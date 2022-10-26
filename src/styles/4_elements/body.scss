@@ -1,0 +1,9 @@
+body {
+  //color: $blue;
+  font-family: $fontMain;
+  -webkit-font-smoothing: antialiased;
+
+  &.fixed {
+    overflow: hidden;
+  }
+}

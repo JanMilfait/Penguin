@@ -1,0 +1,31 @@
+//button {
+//  padding: 12px 32px;
+//  border: none;
+//  border-radius: 84px 48px 48px 0;
+//  outline: none;
+//  background: $gradientBtn;
+//  box-shadow: $btnShadow;
+//  color: $white;
+//  font-size: 16px;
+//  font-weight: 700;
+//  line-height: 32px;
+//  cursor: pointer;
+//
+//  a {
+//    color: $white;
+//  }
+//
+//  @include media-breakpoint-down(lg) {
+//    padding: 12px 24px;
+//    font-size: 14px;
+//    line-height: 24px;
+//  }
+//}
+//
+//button:hover {
+//  background: $gradientBtnHover;
+//}
+//
+//button[aria-disabled="true"] {
+//  background: $gray;
+//}

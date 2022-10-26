@@ -1,0 +1,48 @@
+// Bootstrap 5
+@import "~bootstrap/scss/functions";
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/maps";
+@import "~bootstrap/scss/mixins";
+@import "~bootstrap/scss/utilities";
+@import "~bootstrap/scss/root";
+@import "~bootstrap/scss/reboot";
+@import "~bootstrap/scss/type";
+@import "~bootstrap/scss/images";
+@import "~bootstrap/scss/containers";
+@import "~bootstrap/scss/grid";
+@import "~bootstrap/scss/helpers";
+@import "~bootstrap/scss/utilities/api";
+
+/* IT-CSS */
+// 1. Settings
+@import "1_settings/colors";
+@import "1_settings/font";
+
+// 2. Tools
+@import "2_tools/animate";
+@import "2_tools/mixin";
+
+// 3. Generic
+@import "3_generic/all";
+
+// 4. Elements
+@import "4_elements/a";
+@import "4_elements/body";
+@import "4_elements/button";
+@import "4_elements/h1";
+@import "4_elements/h2";
+@import "4_elements/h3";
+@import "4_elements/h4";
+@import "4_elements/h5";
+@import "4_elements/label";
+@import "4_elements/input";
+@import "4_elements/p";
+@import "4_elements/ul";
+
+// 5. Objects
+@import "5_objects/container";
+
+// 6. Components
+
+// 7. Utilities
+@import "7_utilities/utilities";
