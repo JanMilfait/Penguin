@@ -8,9 +8,9 @@ export const apiSlice = createApi({
     baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL,
     prepareHeaders: (headers, { getState }) => {
       const token = (getState() as AppState).auth.token;
-      if (token) {
-        headers.set('authorization', `Bearer ${token}`);
-      }
+
+      token && headers.set('authorization', `Bearer ${token}`);
+      headers.set('accept', 'application/json');
       return headers;
     }
   }),

@@ -19,11 +19,11 @@ export const authenticate = async (store, {req, res}) => {
   const token = req?.cookies?.token;
 
   if (token) {
-    await store.dispatch(setToken(token));
     const response = await store.dispatch(AuthApi.endpoints.fetchClient.initiate({}, {forceRefetch: true}));
 
     if (response.isError) {
       console.error(`Error: ${response.error.message || 'Couldn\'t log in'}`);
+
       res.writeHead(302, { Location: '/login' });
       res.end();
     }
