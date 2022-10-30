@@ -3,7 +3,7 @@ import { AppState } from 'app/store';
 
 export const apiSlice = createApi({
   reducerPath: 'api',
-  tagTypes: ['Auth'],
+  tagTypes: [],
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL,
     prepareHeaders: (headers, { getState }) => {

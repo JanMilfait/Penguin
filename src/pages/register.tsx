@@ -2,6 +2,7 @@ import { useRegisterMutation } from 'features/auth/authSlice';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
+import Router from 'next/router';
 import { useState } from 'react';
 
 const Register: NextPage = () => {
@@ -23,8 +24,14 @@ const Register: NextPage = () => {
       // dispatch modal error
       return;
     }
-    await register({name, email, password, password_confirmation});
+    const response = await register({name, email, password, password_confirmation});
+    const token = await response?.data?.token;
 
+    if (token) {
+      const expire = new Date(Date.now() + parseInt(process.env.NEXT_PUBLIC_COOKIE_EXPIRES_SECONDS));
+      document.cookie = `token=${token}; SameSite=Strict; expires=${expire}`;
+      Router.push('/');
+    }
   };
 
   let message = null;
@@ -32,7 +39,7 @@ const Register: NextPage = () => {
     message = <p>Your account has been created.</p>;
   }
   if (isError) {
-    message = <p>{error.data.message ?? 'There was an error creating your account.'}</p>;
+    message = <p>{error?.data?.message ?? 'There was an error creating your account.'}</p>;
   }
 
   return (
@@ -75,3 +82,12 @@ const Register: NextPage = () => {
 };
 
 export default Register;
+
+export const getServerSideProps = async ({req, res}) => {
+  const token = req?.cookies?.token;
+  if (token) {
+    res.writeHead(302, { Location: '/' });
+    res.end();
+  }
+  return {props: {}};
+};

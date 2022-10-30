@@ -2,7 +2,8 @@ import '../styles/styles.scss';
 import type {AppProps} from 'next/app';
 import {wrapper} from '../app/store';
 import {Provider} from 'react-redux';
-import {setToken, AuthApi} from '../features/auth/authSlice';
+import {AuthApi, setToken} from '../features/auth/authSlice';
+
 
 function MyApp({ Component, ...rest }: AppProps) {
   const {store, props} = wrapper.useWrappedStore(rest);
@@ -15,11 +16,12 @@ function MyApp({ Component, ...rest }: AppProps) {
 
 export default MyApp;
 
+
 export const authenticate = async (store, {req, res}) => {
   const token = req?.cookies?.token;
-
   if (token) {
-    const response = await store.dispatch(AuthApi.endpoints.fetchClient.initiate({}, {forceRefetch: true}));
+    await store.dispatch(setToken(token));
+    const response = await store.dispatch(AuthApi.endpoints.fetchClient.initiate());
 
     if (response.isError) {
       console.error(`Error: ${response.error.message || 'Couldn\'t log in'}`);

@@ -7,8 +7,7 @@ import {apiSlice} from '../../app/api/apiSlice';
 export const AuthApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     fetchClient: builder.query({
-      // by token provided in the request header
-      query: () => 'user'
+      query: () => 'api/user'
     }),
     login: builder.mutation({
       query: (credentials: {email: string; password: string}) => ({
@@ -63,13 +62,15 @@ export const AuthSlice = createSlice({
         }
       })
       .addMatcher(AuthApi.endpoints.fetchClient.matchFulfilled, (state, action) => {
-        console.log('fetchClient', action.payload);
+        state.data = action.payload;
       })
       .addMatcher(AuthApi.endpoints.login.matchFulfilled, (state, action) => {
-        console.log('login', action.payload);
+        state.token = action.payload.token;
+        state.data = action.payload.user;
       })
       .addMatcher(AuthApi.endpoints.register.matchFulfilled, (state, action) => {
-        console.log('register', action.payload);
+        state.token = action.payload.token;
+        state.data = action.payload.user;
       });
   }
 });

@@ -42,3 +42,12 @@ const Reset: NextPage = () => {
 };
 
 export default Reset;
+
+export const getServerSideProps = async ({req, res}) => {
+  const token = req?.cookies?.token;
+  if (token) {
+    res.writeHead(302, { Location: '/' });
+    res.end();
+  }
+  return {props: {}};
+};
