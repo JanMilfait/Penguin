@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePostsVideosTable extends Migration
+class CreatePostsSharingTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,10 @@ class CreatePostsVideosTable extends Migration
      */
     public function up()
     {
-        Schema::create('posts_videos', function (Blueprint $table) {
+        Schema::create('posts_sharing', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('post_id')->unique('unq_posts_videos_post_id');
-            $table->string('name');
-            $table->string('url', 500);
+            $table->unsignedBigInteger('post_id')->index('fk_posts_shares_posts');
+            $table->unsignedBigInteger('user_id')->index('fk_posts_shares_users');
             $table->timestamp('created_at')->nullable();
         });
     }
@@ -29,6 +28,6 @@ class CreatePostsVideosTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('posts_videos');
+        Schema::dropIfExists('posts_sharing');
     }
 }

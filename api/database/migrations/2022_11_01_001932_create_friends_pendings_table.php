@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateFriendsTable extends Migration
+class CreateFriendsPendingsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,11 @@ class CreateFriendsTable extends Migration
      */
     public function up()
     {
-        Schema::create('friends', function (Blueprint $table) {
+        Schema::create('friends_pendings', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('user_a')->index('fk_friends_users');
-            $table->bigInteger('user_b')->index('fk_friends_users_b');
+            $table->unsignedBigInteger('user_id')->index('fk_friends_pendings_users');
+            $table->unsignedBigInteger('user_pending')->index('fk_friends_pendings_pending');
+            $table->enum('state', ['waiting', 'declined', 'accepted'])->default('waiting');
             $table->timestamp('created_at')->nullable();
         });
     }
@@ -28,6 +29,6 @@ class CreateFriendsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('friends');
+        Schema::dropIfExists('friends_pendings');
     }
 }

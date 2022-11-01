@@ -14,9 +14,9 @@ class CreatePostsCommentsRepliesTable extends Migration
     public function up()
     {
         Schema::create('posts_comments_replies', function (Blueprint $table) {
-            $table->bigInteger('id', true);
-            $table->bigInteger('comment_id')->unique('unq_posts_comments_post_id');
-            $table->bigInteger('user_id')->index('fk_posts_comments_users');
+            $table->bigIncrements('id');
+            $table->unsignedBigInteger('comment_id')->index('fk_posts_comments_replies');
+            $table->unsignedBigInteger('user_id')->index('fk_posts_comments_replies_users');
             $table->string('body', 8000)->nullable();
             $table->timestamps();
         });

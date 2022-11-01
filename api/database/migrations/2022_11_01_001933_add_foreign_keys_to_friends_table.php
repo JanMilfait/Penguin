@@ -14,8 +14,8 @@ class AddForeignKeysToFriendsTable extends Migration
     public function up()
     {
         Schema::table('friends', function (Blueprint $table) {
-            $table->foreign(['user_a'], 'fk_friends_users')->references(['id'])->on('users')->onUpdate('NO ACTION')->onDelete('NO ACTION');
-            $table->foreign(['user_b'], 'fk_friends_users_b')->references(['id'])->on('users')->onUpdate('NO ACTION')->onDelete('NO ACTION');
+            $table->foreign(['user_a'], 'fk_friends_a')->references(['id'])->on('users')->onUpdate('NO ACTION')->onDelete('NO ACTION');
+            $table->foreign(['user_b'], 'fk_friends_b')->references(['id'])->on('users')->onUpdate('NO ACTION')->onDelete('NO ACTION');
         });
     }
 
@@ -27,8 +27,8 @@ class AddForeignKeysToFriendsTable extends Migration
     public function down()
     {
         Schema::table('friends', function (Blueprint $table) {
-            $table->dropForeign('fk_friends_users');
-            $table->dropForeign('fk_friends_users_b');
+            $table->dropForeign('fk_friends_a');
+            $table->dropForeign('fk_friends_b');
         });
     }
 }

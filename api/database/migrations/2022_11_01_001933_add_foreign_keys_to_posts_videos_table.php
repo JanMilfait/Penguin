@@ -14,7 +14,7 @@ class AddForeignKeysToPostsVideosTable extends Migration
     public function up()
     {
         Schema::table('posts_videos', function (Blueprint $table) {
-            $table->foreign(['post_id'], 'fk_posts_videos_posts')->references(['id'])->on('posts')->onUpdate('NO ACTION')->onDelete('NO ACTION');
+            $table->foreign(['post_id'], 'fk_posts_videos_posts')->references(['id'])->on('posts')->onUpdate('NO ACTION')->onDelete('CASCADE');
         });
     }
 

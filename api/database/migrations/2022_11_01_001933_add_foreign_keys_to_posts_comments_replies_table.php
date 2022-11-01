@@ -14,7 +14,7 @@ class AddForeignKeysToPostsCommentsRepliesTable extends Migration
     public function up()
     {
         Schema::table('posts_comments_replies', function (Blueprint $table) {
-            $table->foreign(['comment_id'], 'fk_posts_comments_replies')->references(['id'])->on('posts_comments')->onUpdate('NO ACTION')->onDelete('NO ACTION');
+            $table->foreign(['comment_id'], 'fk_posts_comments_replies')->references(['id'])->on('posts_comments')->onUpdate('NO ACTION')->onDelete('CASCADE');
             $table->foreign(['user_id'], 'fk_posts_comments_replies_users')->references(['id'])->on('users')->onUpdate('NO ACTION')->onDelete('NO ACTION');
         });
     }

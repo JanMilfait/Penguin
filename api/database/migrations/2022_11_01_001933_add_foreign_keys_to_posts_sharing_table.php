@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddForeignKeysToPostsSharesTable extends Migration
+class AddForeignKeysToPostsSharingTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,8 @@ class AddForeignKeysToPostsSharesTable extends Migration
      */
     public function up()
     {
-        Schema::table('posts_shares', function (Blueprint $table) {
-            $table->foreign(['post_id'], 'fk_posts_shares_posts')->references(['id'])->on('posts')->onUpdate('NO ACTION')->onDelete('NO ACTION');
+        Schema::table('posts_sharing', function (Blueprint $table) {
+            $table->foreign(['post_id'], 'fk_posts_shares_posts')->references(['id'])->on('posts')->onUpdate('NO ACTION')->onDelete('CASCADE');
             $table->foreign(['user_id'], 'fk_posts_shares_users')->references(['id'])->on('users')->onUpdate('NO ACTION')->onDelete('NO ACTION');
         });
     }
@@ -26,7 +26,7 @@ class AddForeignKeysToPostsSharesTable extends Migration
      */
     public function down()
     {
-        Schema::table('posts_shares', function (Blueprint $table) {
+        Schema::table('posts_sharing', function (Blueprint $table) {
             $table->dropForeign('fk_posts_shares_posts');
             $table->dropForeign('fk_posts_shares_users');
         });

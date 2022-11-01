@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePostsCommentsReactionsTable extends Migration
+class CreatePostsCommentsRepliesReactionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,10 @@ class CreatePostsCommentsReactionsTable extends Migration
      */
     public function up()
     {
-        Schema::create('posts_comments_reactions', function (Blueprint $table) {
-            $table->bigInteger('id', true);
-            $table->bigInteger('comment_id')->unique('unq_posts_reactions_post_id');
-            $table->bigInteger('user_id')->index('fk_posts_reactions_users');
+        Schema::create('posts_comments_replies_reactions', function (Blueprint $table) {
+            $table->bigIncrements('id');
+            $table->unsignedBigInteger('comment_id')->index('fk_posts_comments_replies_reactions');
+            $table->unsignedBigInteger('user_id')->index('fk_posts_comments_replies_reactions_users');
             $table->integer('reaction');
             $table->timestamp('created_at')->nullable();
         });
@@ -29,6 +29,6 @@ class CreatePostsCommentsReactionsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('posts_comments_reactions');
+        Schema::dropIfExists('posts_comments_replies_reactions');
     }
 }

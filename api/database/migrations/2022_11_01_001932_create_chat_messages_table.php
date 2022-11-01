@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreatePostsSharesTable extends Migration
+class CreateChatMessagesTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,10 +13,11 @@ class CreatePostsSharesTable extends Migration
      */
     public function up()
     {
-        Schema::create('posts_shares', function (Blueprint $table) {
+        Schema::create('chat_messages', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->bigInteger('post_id')->unique('unq_posts_shares_post_id');
-            $table->bigInteger('user_id')->index('fk_posts_shares_users');
+            $table->unsignedBigInteger('user_id')->index('fk_chat_messages_users');
+            $table->string('room_token', 64)->index('fk_chat_messages_chat_rooms');
+            $table->text('body');
             $table->timestamp('created_at')->nullable();
         });
     }
@@ -28,6 +29,6 @@ class CreatePostsSharesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('posts_shares');
+        Schema::dropIfExists('chat_messages');
     }
 }
