@@ -24,10 +24,10 @@ const Home: NextPage = () => {
   );
 };
 
+export default Home;
+
 export const getServerSideProps = wrapper.getServerSideProps(store => async (ctx) => {
   await authenticate(store, ctx);
 
   return {props: {}};
 });
-
-export default Home;

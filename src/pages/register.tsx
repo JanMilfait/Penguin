@@ -4,6 +4,8 @@ import Head from 'next/head';
 import Link from 'next/link';
 import Router from 'next/router';
 import { useState } from 'react';
+import {wrapper} from '../app/store';
+import {authenticateUnprotected} from './_app';
 
 const Register: NextPage = () => {
 
@@ -83,11 +85,8 @@ const Register: NextPage = () => {
 
 export default Register;
 
-export const getServerSideProps = async ({req, res}) => {
-  const token = req?.cookies?.token;
-  if (token) {
-    res.writeHead(302, { Location: '/' });
-    res.end();
-  }
+export const getServerSideProps = wrapper.getServerSideProps(store => async (ctx) => {
+  await authenticateUnprotected(store, ctx);
+
   return {props: {}};
-};
+});

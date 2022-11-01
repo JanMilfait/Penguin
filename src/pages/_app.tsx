@@ -34,3 +34,16 @@ export const authenticate = async (store, {req, res}) => {
     res.end();
   }
 };
+
+export const authenticateUnprotected = async (store, {req, res}) => {
+  const token = req?.cookies?.token;
+  if (token) {
+    await store.dispatch(setToken(token));
+    const response = await store.dispatch(AuthApi.endpoints.fetchClient.initiate());
+
+    if (response.isSuccess) {
+      res.writeHead(302, { Location: '/' });
+      res.end();
+    }
+  }
+};

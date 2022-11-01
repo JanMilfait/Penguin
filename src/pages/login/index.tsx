@@ -1,9 +1,11 @@
-import { useLoginMutation } from 'features/auth/authSlice';
+import {useLoginMutation} from 'features/auth/authSlice';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import { useState } from 'react';
 import Router from 'next/router';
+import {wrapper} from '../../app/store';
+import {authenticateUnprotected} from '../_app';
 
 const Login: NextPage = () => {
 
@@ -69,11 +71,8 @@ const Login: NextPage = () => {
 
 export default Login;
 
-export const getServerSideProps = async ({req, res}) => {
-  const token = req?.cookies?.token;
-  if (token) {
-    res.writeHead(302, { Location: '/' });
-    res.end();
-  }
+export const getServerSideProps = wrapper.getServerSideProps(store => async (ctx) => {
+  await authenticateUnprotected(store, ctx);
+
   return {props: {}};
-};
+});
