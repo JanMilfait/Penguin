@@ -30,7 +30,7 @@ const Register: NextPage = () => {
     const token = await response?.data?.token;
 
     if (token) {
-      const expire = new Date(Date.now() + parseInt(process.env.NEXT_PUBLIC_COOKIE_EXPIRES_SECONDS));
+      const expire = new Date(Date.now() + parseInt(process.env.NEXT_PUBLIC_COOKIE_EXPIRES_SECONDS ?? '2592000000'));
       document.cookie = `token=${token}; SameSite=Strict; expires=${expire}`;
       Router.push('/');
     }

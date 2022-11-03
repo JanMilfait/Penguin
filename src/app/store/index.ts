@@ -1,9 +1,10 @@
-import { configureStore, ThunkAction } from '@reduxjs/toolkit';
-import { createWrapper } from 'next-redux-wrapper';
+import {configureStore, ThunkAction} from '@reduxjs/toolkit';
+import {createWrapper} from 'next-redux-wrapper';
 import {nextReduxCookieMiddleware, wrapMakeStore} from 'next-redux-cookie-wrapper';
-import { Action } from 'redux';
+import {Action} from 'redux';
 import authSlice from 'features/auth/authSlice';
 import {apiSlice} from 'app/api/apiSlice';
+import {pusherMiddleware} from 'app/middlewares/pusherMiddleware';
 
 
 const makeStore = () => configureStore({
@@ -18,6 +19,7 @@ const makeStore = () => configureStore({
         subtrees: ['subtree']
       }))
       .concat(apiSlice.middleware)
+      // .concat(pusherMiddleware)
   )
 });
 

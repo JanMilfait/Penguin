@@ -17,6 +17,10 @@ function MyApp({ Component, ...rest }: AppProps) {
 export default MyApp;
 
 
+////////////
+// Initial page load functions, called by getServerSideProps
+////////////
+
 export const authenticate = async (store, {req, res}) => {
   const token = req?.cookies?.token;
   if (token) {
