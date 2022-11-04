@@ -19,11 +19,9 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        $user->profile;
-        $user->skills;
-
-        return response()->json($user);
+        return response()->json($user->load('profile', 'skills', 'skills.created_by'));
     }
+
 
     /**
      * Update the specified resource in storage.
@@ -42,13 +40,16 @@ class UserController extends Controller
             'name' => ['string', 'max:255'],
             'password' => ['confirmed', Rules\Password::defaults()],
             'avatar_url' => ['string', 'max:500','nullable'],
-            'profile_age' => ['string', 'max:100','nullable'],
-            'profile_description' => ['string', 'max:65535','nullable'],
-            'profile_telephone' => ['string', 'max:20','nullable'],
-            'profile_address' => ['string', 'max:100','nullable'],
-            'profile_nationality' => ['string', 'max:100','nullable'],
+            'visibility' => ['string', 'max:100'],
+            'age' => ['string', 'max:100','nullable'],
+            'description' => ['string', 'max:65535','nullable'],
+            'telephone' => ['string', 'max:20','nullable'],
+            'address' => ['string', 'max:100','nullable'],
+            'nationality' => ['string', 'max:100','nullable'],
             'skills' => ['array', 'nullable'],
         ]);
+
+        $user->update($request->only(['name', 'avatar_url']));
 
         if ($request->has(['password', 'password_confirmation'])) {
             $user->forceFill([
@@ -57,13 +58,20 @@ class UserController extends Controller
             ])->save();
         }
 
+        $user->profile->update($request->only([
+            'visibility',
+            'age',
+            'description',
+            'telephone',
+            'address',
+            'nationality'
+        ]));
+
         if ($request->has('skills')) {
             $request->skills === null ? $user->skills()->detach() : $user->skills()->sync($request->skills);
         }
 
-        $user->update($request->except(['password', 'password_confirmation', 'skills']));
-
-        return response()->json($user);
+        return response()->json($user->load('profile', 'skills'));
     }
 
 

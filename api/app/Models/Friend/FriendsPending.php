@@ -29,10 +29,6 @@ class FriendsPending extends Model
 		'pending_user' => 'int'
 	];
 
-    protected $hidden = [
-        'user_id'
-    ];
-
 	protected $fillable = [
 		'user_id',
         'user_name',

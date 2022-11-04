@@ -7,9 +7,32 @@ use App\Models\Friend\FriendsPending;
 use App\Models\User\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use function React\Promise\map;
 
 class FriendController extends Controller
 {
+    /**
+     * Display user's friends.
+     *
+     * @param Request $request
+     * @param User    $user
+     * @return JsonResponse
+     */
+    public function show(Request $request, User $user)
+    {
+        $friends = Friend::join('users', 'friends.user_b', '=', 'users.id')
+            ->where('friends.user_a', $user->id)
+            ->select('users.id as id', 'users.name', 'users.is_active', 'users.avatar_url')
+            ->orderBy('users.is_active', 'desc')
+            ->orderBy('users.name')
+            ->offset($request->get('offset') ?? 0)
+            ->limit($request->get('limit') ?? 30)
+            ->get();
+
+        return response()->json($friends);
+    }
+
+
     /**
      * Store a newly created resource in storage.
      *
@@ -51,6 +74,7 @@ class FriendController extends Controller
         return response()->json(['message' => 'Friend request sent.']);
     }
 
+
     /**
      * Accept a friend request.
      *
@@ -86,6 +110,7 @@ class FriendController extends Controller
         return response()->json(['message' => 'Friend request accepted.']);
     }
 
+
     /**
      * Decline a friend request.
      *
@@ -112,6 +137,35 @@ class FriendController extends Controller
         return response()->json(['message' => 'Friend request declined.']);
     }
 
+
+    /**
+     * Remove friend
+     *
+     * @param Request $request
+     * @param User    $user
+     * @return JsonResponse
+     */
+    public function destroy(Request $request, User $user)
+    {
+        if ($user->id === $request->user()->id) {
+            return response()->json([
+                'message' => 'You can\'t remove yourself'
+            ], 400);
+        }
+
+        if (!$user->friends->contains('user_b', $request->user()->id)) {
+            return response()->json([
+                'message' => 'You are not friends with this user'
+            ], 400);
+        }
+
+        $request->user()->friends->where('user_b', $user->id)->first()->delete();
+        $user->friends->where('user_b', $request->user()->id)->first()->delete();
+
+        return response()->json(['message' => 'Friend removed.']);
+    }
+
+
     /**
      * Display send pendings for the logged user.
      *
@@ -122,6 +176,7 @@ class FriendController extends Controller
     {
         $pendings = $request->user()->pendings()
             ->where('updated_at', '>', now()->subMonth())
+            ->select('id', 'pending_user', 'pending_name', 'state', 'created_at', 'updated_at')
             ->latest('updated_at')
             ->offset($request->get('offset') ?? 0)
             ->limit($request->get('limit') ?? 10)
@@ -129,6 +184,7 @@ class FriendController extends Controller
 
         return response()->json($pendings);
     }
+
 
     /**
      * Display received pendings for the logged user.
@@ -140,6 +196,7 @@ class FriendController extends Controller
     {
         $received = FriendsPending::where('pending_user', $request->user()->id)
             ->where('updated_at', '>', now()->subMonth())
+            ->select('id', 'user_id', 'user_name', 'state', 'created_at', 'updated_at')
             ->latest('updated_at')
             ->offset($request->get('offset') ?? 0)
             ->limit($request->get('limit') ?? 10)

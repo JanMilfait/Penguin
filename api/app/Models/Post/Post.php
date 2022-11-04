@@ -29,9 +29,9 @@ class Post extends Model
 {
 	protected $table = 'posts';
 
-	protected $casts = [
-		'user_id' => 'int'
-	];
+    protected $hidden = [
+        'user_id'
+    ];
 
 	protected $fillable = [
 		'user_id',
@@ -40,31 +40,31 @@ class Post extends Model
 
 	public function user()
 	{
-		return $this->belongsTo(User::class);
+		return $this->belongsTo(User::class)->select(['id', 'name', 'avatar_url']);
 	}
 
-	public function posts_comments()
+	public function comments()
 	{
 		return $this->hasMany(PostsComment::class);
 	}
 
-	public function posts_images()
+	public function image()
 	{
-		return $this->hasMany(PostsImage::class);
+		return $this->hasOne(PostsImage::class);
 	}
 
-	public function posts_reactions()
+	public function reactions()
 	{
 		return $this->hasMany(PostsReaction::class);
 	}
 
-	public function posts_sharings()
+	public function sharings()
 	{
 		return $this->hasMany(PostsSharing::class);
 	}
 
-	public function posts_videos()
+	public function video()
 	{
-		return $this->hasMany(PostsVideo::class);
+		return $this->hasOne(PostsVideo::class);
 	}
 }

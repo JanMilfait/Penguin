@@ -25,10 +25,10 @@ class PostsSharing extends Model
 
     const UPDATED_AT = null;
 
-    protected $casts = [
-		'post_id' => 'int',
-		'user_id' => 'int'
-	];
+    protected $hidden = [
+        'post_id',
+        'user_id',
+    ];
 
 	protected $fillable = [
 		'post_id',
@@ -42,6 +42,6 @@ class PostsSharing extends Model
 
 	public function user()
 	{
-		return $this->belongsTo(User::class);
+		return $this->belongsTo(User::class)->select(['id', 'name', 'avatar_url']);
 	}
 }

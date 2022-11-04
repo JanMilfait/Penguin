@@ -24,9 +24,10 @@ class PostsImage extends Model
 
     const UPDATED_AT = null;
 
-    protected $casts = [
-		'post_id' => 'int'
-	];
+    protected $hidden = [
+        'post_id',
+        'created_at'
+    ];
 
 	protected $fillable = [
 		'post_id',

@@ -27,10 +27,10 @@ class PostsCommentsReply extends Model
 {
 	protected $table = 'posts_comments_replies';
 
-	protected $casts = [
-		'comment_id' => 'int',
-		'user_id' => 'int'
-	];
+    protected $hidden = [
+        'comment_id',
+        'user_id'
+    ];
 
 	protected $fillable = [
 		'comment_id',
@@ -38,17 +38,17 @@ class PostsCommentsReply extends Model
 		'body'
 	];
 
-	public function posts_comment()
+	public function comment()
 	{
-		return $this->belongsTo(PostsComment::class, 'comment_id');
+		return $this->belongsTo(PostsComment::class);
 	}
 
 	public function user()
 	{
-		return $this->belongsTo(User::class);
+		return $this->belongsTo(User::class)->select(['id', 'name', 'avatar_url']);
 	}
 
-	public function posts_comments_replies_reactions()
+	public function reactions()
 	{
 		return $this->hasMany(PostsCommentsRepliesReaction::class, 'comment_id');
 	}

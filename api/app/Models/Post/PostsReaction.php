@@ -27,10 +27,14 @@ class PostsReaction extends Model
     const UPDATED_AT = null;
 
     protected $casts = [
-		'post_id' => 'int',
-		'user_id' => 'int',
 		'reaction' => 'int'
 	];
+
+    protected $hidden = [
+        'post_id',
+        'user_id',
+        'created_at'
+    ];
 
 	protected $fillable = [
 		'post_id',
@@ -45,6 +49,6 @@ class PostsReaction extends Model
 
 	public function user()
 	{
-		return $this->belongsTo(User::class);
+		return $this->belongsTo(User::class)->select(['id', 'name', 'avatar_url']);
 	}
 }
