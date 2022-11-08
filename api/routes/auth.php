@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\PasswordResetLinkController;
 use App\Http\Controllers\Auth\PusherAuthenticatedController;
 use App\Http\Controllers\Auth\RegisteredUserController;
 use App\Http\Controllers\Auth\VerifyEmailController;
+use App\Http\Controllers\Webhooks\Pusher\ChannelExistence;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [RegisteredUserController::class, 'store'])
@@ -40,3 +41,8 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
 Route::post('/pusher/auth', [PusherAuthenticatedController::class, 'auth'])
                 ->middleware('auth:sanctum')
                 ->name('pusher.auth');
+
+// TODO: SETUP WEBHOOK ROUTE IN PRODUCTION
+Route::post('/pusher/webhook/private-user', [ChannelExistence::class, 'private_user'])
+                ->middleware('pusher.signature')
+                ->name('pusher.private-user');

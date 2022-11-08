@@ -14,8 +14,8 @@ class AddForeignKeysToPostsReactionsTable extends Migration
     public function up()
     {
         Schema::table('posts_reactions', function (Blueprint $table) {
-            $table->foreign(['user_id'], 'fk_posts_reactions_users')->references(['id'])->on('users')->onUpdate('NO ACTION')->onDelete('NO ACTION');
             $table->foreign(['post_id'], 'fk_posts_reactions_posts')->references(['id'])->on('posts')->onUpdate('NO ACTION')->onDelete('CASCADE');
+            $table->foreign(['user_id'], 'fk_posts_reactions_users')->references(['id'])->on('users')->onUpdate('NO ACTION')->onDelete('NO ACTION');
         });
     }
 
@@ -27,8 +27,8 @@ class AddForeignKeysToPostsReactionsTable extends Migration
     public function down()
     {
         Schema::table('posts_reactions', function (Blueprint $table) {
-            $table->dropForeign('fk_posts_reactions_users');
             $table->dropForeign('fk_posts_reactions_posts');
+            $table->dropForeign('fk_posts_reactions_users');
         });
     }
 }

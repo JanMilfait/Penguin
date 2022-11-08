@@ -21,7 +21,8 @@ Route::middleware('auth:sanctum')->group(function () {
     // TODO: NOTIFICATIONS
     Route::get('/user', [UserController::class, 'logged']);
     Route::get('/user/{user}', [UserController::class, 'show']);
-    Route::put('/user/{user}', [UserController::class, 'update']);
+    Route::put('/user', [UserController::class, 'update']);
+    Route::post('/user/avatar', [UserController::class, 'upload_avatar']);
 
     Route::get('/friends/{user}', [FriendController::class, 'show']);
     Route::delete('/friends/{user}', [FriendController::class, 'destroy']);

@@ -15,7 +15,6 @@ class CreateChatRoomsTable extends Migration
     {
         Schema::create('chat_rooms', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('token', 64)->unique('unq_chat_rooms_token');
             $table->timestamp('created_at')->nullable();
         });
     }

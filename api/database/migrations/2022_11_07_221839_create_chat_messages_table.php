@@ -16,8 +16,10 @@ class CreateChatMessagesTable extends Migration
         Schema::create('chat_messages', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id')->index('fk_chat_messages_users');
-            $table->string('room_token', 64)->index('fk_chat_messages_chat_rooms');
+            $table->unsignedBigInteger('room_id')->index('fk_chat_messages_chat_rooms');
             $table->text('body');
+            $table->string('img_name')->nullable();
+            $table->string('img_url', 500)->nullable();
             $table->timestamp('created_at')->nullable();
         });
     }

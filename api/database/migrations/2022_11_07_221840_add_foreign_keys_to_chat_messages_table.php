@@ -15,7 +15,7 @@ class AddForeignKeysToChatMessagesTable extends Migration
     {
         Schema::table('chat_messages', function (Blueprint $table) {
             $table->foreign(['user_id'], 'fk_chat_messages_users')->references(['id'])->on('users')->onUpdate('NO ACTION')->onDelete('NO ACTION');
-            $table->foreign(['room_token'], 'fk_chat_messages_chat_rooms')->references(['token'])->on('chat_rooms')->onUpdate('NO ACTION')->onDelete('NO ACTION');
+            $table->foreign(['room_id'], 'fk_chat_messages_chat_rooms')->references(['id'])->on('chat_rooms')->onUpdate('NO ACTION')->onDelete('NO ACTION');
         });
     }
 

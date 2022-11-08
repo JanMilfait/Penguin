@@ -12,9 +12,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id
  * @property int $user_id
  * @property int $room_id
- * @property string $body
- * @property string|null $img_name
- * @property string|null $img_url
  * @property Carbon|null $created_at
  *
  * @property ChatRoom $chat_room
@@ -22,18 +19,15 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @package App\Models
  */
-class ChatMessage extends Model
+class ChatParticipant extends Model
 {
-	protected $table = 'chat_messages';
+	protected $table = 'chat_participants';
 
     const UPDATED_AT = null;
 
 	protected $fillable = [
 		'user_id',
-		'room_id',
-		'body',
-        'img_url',
-        'img_name'
+		'room_id'
 	];
 
 	public function room()

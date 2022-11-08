@@ -19,7 +19,7 @@ const makeStore = () => configureStore({
         subtrees: ['subtree']
       }))
       .concat(apiSlice.middleware)
-      // .concat(pusherMiddleware)
+      .concat(pusherMiddleware)
   )
 });
 

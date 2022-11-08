@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\User\User;
+use App\Services\UserAvatar;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
+use Image;
 
 class UserController extends Controller
 {
@@ -24,22 +26,19 @@ class UserController extends Controller
 
 
     /**
-     * Update the specified resource in storage.
+     * Update user.
      *
      * @param Request $request
-     * @param User    $user
      * @return JsonResponse
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request)
     {
-        if ($request->user()->id !== $user->id) {
-            return response()->json(['message' => 'Unauthorized'], 401);
-        }
+        $user = $request->user();
 
         $request->validate([
             'name' => ['string', 'max:255'],
+            'avatar' => ['nullable', 'image', 'max:2048', 'dimensions:min_width=200,min_height=200'],
             'password' => ['confirmed', Rules\Password::defaults()],
-            'avatar_url' => ['string', 'max:500','nullable'],
             'visibility' => ['string', 'max:100'],
             'age' => ['string', 'max:100','nullable'],
             'description' => ['string', 'max:65535','nullable'],
@@ -49,7 +48,7 @@ class UserController extends Controller
             'skills' => ['array', 'nullable'],
         ]);
 
-        $user->update($request->only(['name', 'avatar_url']));
+        $user->update($request->only('name'));
 
         if ($request->has(['password', 'password_confirmation'])) {
             $user->forceFill([
@@ -72,6 +71,35 @@ class UserController extends Controller
         }
 
         return response()->json($user->load('profile', 'skills'));
+    }
+
+
+    /**
+     * Upload and process user avatar.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function upload_avatar(Request $request)
+    {
+        $user = $request->user();
+
+        $request->validate([
+            'avatar' => ['required', 'image', 'max:2048', 'dimensions:min_width=200,min_height=200'],
+        ]);
+
+        $response = UserAvatar::save($request->file('avatar'), $user);
+
+        if (isset($response['error'])) {
+            return response()->json(['message' => $response['error']], 500);
+        }
+
+        $user->update([
+            'avatar_name' => $response['name'],
+            'avatar_url' => $response['url']
+        ]);
+
+        return response()->json(['message' => 'Avatar uploaded successfully.']);
     }
 
 

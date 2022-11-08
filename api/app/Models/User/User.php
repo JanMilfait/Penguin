@@ -9,7 +9,6 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 use App\Models\Chat\ChatMessage;
-use App\Models\Chat\ChatRoom;
 use App\Models\Friend\Friend;
 use App\Models\Friend\FriendsPending;
 use App\Models\Post\Post;
@@ -32,12 +31,12 @@ use Illuminate\Database\Eloquent\Collection;
  * @property string $password
  * @property string|null $remember_token
  * @property bool $is_active
+ * @property string|null $avatar_name
  * @property string|null $avatar_url
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
  * @property Collection|ChatMessage[] $chat_messages
- * @property Collection|ChatRoom[] $chat_rooms
  * @property Collection|Friend[] $friends
  * @property Collection|FriendsPending[] $friends_pendings
  * @property Collection|Notification[] $notifications
@@ -74,8 +73,9 @@ class User extends Authenticatable
 		'email',
 		'password',
 		'is_active',
+        'avatar_name',
 		'avatar_url'
-	];
+    ];
 
 	public function messages()
 	{

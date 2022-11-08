@@ -16,6 +16,7 @@ class CreateUsersProfilesTable extends Migration
         Schema::create('users_profiles', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('user_id')->index('fk_users_profiles_users');
+            $table->enum('visibility', ['public', 'friends', 'private'])->default('friends');
             $table->string('age', 100)->nullable();
             $table->text('description')->nullable();
             $table->string('telephone', 20)->nullable();

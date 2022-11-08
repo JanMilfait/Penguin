@@ -11,11 +11,11 @@ use Illuminate\Database\Eloquent\Model;
  * Class ChatRoom
  *
  * @property int $id
- * @property string $token
  * @property Carbon|null $created_at
  *
  * @property User $user
  * @property Collection|ChatMessage[] $chat_messages
+ * @property Collection|ChatParticipant[] $chat_participants
  *
  * @package App\Models
  */
@@ -25,16 +25,13 @@ class ChatRoom extends Model
 
     const UPDATED_AT = null;
 
-	protected $hidden = [
-		'token'
-	];
-
-	protected $fillable = [
-		'token'
-	];
-
-	public function chat_messages()
+	public function messages()
 	{
-		return $this->hasMany(ChatMessage::class, 'room_token', 'token');
-	}
+        return $this->hasMany(ChatMessage::class, 'room_id');
+    }
+
+    public function participants()
+    {
+        return $this->hasMany(ChatParticipant::class, 'room_id');
+    }
 }
