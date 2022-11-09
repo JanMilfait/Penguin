@@ -7,7 +7,6 @@ use App\Models\Friend\FriendsPending;
 use App\Models\User\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use function React\Promise\map;
 
 class FriendController extends Controller
 {

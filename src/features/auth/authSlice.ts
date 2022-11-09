@@ -1,5 +1,4 @@
 import {createSlice} from '@reduxjs/toolkit';
-import {HYDRATE} from 'next-redux-wrapper';
 import {AppState} from 'app/store';
 import {apiSlice} from '../../app/api/apiSlice';
 
@@ -53,14 +52,6 @@ export const AuthSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(HYDRATE, (state, action) => {
-        if (action.payload.auth) {
-          return {
-            ...state,
-            ...action.payload.auth
-          };
-        }
-      })
       .addMatcher(AuthApi.endpoints.fetchClient.matchFulfilled, (state, action) => {
         state.data = action.payload;
       })
