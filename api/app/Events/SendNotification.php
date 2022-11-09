@@ -9,22 +9,26 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class FriendOnline implements ShouldBroadcastNow
+class SendNotification implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $user_id;
-    public $friend_id;
+    public $source;
+    public $source_id;
+    public $source_data;
 
     /**
      * Create a new event instance.
      *
      * @return void
      */
-    public function __construct($user_id, $friend_id)
+    public function __construct($user_id, $source, $source_id, array $source_data)
     {
         $this->user_id = $user_id;
-        $this->friend_id = $friend_id;
+        $this->source = $source;
+        $this->source_id = $source_id;
+        $this->source_data = $source_data;
     }
 
     /**
@@ -39,14 +43,12 @@ class FriendOnline implements ShouldBroadcastNow
 
     public function broadcastAs()
     {
-        return 'friend-online';
+        return 'new-notification';
     }
 
     public function broadcastWith()
     {
-        return [
-            'friend_id' => $this->friend_id
-        ];
+        return $this->source_data;
     }
 
     public function broadcastWhen()
@@ -54,4 +56,3 @@ class FriendOnline implements ShouldBroadcastNow
         return User::where('id', $this->user_id)->where('is_active', 1)->exists();
     }
 }
-

@@ -20,9 +20,7 @@ class ChannelExistence extends Controller
                 $user->update(['is_active' => 1]);
 
                 foreach ($user->friends as $friend) {
-                    if ($friend->user->is_active) {
-                        broadcast(new FriendOnline($friend->user->id, $user->id));
-                    }
+                    broadcast(new FriendOnline($friend->user->id, $user->id));
                 }
             }
 
@@ -30,9 +28,7 @@ class ChannelExistence extends Controller
                 $user->update(['is_active' => 0]);
 
                 foreach ($user->friends as $friend) {
-                    if ($friend->user->is_active) {
-                        broadcast(new FriendOffline($friend->user->id, $user->id));
-                    }
+                    broadcast(new FriendOffline($friend->user->id, $user->id));
                 }
             }
         }

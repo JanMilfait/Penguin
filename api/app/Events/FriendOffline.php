@@ -2,13 +2,14 @@
 
 namespace App\Events;
 
+use App\Models\User\User;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
-use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class FriendOffline implements shouldBroadcast
+class FriendOffline implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
@@ -46,6 +47,11 @@ class FriendOffline implements shouldBroadcast
         return [
             'friend_id' => $this->friend_id
         ];
+    }
+
+    public function broadcastWhen()
+    {
+        return User::where('id', $this->user_id)->where('is_active', 1)->exists();
     }
 }
 

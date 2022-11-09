@@ -41,6 +41,6 @@ class Friend extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_b')->select('id', 'name', 'is_active', 'avatar_url');
+        return $this->belongsTo(User::class, 'user_b')->select('id', 'name', 'is_active', 'avatar_name', 'avatar_url');
     }
 }

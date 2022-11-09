@@ -31,5 +31,26 @@ class PostVideo
                 'url' => env('APP_URL') . '/storage/posts/videos/'
             ];
         }
+
+        return ['error' => 'Could not save video.'];
+    }
+
+
+    /**
+     * Delete post video.
+     *
+     * @param $post
+     * @return bool
+     */
+    public static function delete($post)
+    {
+        $videosPath = public_path('storage/posts/videos/');
+        $videoName = $post->video->name;
+
+        if (file_exists($videosPath . $videoName)) {
+            return unlink($videosPath . $videoName);
+        }
+
+        return true;
     }
 }

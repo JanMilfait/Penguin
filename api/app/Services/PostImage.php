@@ -39,4 +39,27 @@ class PostImage
             return ['error' => $e->getMessage()];
         }
     }
+
+
+    /**
+     * Delete post image.
+     *
+     * @param $post
+     * @return bool
+     */
+    public static function delete($post)
+    {
+        $imagesPath = public_path('storage/posts/images/');
+        $imageName = $post->image->name;
+
+        if (file_exists($imagesPath . $imageName)) {
+            unlink($imagesPath . $imageName);
+        }
+
+        if (file_exists($imagesPath . '600_' . $imageName)) {
+            unlink($imagesPath . '600_' . $imageName);
+        }
+
+        return true;
+    }
 }

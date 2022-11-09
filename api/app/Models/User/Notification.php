@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $user_id
  * @property string $source
  * @property int|null $source_id
+ * @property string|null $source_data
  * @property Carbon|null $created_at
  * @property Carbon|null $expire_at
  *
@@ -38,6 +39,7 @@ class Notification extends Model
 		'user_id',
 		'source',
 		'source_id',
+        'source_data',
 		'expire_at'
 	];
 
@@ -45,9 +47,4 @@ class Notification extends Model
 	{
 		return $this->belongsTo(User::class);
 	}
-
-    public function setExpireAtAttribute($value)
-    {
-        $this->attributes['expire_at'] = Carbon::now()->addDays(2);
-    }
 }

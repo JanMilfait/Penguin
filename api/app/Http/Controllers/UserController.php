@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rules;
-use Image;
 
 class UserController extends Controller
 {
@@ -93,6 +92,8 @@ class UserController extends Controller
         if (isset($response['error'])) {
             return response()->json(['message' => $response['error']], 500);
         }
+
+        $user->avatar_name && UserAvatar::delete($user);
 
         $user->update([
             'avatar_name' => $response['name'],

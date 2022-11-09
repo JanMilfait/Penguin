@@ -42,6 +42,6 @@ class PostsSharing extends Model
 
 	public function user()
 	{
-		return $this->belongsTo(User::class)->select(['id', 'name', 'avatar_url']);
+		return $this->belongsTo(User::class)->select(['id', 'name', 'avatar_name', 'avatar_url']);
 	}
 }

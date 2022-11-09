@@ -22,7 +22,7 @@ class FriendController extends Controller
     {
         $friends = Friend::join('users', 'friends.user_b', '=', 'users.id')
             ->where('friends.user_a', $user->id)
-            ->select('users.id as id', 'users.name', 'users.is_active', 'users.avatar_url')
+            ->select('users.id as id', 'users.name', 'users.is_active', 'users.avatar_name', 'users.avatar_url')
             ->orderBy('users.is_active', 'desc')
             ->orderBy('users.name')
             ->offset($request->get('offset') ?? 0)
@@ -69,6 +69,7 @@ class FriendController extends Controller
             'user_name' => $request->user()->name,
             'pending_user' => $user->id,
             'pending_name' => $user->name,
+            'state' => 'waiting'
         ]);
 
         return response()->json(['message' => 'Friend request sent.']);

@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\FriendController;
+use App\Http\Controllers\PostCommentController;
+use App\Http\Controllers\PostCommentReplyController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -18,23 +20,42 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware('auth:sanctum')->group(function () {
 
-    // TODO: NOTIFICATIONS
     Route::get('/user', [UserController::class, 'logged']);
     Route::get('/user/{user}', [UserController::class, 'show']);
     Route::put('/user', [UserController::class, 'update']);
     Route::post('/user/avatar', [UserController::class, 'upload_avatar']);
 
     Route::get('/friends/{user}', [FriendController::class, 'show']);
-    Route::delete('/friends/{user}', [FriendController::class, 'destroy']);
-
+    Route::delete('/friend/{user}', [FriendController::class, 'destroy']);
     Route::get('/pendings', [FriendController::class, 'logged']);
     Route::get('/pendings/received', [FriendController::class, 'logged_received']);
-    Route::post('/pendings/{user}', [FriendController::class, 'store']);
-    Route::patch('/pendings/accept/{pending}', [FriendController::class, 'accept']);
-    Route::patch('/pendings/decline/{pending}', [FriendController::class, 'decline']);
+    Route::post('/pending/{user}', [FriendController::class, 'store']);
+    Route::patch('/pending-accept/{pending}', [FriendController::class, 'accept']);
+    Route::patch('/pending-decline/{pending}', [FriendController::class, 'decline']);
 
-    Route::get('/posts/{user}', [PostController::class, 'show']);
-    Route::post('/posts', [PostController::class, 'store']);
-    Route::put('/posts/{post}', [PostController::class, 'update']);
-    Route::delete('/posts/{post}', [PostController::class, 'destroy']);
+    Route::get('/posts/{user}', [PostController::class, 'index']);
+    Route::get('/post/{post}', [PostController::class, 'show']);
+    Route::post('/post', [PostController::class, 'store']);
+    Route::put('/post/{post}', [PostController::class, 'update']);
+    Route::delete('/post/{post}', [PostController::class, 'destroy']);
+    Route::post('/post/{post}/share', [PostController::class, 'share']);
+    Route::delete('/post/{post}/share', [PostController::class, 'unshare']);
+    Route::post('/post/{post}/reaction', [PostController::class, 'store_reaction']);
+    Route::delete('/post/{post}/reaction', [PostController::class, 'destroy_reaction']);
+
+    Route::get('/post/{post}/comments', [PostCommentController::class, 'show']);
+    Route::post('/post/{post}/comment', [PostCommentController::class, 'store']);
+    Route::put('/post/comment/{comment}', [PostCommentController::class, 'update']);
+    Route::delete('/post/comment/{comment}', [PostCommentController::class, 'destroy']);
+    Route::post('/post/comment/{comment}/reaction', [PostCommentController::class, 'store_reaction']);
+    Route::delete('/post/comment/{comment}/reaction', [PostCommentController::class, 'destroy_reaction']);
+
+    Route::get('/post/comment/{comment}/replies', [PostCommentReplyController::class, 'show']);
+    Route::post('/post/comment/{comment}/reply', [PostCommentReplyController::class, 'store']);
+    Route::put('/post/comment/reply/{reply}', [PostCommentReplyController::class, 'update']);
+    Route::delete('/post/comment/reply/{reply}', [PostCommentReplyController::class, 'destroy']);
+    Route::post('/post/comment/reply/{reply}/reaction', [PostCommentReplyController::class, 'store_reaction']);
+    Route::delete('/post/comment/reply/{reply}/reaction', [PostCommentReplyController::class, 'destroy_reaction']);
+
+    // TODO: CHAT
 });

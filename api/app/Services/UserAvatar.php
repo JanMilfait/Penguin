@@ -41,4 +41,31 @@ class UserAvatar
             return ['error' => $e->getMessage()];
         }
     }
+
+
+    /**
+     * Delete user avatar.
+     *
+     * @param $user
+     * @return bool
+     */
+    public static function delete($user)
+    {
+        $avatarsPath = public_path('storage/images/avatars/');
+        $avatarName = $user->avatar_name;
+
+        if (file_exists($avatarsPath . $avatarName)) {
+            unlink($avatarsPath . $avatarName);
+        }
+
+        if (file_exists($avatarsPath . '40_' . $avatarName)) {
+            unlink($avatarsPath . '40_' . $avatarName);
+        }
+
+        if (file_exists($avatarsPath . '200_' . $avatarName)) {
+            unlink($avatarsPath . '200_' . $avatarName);
+        }
+
+        return true;
+    }
 }
