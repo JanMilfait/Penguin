@@ -2,7 +2,7 @@ import type { NextPage } from 'next';
 import Link from 'next/link';
 import { useState } from 'react';
 import {wrapper} from '../../app/store';
-import {authenticateUnprotected} from '../../app/helpers/initialProps';
+import {authenticateUnprotected} from '../../app/helpers/initialFunctionProps';
 
 const Reset: NextPage = () => {
 

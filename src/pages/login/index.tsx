@@ -4,14 +4,14 @@ import Link from 'next/link';
 import { useState } from 'react';
 import Router from 'next/router';
 import {wrapper} from '../../app/store';
-import {authenticateUnprotected} from '../../app/helpers/initialProps';
+import {authenticateUnprotected} from '../../app/helpers/initialFunctionProps';
 
 const Login: NextPage = () => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
   const [login, { isSuccess, isError, error }] = useLoginMutation();
+
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -20,21 +20,21 @@ const Login: NextPage = () => {
       return;
     }
     const response = await login({email, password});
-    const token = await response.data.token;
+    if ('data' in response && 'token' in response.data) {
 
-    if (token) {
-      const expire = new Date(Date.now() + parseInt(process.env.NEXT_PUBLIC_COOKIE_EXPIRES_SECONDS));
-      document.cookie = `token=${token}; SameSite=Strict; expires=${expire}`;
+      const expire = new Date(Date.now() + parseInt(process.env.NEXT_PUBLIC_COOKIE_EXPIRES_SECONDS || '2592000000'));
+      document.cookie = `token=${response.data.token}; SameSite=Strict; expires=${expire}`;
       Router.push('/');
     }
   };
+
 
   let message = null;
   if (isSuccess) {
     message = <p>You have been logged in.</p>;
   }
   if (isError) {
-    message = <p>{error.data.message ?? 'There was an error logging in.'}</p>;
+    message = <p>{hasErrMessage(error) ? error.data.message : 'There was an error logging in.'}</p>;
   }
 
   return (

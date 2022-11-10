@@ -10,10 +10,6 @@
       "error",
       "never"
     ],
-    "max-len": [
-      "error",
-      180
-    ],
     "one-var": 0,
     "semi": [
       "error",

@@ -1,17 +1,16 @@
-import { wrapper } from '../app/store';
-import {authenticate} from '../app/helpers/initialProps';
-import {selectClient} from 'features/auth/authSlice';
+import {AppState, wrapper} from '../app/store';
+import {authenticate} from '../app/helpers/initialFunctionProps';
 import type { NextPage } from 'next';
 import Link from 'next/link';
 import { useSelector } from 'react-redux';
 
 const Home: NextPage = () => {
-  const {token, data} = useSelector(selectClient);
+  const { token, data } = useSelector((state: AppState) => state.auth);
 
 
   return (
     <div className="container">
-      <button>{data?.name ?? 's'}</button>
+      <button>{data && data.name}</button>
       <p>
         Go to <Link href="/profile">Profile</Link> {token}
       </p>

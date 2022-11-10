@@ -1,12 +1,11 @@
 import type {NextPage} from 'next';
 import Link from 'next/link';
 import {useSelector} from 'react-redux';
-import {wrapper} from '../app/store';
-import {selectClient} from 'features/auth/authSlice';
-import {authenticate} from '../app/helpers/initialProps';
+import {AppState, wrapper} from '../app/store';
+import {authenticate} from '../app/helpers/initialFunctionProps';
 
 const Profile: NextPage = () => {
-  const {token, data} = useSelector(selectClient);
+  const {token} = useSelector((state: AppState) => state.auth);
 
   return (
     <div className="container">

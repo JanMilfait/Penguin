@@ -4,7 +4,7 @@ import Link from 'next/link';
 import Router from 'next/router';
 import { useState } from 'react';
 import {wrapper} from '../app/store';
-import {authenticateUnprotected} from '../app/helpers/initialProps';
+import {authenticateUnprotected} from '../app/helpers/initialFunctionProps';
 
 const Register: NextPage = () => {
 
@@ -26,11 +26,10 @@ const Register: NextPage = () => {
       return;
     }
     const response = await register({name, email, password, password_confirmation});
-    const token = await response?.data?.token;
+    if ('data' in response && 'token' in response.data) {
 
-    if (token) {
       const expire = new Date(Date.now() + parseInt(process.env.NEXT_PUBLIC_COOKIE_EXPIRES_SECONDS ?? '2592000000'));
-      document.cookie = `token=${token}; SameSite=Strict; expires=${expire}`;
+      document.cookie = `token=${response.data.token}; SameSite=Strict; expires=${expire}`;
       Router.push('/');
     }
   };
@@ -40,7 +39,7 @@ const Register: NextPage = () => {
     message = <p>Your account has been created.</p>;
   }
   if (isError) {
-    message = <p>{error?.data?.message ?? 'There was an error creating your account.'}</p>;
+    message = <p>{hasErrMessage(error) ? error.data.message :  'There was an error creating your account.'}</p>;
   }
 
   return (

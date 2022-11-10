@@ -1,6 +1,7 @@
 import Pusher from 'pusher-js';
+import { Middleware } from 'redux';
 
-export const pusherMiddleware = (store) => (next) => (action) => {
+export const pusherMiddleware: Middleware = (store) => (next) => (action) => {
   const auth = store.getState().auth;
 
   if (auth.token && auth.data && !Pusher.instances[0]) {
@@ -8,7 +9,7 @@ export const pusherMiddleware = (store) => (next) => (action) => {
       Pusher.logToConsole = true;
     }
 
-    const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_APP_KEY, {
+    const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_APP_KEY || '', {
       cluster: process.env.NEXT_PUBLIC_PUSHER_APP_CLUSTER,
       authEndpoint: process.env.NEXT_PUBLIC_API_BASE_URL + '/pusher/auth',
       auth: {

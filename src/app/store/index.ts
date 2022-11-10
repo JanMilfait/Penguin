@@ -11,15 +11,11 @@ const combinedReducer = combineReducers({
   [apiSlice.reducerPath]: apiSlice.reducer
 });
 
-const reducer = (state: ReturnType<typeof combinedReducer>, action: AnyAction) => {
+const reducer = (state: ReturnType<typeof combinedReducer>|undefined, action: AnyAction) => {
   if (action.type === HYDRATE) {
-    return {
-      ...state,
-      ...action.payload
-    };
-  } else {
-    return combinedReducer(state, action);
+    return {...state, ...action.payload};
   }
+  return combinedReducer(state, action);
 };
 
 const makeStore = () => configureStore({
@@ -33,6 +29,7 @@ const makeStore = () => configureStore({
 
 export type AppStore = ReturnType<typeof makeStore>;
 export type AppState = ReturnType<AppStore['getState']>;
-export type AppThunk<ReturnType = void> = ThunkAction<ReturnType, AppState, unknown, Action>;
+export type AppThunk = ThunkAction<void, AppState, unknown, Action>;
+export type AppDispatch = AppStore['dispatch'];
 
 export const wrapper = createWrapper<AppStore>(makeStore);

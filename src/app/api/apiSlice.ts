@@ -1,4 +1,4 @@
-import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import {BaseQueryFn, createApi, FetchArgs, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { AppState } from 'app/store';
 
 export const apiSlice = createApi({
@@ -13,7 +13,7 @@ export const apiSlice = createApi({
       headers.set('accept', 'application/json');
       return headers;
     }
-  }),
+  }) as BaseQueryFn<string | FetchArgs, unknown, {data: ErrorMessage}, Record<string, unknown>>,
   // eslint-disable-next-line
   endpoints: (builder) => ({})
 });
