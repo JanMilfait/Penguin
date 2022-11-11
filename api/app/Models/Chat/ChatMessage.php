@@ -13,8 +13,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $user_id
  * @property int $room_id
  * @property string $body
- * @property string|null $img_name
- * @property string|null $img_url
+ * @property string|null $image_url
  * @property Carbon|null $created_at
  *
  * @property ChatRoom $chat_room
@@ -28,12 +27,17 @@ class ChatMessage extends Model
 
     const UPDATED_AT = null;
 
+    protected $hidden = [
+        'id',
+        'room_id',
+    ];
+
 	protected $fillable = [
 		'user_id',
 		'room_id',
 		'body',
-        'img_url',
-        'img_name'
+        'img_name',
+        'img_url'
 	];
 
 	public function room()

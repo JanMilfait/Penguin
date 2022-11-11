@@ -67,4 +67,9 @@ class Post extends Model
 	{
 		return $this->hasOne(PostsVideo::class);
 	}
+
+    public function getUpdatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->diffForHumans();
+    }
 }

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\FriendController;
 use App\Http\Controllers\PostCommentController;
 use App\Http\Controllers\PostCommentReplyController;
@@ -33,6 +34,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::patch('/pending-accept/{pending}', [FriendController::class, 'accept']);
     Route::patch('/pending-decline/{pending}', [FriendController::class, 'decline']);
 
+    Route::get('/posts', [PostController::class, 'feed']);
     Route::get('/posts/{user}', [PostController::class, 'index']);
     Route::get('/post/{post}', [PostController::class, 'show']);
     Route::post('/post', [PostController::class, 'store']);
@@ -57,5 +59,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/post/comment/reply/{reply}/reaction', [PostCommentReplyController::class, 'store_reaction']);
     Route::delete('/post/comment/reply/{reply}/reaction', [PostCommentReplyController::class, 'destroy_reaction']);
 
-    // TODO: CHAT
+    Route::get('/chat/{user}', [ChatController::class, 'show']);
+    Route::get('/chat/{chat}/messages', [ChatController::class, 'show_messages']);
+    Route::post('/chat/{chat}/message', [ChatController::class, 'store_message']);
+
 });

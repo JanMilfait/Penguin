@@ -52,4 +52,9 @@ class PostsCommentsReply extends Model
 	{
 		return $this->hasMany(PostsCommentsRepliesReaction::class, 'comment_id');
 	}
+
+    public function getUpdatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->diffForHumans();
+    }
 }

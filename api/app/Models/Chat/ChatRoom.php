@@ -11,7 +11,9 @@ use Illuminate\Database\Eloquent\Model;
  * Class ChatRoom
  *
  * @property int $id
+ * @property string $last_message
  * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  *
  * @property User $user
  * @property Collection|ChatMessage[] $chat_messages
@@ -22,8 +24,6 @@ use Illuminate\Database\Eloquent\Model;
 class ChatRoom extends Model
 {
 	protected $table = 'chat_rooms';
-
-    const UPDATED_AT = null;
 
 	public function messages()
 	{

@@ -14,6 +14,28 @@ use Illuminate\Http\Request;
 class PostController extends Controller
 {
     /**
+     * Feed posts for logged user.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public  function feed (Request $request)
+    {
+        $posts = Post::where('user_id', $request->user()->id)
+            ->orWhereIn('user_id', $request->user()->friends()->pluck('user_b'))
+            ->latest('updated_at')
+            ->offset($request->get('offset') ?? 0)
+            ->limit($request->get('limit') ?? 3)
+            ->get();
+
+        $posts = $posts->map(function ($post) {
+            return PostMetadata::append($post);
+        });
+
+        return response()->json($posts);
+    }
+
+    /**
      * Display user's posts.
      *
      * @param Request $request
@@ -43,15 +65,13 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        $user = $request->user();
-
         $request->validate([
             'body' => ['required', 'string', 'max:65535'],
             'image' => ['nullable', 'image', 'max:8192', 'dimensions:min_width=600,min_height=300'],
             'video' => ['nullable', 'mimetypes:video/mp4,video/x-m4v,video/*', 'max:104857600'] // TODO: CHANGE MAX IN PRODUCTION
         ]);
 
-        $post = $user->posts()->create($request->only('body'));
+        $post = $request->user()->posts()->create($request->only('body'));
 
         if ($request->hasFile('image')) {
             $response = PostImage::save($request->file('image'), $post);

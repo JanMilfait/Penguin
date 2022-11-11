@@ -32,8 +32,6 @@ class UserController extends Controller
      */
     public function update(Request $request)
     {
-        $user = $request->user();
-
         $request->validate([
             'name' => ['string', 'max:255'],
             'avatar' => ['nullable', 'image', 'max:2048', 'dimensions:min_width=200,min_height=200'],
@@ -46,6 +44,8 @@ class UserController extends Controller
             'nationality' => ['string', 'max:100','nullable'],
             'skills' => ['array', 'nullable'],
         ]);
+
+        $user = $request->user();
 
         $user->update($request->only('name'));
 
@@ -81,11 +81,11 @@ class UserController extends Controller
      */
     public function upload_avatar(Request $request)
     {
-        $user = $request->user();
-
         $request->validate([
             'avatar' => ['required', 'image', 'max:2048', 'dimensions:min_width=200,min_height=200'],
         ]);
+
+        $user = $request->user();
 
         $response = UserAvatar::save($request->file('avatar'), $user);
 

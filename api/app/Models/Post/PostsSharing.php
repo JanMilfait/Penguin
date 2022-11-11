@@ -44,4 +44,9 @@ class PostsSharing extends Model
 	{
 		return $this->belongsTo(User::class)->select(['id', 'name', 'avatar_name', 'avatar_url']);
 	}
+
+    public function getCreatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->diffForHumans();
+    }
 }

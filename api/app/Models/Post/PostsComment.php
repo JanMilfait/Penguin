@@ -58,4 +58,9 @@ class PostsComment extends Model
 	{
 		return $this->hasMany(PostsCommentsReply::class, 'comment_id');
 	}
+
+    public function getUpdatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->diffForHumans();
+    }
 }
