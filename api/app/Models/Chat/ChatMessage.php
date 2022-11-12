@@ -36,8 +36,7 @@ class ChatMessage extends Model
 		'user_id',
 		'room_id',
 		'body',
-        'img_name',
-        'img_url'
+        'image_url'
 	];
 
 	public function room()

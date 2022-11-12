@@ -11,12 +11,11 @@ class PostVideo
      * Save post video.
      *
      * @param $video
-     * @param $post
      * @return array
      */
-    public static function save($video, $post)
+    public static function save($video)
     {
-        $videoName = $post->id . Str::random(40) . '.' . $video->getClientOriginalExtension();
+        $videoName = Str::uuid() . '.' . $video->getClientOriginalExtension();
         $videosPath = public_path('storage/posts/videos/');
 
         if (!file_exists($videosPath)) {

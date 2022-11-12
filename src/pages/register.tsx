@@ -5,6 +5,7 @@ import Router from 'next/router';
 import { useState } from 'react';
 import {wrapper} from '../app/store';
 import {authenticateUnprotected} from '../app/helpers/initialFunctionProps';
+import { setCookie } from 'cookies-next';
 
 const Register: NextPage = () => {
 
@@ -12,8 +13,8 @@ const Register: NextPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [password_confirmation, setPasswordConfirmation] = useState('');
-
   const [register, { isSuccess, isError, error }] = useRegisterMutation();
+
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -26,13 +27,13 @@ const Register: NextPage = () => {
       return;
     }
     const response = await register({name, email, password, password_confirmation});
-    if ('data' in response && 'token' in response.data) {
 
-      const expire = new Date(Date.now() + parseInt(process.env.NEXT_PUBLIC_COOKIE_EXPIRES_SECONDS ?? '2592000000'));
-      document.cookie = `token=${response.data.token}; SameSite=Strict; expires=${expire}`;
+    if ('data' in response && 'token' in response.data) {
+      setCookie('token', response.data.token);
       Router.push('/');
     }
   };
+
 
   let message = null;
   if (isSuccess) {

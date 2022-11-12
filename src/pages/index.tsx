@@ -14,6 +14,7 @@ const Home: NextPage = () => {
       <p>
         Go to <Link href="/profile">Profile</Link> {token}
       </p>
+      <img src="http://localhost:8000/chat/images/[1]lLP4SrXFmSN73EUSL0br76uINHHoRr0gTpSskNvc.jpg" />
     </div>
   );
 };

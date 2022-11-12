@@ -41,8 +41,3 @@ Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
 Route::post('/pusher/auth', [PusherAuthenticatedController::class, 'auth'])
                 ->middleware('auth:sanctum')
                 ->name('pusher.auth');
-
-// TODO: SETUP WEBHOOK ROUTE IN PRODUCTION
-Route::post('/pusher/webhook/private-user', [ChannelExistence::class, 'private_user'])
-                ->middleware('pusher.signature')
-                ->name('pusher.private-user');

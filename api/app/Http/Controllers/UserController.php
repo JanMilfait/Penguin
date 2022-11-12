@@ -87,7 +87,7 @@ class UserController extends Controller
 
         $user = $request->user();
 
-        $response = UserAvatar::save($request->file('avatar'), $user);
+        $response = UserAvatar::save($request->file('avatar'));
 
         if (isset($response['error'])) {
             return response()->json(['message' => $response['error']], 500);

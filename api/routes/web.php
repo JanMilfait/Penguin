@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\ChatController;
+use App\Http\Controllers\Webhooks\Pusher\ChannelExistence;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,4 +19,7 @@ Route::get('/', function () {
     return ['Laravel' => app()->version()];
 });
 
+Route::get('/chat/images/{image}', [ChatController::class, 'show_image']);
+
+require __DIR__.'/webhooks.php';
 require __DIR__.'/auth.php';

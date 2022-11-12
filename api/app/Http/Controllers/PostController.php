@@ -74,7 +74,7 @@ class PostController extends Controller
         $post = $request->user()->posts()->create($request->only('body'));
 
         if ($request->hasFile('image')) {
-            $response = PostImage::save($request->file('image'), $post);
+            $response = PostImage::save($request->file('image'));
 
             if (isset($response['error'])) {
                 return response()->json(['error' => $response['error']], 500);
@@ -139,7 +139,7 @@ class PostController extends Controller
         $post->update($request->only('body'));
 
         if ($request->hasFile('image')) {
-            $response = PostImage::save($request->file('image'), $post);
+            $response = PostImage::save($request->file('image'));
 
             if (isset($response['error'])) {
                 return response()->json(['error' => $response['error']], 500);

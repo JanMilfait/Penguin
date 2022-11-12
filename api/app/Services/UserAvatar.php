@@ -11,12 +11,11 @@ class UserAvatar
      * Save user avatar.
      *
      * @param $avatar
-     * @param $user
      * @return array
      */
-    public static function save($avatar, $user)
+    public static function save($avatar)
     {
-        $avatarName = $user->id . Str::random(40) . '.jpg';
+        $avatarName = Str::uuid() . '.jpg';
         $avatarsPath = public_path('storage/images/avatars/');
 
         if (!file_exists($avatarsPath)) {
@@ -24,7 +23,7 @@ class UserAvatar
         }
 
         try {
-            $avatarOriginal = Image::make($avatar)->encode('jpg', 80);
+            $avatarOriginal = Image::make($avatar)->encode('jpg');
             $avatar40 = Image::make($avatar)->fit(40, 40)->encode('jpg', 80);
             $avatar200 = Image::make($avatar)->fit(200, 200)->encode('jpg', 80);
 

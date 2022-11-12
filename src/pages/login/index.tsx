@@ -5,6 +5,7 @@ import { useState } from 'react';
 import Router from 'next/router';
 import {wrapper} from '../../app/store';
 import {authenticateUnprotected} from '../../app/helpers/initialFunctionProps';
+import { setCookie } from 'cookies-next';
 
 const Login: NextPage = () => {
 
@@ -20,10 +21,9 @@ const Login: NextPage = () => {
       return;
     }
     const response = await login({email, password});
-    if ('data' in response && 'token' in response.data) {
 
-      const expire = new Date(Date.now() + parseInt(process.env.NEXT_PUBLIC_COOKIE_EXPIRES_SECONDS || '2592000000'));
-      document.cookie = `token=${response.data.token}; SameSite=Strict; expires=${expire}`;
+    if ('data' in response && 'token' in response.data) {
+      setCookie('token', response.data.token);
       Router.push('/');
     }
   };

@@ -25,6 +25,10 @@ class ChatRoom extends Model
 {
 	protected $table = 'chat_rooms';
 
+    protected $fillable = [
+        'last_message',
+    ];
+
 	public function messages()
 	{
         return $this->hasMany(ChatMessage::class, 'room_id');

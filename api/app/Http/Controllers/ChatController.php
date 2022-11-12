@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Chat\ChatParticipant;
 use App\Models\Chat\ChatRoom;
 use App\Models\User\User;
+use App\Services\ChatImage;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class ChatController extends Controller
 {
@@ -33,17 +34,22 @@ class ChatController extends Controller
         ]);
 
         if ($request->hasFile('image')) {
-            $imageUrl = // TODO TODO
+            $response = ChatImage::save($request->file('image'));
 
+            if (isset($response['error'])) {
+                return response()->json(['error' => $response['error']], 500);
+            }
 
-            $request->merge(['body' => '<img src="' . $imageUrl . '">']);
+            $request->merge(['body' => '<img src="' . $response['url'] . '">']);
         }
 
         $chat->messages()->create([
+            'user_id' => $request->user()->id,
             'body' => $request->input('body'),
-            'image_url' => $imageUrl ?? null,
+            'image_url' => $response['url'] ?? null,
         ]);
 
+        $chat->update(['last_message' => $response['url'] ? 'Sent an image.' : $request->input('body')]);
 
         return response()->json('Message sent.', 201);
     }
@@ -82,6 +88,26 @@ class ChatController extends Controller
         }
 
         return response()->json($chat);
+    }
+
+
+    /**
+     * Display the specified resource.
+     *
+     * @param   $image
+     * @return JsonResponse | BinaryFileResponse
+     */
+    public function show_image($image)
+    {
+        $image = storage_path('app/chats/images/' . $image);
+
+        if (!file_exists($image)) {
+            return response()->json([
+                'message' => 'Image not found.',
+            ], 404);
+        }
+
+        return response()->file($image);
     }
 
 

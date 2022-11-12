@@ -11,12 +11,11 @@ class PostImage
      * Save post image.
      *
      * @param $image
-     * @param $post
      * @return array
      */
-    public static function save($image, $post)
+    public static function save($image)
     {
-        $imageName = $post->id . Str::random(40) . '.jpg';
+        $imageName = Str::uuid() . '.jpg';
         $imagesPath = public_path('storage/posts/images/');
 
         if (!file_exists($imagesPath)) {
@@ -24,7 +23,7 @@ class PostImage
         }
 
         try {
-            $imageOriginal = Image::make($image)->encode('jpg', 80);
+            $imageOriginal = Image::make($image)->encode('jpg');
             $image600 = Image::make($image)->widen(600)->encode('jpg', 80);
 
             $imageOriginal->save($imagesPath . $imageName);
