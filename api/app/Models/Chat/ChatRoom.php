@@ -2,10 +2,13 @@
 
 namespace App\Models\Chat;
 
+use App\Events\SendNotification;
+use App\Models\User\Notification;
 use App\Models\User\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Str;
 
 /**
  * Class ChatRoom
@@ -26,7 +29,7 @@ class ChatRoom extends Model
 	protected $table = 'chat_rooms';
 
     protected $fillable = [
-        'last_message',
+        'last_message'
     ];
 
 	public function messages()

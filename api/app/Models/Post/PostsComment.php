@@ -2,10 +2,12 @@
 
 namespace App\Models\Post;
 
+use App\Events\SendNotification;
 use App\Models\User\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Str;
 
 /**
  * Class PostsComment
@@ -62,5 +64,31 @@ class PostsComment extends Model
     public function getUpdatedAtAttribute($value)
     {
         return Carbon::parse($value)->diffForHumans();
+    }
+
+
+    /**
+     * Notifications (send to client, save to database)
+     *
+     * @return void
+     */
+    protected static function booted()
+    {
+        static::created(function ($comment) {
+
+            // Don't send notification if commenting own post
+            if ($comment->post->user_id === $comment->user_id) {
+                return;
+            }
+
+            broadcast(new SendNotification($comment->post->user_id, 'comment', $comment->id, [
+                'source' => 'comment',
+                'source_id' => $comment->id,
+                'preview' => Str::limit($comment->body, 50),
+                'id' => $comment->user->id,
+                'name' => $comment->user->name,
+                'avatar' => $comment->user->avatar_url . '40_' . $comment->user->avatar_name
+            ]));
+        });
     }
 }

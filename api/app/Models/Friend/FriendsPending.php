@@ -56,39 +56,47 @@ class FriendsPending extends Model
      */
     protected static function booted()
     {
-        // Pending created -> send notification to pending user
+        // Send notification to pending user
         static::created(function ($pending) {
+
+            $user = User::find($pending->user_id);
+
             broadcast(new SendNotification($pending->pending_user, 'pending', $pending->id, [
-                'user_id' => $pending->user_id,
-                'user_name' => $pending->user_name,
-                'pending_user' => $pending->pending_user,
-                'pending_name' => $pending->pending_name,
-                'state' => $pending->state
+                'source' => 'pending',
+                'source_id' => $pending->id,
+                'state' => $pending->state,
+                'id' => $user->id,
+                'name' => $user->name,
+                'avatar' => $user->avatar_url . '40_' . $user->avatar_name
             ]));
         });
 
-        // Pending accepted -> send notification to original user
+        // Send notification to original user
         static::updated(function ($pending) {
-            if ($pending->state === 'accepted') {
-                broadcast(new SendNotification($pending->user_id, 'pending', $pending->id, [
-                    'user_id' => $pending->user_id,
-                    'user_name' => $pending->user_name,
-                    'pending_user' => $pending->pending_user,
-                    'pending_name' => $pending->pending_name,
-                    'state' => $pending->state
-                ]));
-            }
-        });
+            if ($pending->isDirty('state') && $pending->state == 'accepted') {
 
-        // Pending declined -> send notification to original user
-        static::updated(function ($pending) {
-            if ($pending->state === 'declined') {
+                $user = User::find($pending->pending_user);
+
                 broadcast(new SendNotification($pending->user_id, 'pending', $pending->id, [
-                    'user_id' => $pending->user_id,
-                    'user_name' => $pending->user_name,
-                    'pending_user' => $pending->pending_user,
-                    'pending_name' => $pending->pending_name,
-                    'state' => $pending->state
+                    'source' => 'pending',
+                    'source_id' => $pending->id,
+                    'state' => $pending->state,
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'avatar' => $user->avatar_url . '40_' . $user->avatar_name
+                ]));
+
+            } elseif ($pending->isDirty('state') && $pending->state === 'declined') {
+
+                $user = User::find($pending->pending_user);
+
+                broadcast(new SendNotification($pending->user_id, 'pending', $pending->id, [
+                    'source' => 'pending',
+                    'source_id' => $pending->id,
+                    'state' => $pending->state,
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'avatar' => $user->avatar_url . '40_' . $user->avatar_name
                 ]));
             }
         });

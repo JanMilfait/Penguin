@@ -3,6 +3,7 @@
 namespace App\Models\Chat;
 
 use App\Models\User\User;
+use Cache;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
@@ -39,4 +40,17 @@ class ChatParticipant extends Model
 	{
 		return $this->belongsTo(User::class);
 	}
+
+
+    /**
+     * Forget cache for non-active users chat notification
+     *
+     * @return void
+     */
+    protected static function booted()
+    {
+        static::created(function ($participant) {
+            Cache::forget('chat_' . $participant->room_id . '_' . $participant->user_id);
+        });
+    }
 }

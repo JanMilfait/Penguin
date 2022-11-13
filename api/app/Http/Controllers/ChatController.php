@@ -49,7 +49,9 @@ class ChatController extends Controller
             'image_url' => $response['url'] ?? null,
         ]);
 
-        $chat->update(['last_message' => $response['url'] ? 'Sent an image.' : $request->input('body')]);
+        $chat->update([
+            'last_message' => isset($response['url']) ? 'Sent an image.' : $request->input('body')
+        ]);
 
         return response()->json('Message sent.', 201);
     }

@@ -59,6 +59,7 @@ class User extends Authenticatable
 	protected $table = 'users';
 
 	protected $casts = [
+        'is_active' => 'int',
         'email_verified_at' => 'datetime'
 	];
 
