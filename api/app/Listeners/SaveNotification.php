@@ -31,8 +31,7 @@ class SaveNotification
             'user_id' => $event->user_id,
             'source' => $event->source,
             'source_id' => $event->source_id,
-            'source_data' => json_encode($event->source_data),
-            'expire_at' => now()->addDays(7)
+            'source_data' => json_encode($event->source_data)
         ]);
     }
 }

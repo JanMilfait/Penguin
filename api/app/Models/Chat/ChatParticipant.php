@@ -36,9 +36,9 @@ class ChatParticipant extends Model
         'is_admin'
 	];
 
-	public function room()
+	public function chat()
 	{
-		return $this->belongsTo(ChatRoom::class);
+		return $this->belongsTo(ChatRoom::class, 'room_id');
 	}
 
 	public function user()

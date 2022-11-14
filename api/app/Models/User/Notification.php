@@ -14,7 +14,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property int|null $source_id
  * @property string|null $source_data
  * @property Carbon|null $created_at
- * @property Carbon|null $expire_at
  *
  * @property User $user
  *
@@ -31,16 +30,11 @@ class Notification extends Model
 		'source_id' => 'int'
 	];
 
-	protected $dates = [
-		'expire_at'
-	];
-
 	protected $fillable = [
 		'user_id',
 		'source',
 		'source_id',
-        'source_data',
-		'expire_at'
+        'source_data'
 	];
 
 	public function user()

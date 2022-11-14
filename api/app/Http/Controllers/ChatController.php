@@ -44,9 +44,7 @@ class ChatController extends Controller
         $participant = $chat->participants()->where('user_id', $request->user()->id)->first();
 
         if (!$participant) {
-            return response()->json([
-                'message' => 'You are not allowed to send messages to this chat.',
-            ], 403);
+            return $this->jsonError('You are not allowed to send messages to this chat.', 403);
         }
 
         $request->validate([
@@ -58,7 +56,7 @@ class ChatController extends Controller
             $response = ChatImage::save($request->file('image'));
 
             if (isset($response['error'])) {
-                return response()->json(['error' => $response['error']], 500);
+                return $this->jsonError($response['error'], 500);
             }
 
             $request->merge(['body' => '<img src="' . $response['url'] . '">']);
@@ -89,9 +87,7 @@ class ChatController extends Controller
     public function show(Request $request, User $user)
     {
         if ($request->user()->id === $user->id) {
-            return response()->json([
-                'message' => 'You cannot chat with yourself',
-            ], 400);
+            return $this->jsonError('You cannot chat with yourself', 400);
         }
 
         $chat = ChatRoom::
@@ -128,9 +124,7 @@ class ChatController extends Controller
         $image = storage_path('app/chats/images/' . $image);
 
         if (!file_exists($image)) {
-            return response()->json([
-                'message' => 'Image not found.',
-            ], 404);
+            return $this->jsonError('Image not found.', 404);
         }
 
         return response()->file($image);
@@ -149,9 +143,7 @@ class ChatController extends Controller
         $participant = $chat->participants()->where('user_id', $request->user()->id)->first();
 
         if (!$participant) {
-            return response()->json([
-                'message' => 'You are not allowed to view messages in this chat.',
-            ], 403);
+            return $this->jsonError('You are not allowed to view messages in this chat.', 403);
         }
 
         $messages = $chat->messages()
@@ -179,26 +171,24 @@ class ChatController extends Controller
             'user_id' => ['required', 'exists:users,id'],
         ]);
 
-        $participants = $chat->participants();
-
-        if (!$participants->where('user_id', $request->user()->id)->first()) {
-            return response()->json([
-                'message' => 'You are not allowed to add participants to this chat.',
-            ], 403);
+        if (!$chat->participants()->where('user_id', $request->user()->id)->first()) {
+            return $this->jsonError('You are not allowed to add participants to this chat.', 403);
         }
 
-        if ($participants->count() === 2) {
-            $participants->update(['is_admin' => 1]);
+        if ($chat->participants()->count() === 2) {
+            $chat->participants()->update(['is_admin' => 1]);
             $chat->update(['type' => 'group']);
         } else {
-            if (!$participants->where('user_id', $request->user()->id)->first()->is_admin) {
-                return response()->json([
-                    'message' => 'You are not admin of this chat.',
-                ], 403);
+            if (!$chat->participants()->where('user_id', $request->user()->id)->first()->is_admin) {
+                return $this->jsonError('You are not admin of this chat.', 403);
             }
         }
 
-        $participants->create([
+        if (!$request->user()->friends()->where('user_b', $request->input('user_id'))->first()) {
+            return $this->jsonError('Cannot add a user that is not your friend.', 403);
+        }
+
+        $chat->participants()->firstOrCreate([
             'user_id' => $request->input('user_id'),
             'room_id' => $chat->id,
         ]);
@@ -217,27 +207,23 @@ class ChatController extends Controller
      */
     public function destroy_participant(Request $request, ChatRoom $chat, User $user)
     {
-        $participants = $chat->participants();
-
-        if (!$participants->where('user_id', $request->user()->id)->first()) {
-            return response()->json([
-                'message' => 'You are not allowed to remove participants from this chat.',
-            ], 403);
+        if (!$chat->participants()->where('user_id', $request->user()->id)->first()) {
+            return $this->jsonError('You are not allowed to remove participants from this chat.', 403);
         }
 
-        if (!$participants->where('user_id', $request->user()->id)->first()->is_admin) {
-            return response()->json([
-                'message' => 'You are not admin of this chat.',
-            ], 403);
+        if (!$chat->participants()->where('user_id', $user->id)->first()) {
+            return $this->jsonError('User is not participant of this chat.', 404);
         }
 
-        if ($participants->where('user_id', $user->id)->first()->is_admin) {
-            return response()->json([
-                'message' => 'You cannot remove admin from this chat.',
-            ], 403);
+        if (!$chat->participants()->where('user_id', $request->user()->id)->first()->is_admin) {
+            return $this->jsonError('You are not admin of this chat.', 403);
         }
 
-        $participants->where('user_id', $user->id)->delete();
+        if ($chat->participants()->where('user_id', $user->id)->first()->is_admin) {
+            return $this->jsonError('You cannot remove admin from this chat.', 403);
+        }
+
+        $chat->participants()->where('user_id', $user->id)->first()->delete();
 
         return response()->json('Participant removed.');
     }

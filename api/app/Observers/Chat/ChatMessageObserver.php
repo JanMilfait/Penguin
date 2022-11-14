@@ -18,7 +18,7 @@ class ChatMessageObserver
      */
     public function created(ChatMessage $message)
     {
-        // 1 day / add participant -> delete cache
+        // 1 day / add or delete participant -> clear cache
         $cached = Cache::remember('chat_' . $message->room_id . '_' . $message->user_id, 86400, function () use ($message) {
             return $message->load('user', 'chat.participants');
         });
@@ -32,16 +32,16 @@ class ChatMessageObserver
 
             Notification::updateOrCreate([
                 'user_id' => $participant->user_id,
-                'source' => 'chat',
+                'source' => 'message',
                 'source_id' => $cached->chat->id,
             ], [
                 'source_data' => json_encode([
-                    'source' => 'chat',
+                    'source' => 'message',
                     'source_id' => $cached->chat->id,
                     'preview' => Str::limit($cached->body, 50),
                     'id' => $cached->user->id,
                     'name' => $cached->user->name,
-                    'avatar' => $cached->user->avatar_url . '40_' . $cached->user->avatar_name
+                    'avatar' => $cached->user->avatar_name ? $cached->user->avatar_url . '40_' . $cached->user->avatar_name : null
                 ]),
                 'expire_at' => now()->addDays(7)
             ]);

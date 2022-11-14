@@ -22,7 +22,7 @@ class PostsSharingObserver
             'preview' => Str::limit($sharing->post->body, 50),
             'id' => $sharing->user->id,
             'name' => $sharing->user->name,
-            'avatar' => $sharing->user->avatar_url . '40_' . $sharing->user->avatar_name
+            'avatar' => $sharing->user->avatar_name ? $sharing->user->avatar_url . '40_' . $sharing->user->avatar_name : null
         ]));
     }
 

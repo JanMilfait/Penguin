@@ -90,7 +90,7 @@ class UserController extends Controller
         $response = UserAvatar::save($request->file('avatar'));
 
         if (isset($response['error'])) {
-            return response()->json(['message' => $response['error']], 500);
+            return $this->jsonError($response['error'], 500);
         }
 
         $user->avatar_name && UserAvatar::delete($user);
@@ -113,5 +113,19 @@ class UserController extends Controller
     public function logged(Request $request)
     {
         return response()->json($request->user());
+    }
+
+
+    /**
+     * Display user's notifications.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function logged_notifications(Request $request)
+    {
+        $notifications = $request->user()->notifications()->limit(100)->latest()->get();
+
+        return response()->json($notifications);
     }
 }

@@ -62,7 +62,7 @@ class PostCommentReplyController extends Controller
     public function update(Request $request, PostsCommentsReply $reply)
     {
         if ($request->user()->id !== $reply->user_id) {
-            return response()->json(['message' => 'Cannot edit this comment.'], 403);
+            return $this->jsonError('Cannot edit this comment.', 403);
         }
 
         $request->validate([
@@ -89,7 +89,7 @@ class PostCommentReplyController extends Controller
     public function destroy(Request $request, PostsCommentsReply $reply)
     {
         if ($request->user()->id !== $reply->user_id) {
-            return response()->json(['message' => 'Cannot delete this comment.'], 403);
+            return $this->jsonError('Cannot delete this comment.', 403);
         }
 
         $reply->delete();

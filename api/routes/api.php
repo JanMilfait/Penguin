@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/user', [UserController::class, 'logged']);
+    Route::get('/user/notifications', [UserController::class, 'logged_notifications']);
     Route::get('/user/{user}', [UserController::class, 'show']);
     Route::put('/user', [UserController::class, 'update']);
     Route::post('/user/avatar', [UserController::class, 'upload_avatar']);

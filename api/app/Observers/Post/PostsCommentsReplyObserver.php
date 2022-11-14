@@ -27,7 +27,7 @@ class PostsCommentsReplyObserver
             'preview' => Str::limit($reply->body, 50),
             'id' => $reply->user->id,
             'name' => $reply->user->name,
-            'avatar' => $reply->user->avatar_url . '40_' . $reply->user->avatar_name
+            'avatar' => $reply->user->avatar_name ? $reply->user->avatar_url . '40_' . $reply->user->avatar_name : null
         ]));
     }
 

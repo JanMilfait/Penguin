@@ -42,15 +42,11 @@ class FriendController extends Controller
     public function store(Request $request, User $user)
     {
         if ($user->id === $request->user()->id) {
-            return response()->json([
-                'message' => 'You can\'t send a friend request to yourself'
-            ], 400);
+            return $this->jsonError('You can\'t send a friend request to yourself');
         }
 
         if ($user->friends->contains('user_b', $request->user()->id)) {
-            return response()->json([
-                'message' => 'You are already friends with this user'
-            ], 400);
+            return $this->jsonError('You are already friends with this user');
         }
 
         // Check if there is already a pending request for any of the users
@@ -58,9 +54,7 @@ class FriendController extends Controller
         $waitingRequested = $user->pendings->where('state', 'waiting')->where('pending_user', $request->user()->id)->first();
 
         if ($waitingLogged || $waitingRequested) {
-            return response()->json([
-                'message' => 'Waiting for response'
-            ], 400);
+            return $this->jsonError('Waiting for response');
         }
 
         FriendsPending::firstOrCreate([
@@ -85,15 +79,11 @@ class FriendController extends Controller
     public function accept(Request $request, FriendsPending $pending)
     {
         if ($pending->pending_user !== $request->user()->id) {
-            return response()->json([
-                'message' => 'You can\'t accept this friend request'
-            ], 400);
+            return $this->jsonError('You can\'t accept this friend request');
         }
 
         if ($pending->state !== 'waiting') {
-            return response()->json([
-                'message' => 'You already responded to this friend request'
-            ], 400);
+            return $this->jsonError('You already responded to this friend request');
         }
 
         $pending->update(['state' => 'accepted']);
@@ -121,15 +111,11 @@ class FriendController extends Controller
     public function decline(Request $request, FriendsPending $pending)
     {
         if ($pending->pending_user !== $request->user()->id) {
-            return response()->json([
-                'message' => 'You can\'t decline this friend request'
-            ], 400);
+            return $this->jsonError('You can\'t decline this friend request');
         }
 
         if ($pending->state !== 'waiting') {
-            return response()->json([
-                'message' => 'You already responded to this friend request'
-            ], 400);
+            return $this->jsonError('You already responded to this friend request');
         }
 
         $pending->update(['state' => 'declined']);
@@ -148,15 +134,11 @@ class FriendController extends Controller
     public function destroy(Request $request, User $user)
     {
         if ($user->id === $request->user()->id) {
-            return response()->json([
-                'message' => 'You can\'t remove yourself'
-            ], 400);
+            return $this->jsonError('You can\'t remove yourself');
         }
 
         if (!$user->friends->contains('user_b', $request->user()->id)) {
-            return response()->json([
-                'message' => 'You are not friends with this user'
-            ], 400);
+            return $this->jsonError('You are not friends with this user');
         }
 
         $request->user()->friends->where('user_b', $user->id)->first()->delete();

@@ -23,7 +23,7 @@ class PostObserver
                 'preview' => Str::limit($post->body, 50),
                 'id' => $post->user->id,
                 'name' => $post->user->name,
-                'avatar' => $post->user->avatar_url . '40_' . $post->user->avatar_name
+                'avatar' => $post->user->avatar_name ? $post->user->avatar_url . '40_' . $post->user->avatar_name : null
             ]));
         });
     }

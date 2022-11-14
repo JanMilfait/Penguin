@@ -76,7 +76,7 @@ class PostController extends Controller
             $response = PostImage::save($request->file('image'));
 
             if (isset($response['error'])) {
-                return response()->json(['error' => $response['error']], 500);
+                return $this->jsonError($response['error'], 500);
             }
 
             $post->image()->create([
@@ -89,7 +89,7 @@ class PostController extends Controller
             $response = PostVideo::save($request->file('video'), $post);
 
             if (isset($response['error'])) {
-                return response()->json(['error' => $response['error']], 500);
+                return $this->jsonError($response['error'], 500);
             }
 
             $post->video()->create([
@@ -126,7 +126,7 @@ class PostController extends Controller
     public function update(Request $request, Post $post)
     {
         if ($post->user_id !== $request->user()->id) {
-            return response()->json(['error' => 'Post does not belong to user.'], 403);
+            return $this->jsonError('Post does not belong to user.', 403);
         }
 
         $request->validate([
@@ -141,7 +141,7 @@ class PostController extends Controller
             $response = PostImage::save($request->file('image'));
 
             if (isset($response['error'])) {
-                return response()->json(['error' => $response['error']], 500);
+                return $this->jsonError($response['error'], 500);
             }
 
             $post->image && PostImage::delete($post);
@@ -157,10 +157,10 @@ class PostController extends Controller
         }
 
         if ($request->hasFile('video')) {
-            $response = PostVideo::save($request->file('video'), $post);
+            $response = PostVideo::save($request->file('video'));
 
             if (isset($response['error'])) {
-                return response()->json(['error' => $response['error']], 500);
+                return $this->jsonError($response['error'], 500);
             }
 
             $post->image && PostImage::delete($post);
@@ -191,7 +191,7 @@ class PostController extends Controller
     public function destroy(Request $request, Post $post)
     {
         if ($post->user_id !== $request->user()->id) {
-            return response()->json(['error' => 'Post does not belong to user.'], 403);
+            return $this->jsonError('Post does not belong to user.', 403);
         }
 
         $post->delete();
@@ -210,7 +210,7 @@ class PostController extends Controller
     public function share(Request $request, Post $post)
     {
         if ($post->user_id === $request->user()->id) {
-            return response()->json(['error' => 'Cannot share own post.'], 403);
+            return $this->jsonError('Cannot share own post.', 403);
         }
 
         $post->sharings()->firstOrCreate([
