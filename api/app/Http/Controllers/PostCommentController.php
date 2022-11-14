@@ -43,7 +43,7 @@ class PostCommentController extends Controller
     public function show(Request $request, Post $post)
     {
         $comments = $post->comments()
-            ->with('user', 'replies', 'replies.user', 'replies.reactions', 'replies.reactions.user', 'reactions', 'reactions.user')
+            ->with('user', 'replies.user', 'replies.reactions.user', 'reactions.user')
             ->latest('updated_at')
             ->offset($request->get('offset') ?? 0)
             ->limit($request->get('limit') ?? 10)
@@ -74,7 +74,7 @@ class PostCommentController extends Controller
             'body' => $request->input('body')
         ]);
 
-        $comment->load('user', 'replies', 'replies.user', 'replies.reactions', 'replies.reactions.user', 'reactions', 'reactions.user');
+        $comment->load('user', 'replies.user', 'replies.reactions.user', 'reactions.user');
 
         return response()->json($comment);
     }
@@ -119,7 +119,7 @@ class PostCommentController extends Controller
             'reaction' => $request->input('reaction')
         ]);
 
-        $comment->load('user', 'replies', 'replies.user', 'replies.reactions', 'replies.reactions.user', 'reactions', 'reactions.user');
+        $comment->load('user', 'replies.user', 'replies.reactions.user', 'reactions.user');
 
         return response()->json($comment);
     }

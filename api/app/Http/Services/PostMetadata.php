@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services;
+namespace App\Http\Services;
 
 class PostMetadata
 {
@@ -14,7 +14,7 @@ class PostMetadata
     {
       $post->comments_count = $post->comments()->count();
       $post->most_reacted_comment = $post->comments()
-        ->with('user', 'replies', 'replies.user', 'replies.reactions', 'replies.reactions.user', 'reactions', 'reactions.user')
+        ->with('user', 'replies.user', 'replies.reactions.user', 'reactions.user')
         ->withCount('reactions')
         ->orderBy('reactions_count', 'desc')
         ->first();

@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Services\UserAvatar;
 use App\Models\User\User;
-use App\Services\UserAvatar;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -20,7 +20,7 @@ class UserController extends Controller
      */
     public function show(User $user)
     {
-        return response()->json($user->load('profile', 'skills', 'skills.created_by'));
+        return response()->json($user->load('profile', 'skills.created_by'));
     }
 
 

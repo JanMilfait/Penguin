@@ -2,12 +2,10 @@
 
 namespace App\Models\Post;
 
-use App\Events\SendNotification;
 use App\Models\User\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Str;
 
 /**
  * Class Post
@@ -73,28 +71,5 @@ class Post extends Model
     public function getUpdatedAtAttribute($value)
     {
         return Carbon::parse($value)->diffForHumans();
-    }
-
-
-    /**
-     * Notifications (send to client, save to database)
-     *
-     * @return void
-     */
-    protected static function booted()
-    {
-        static::created(function ($post) {
-
-            $post->user->friends->each(function ($friend) use ($post) {
-                broadcast(new SendNotification($friend->user->id, 'post', $post->id,[
-                    'source' => 'post',
-                    'source_id' => $post->id,
-                    'preview' => Str::limit($post->body, 50),
-                    'id' => $post->user->id,
-                    'name' => $post->user->name,
-                    'avatar' => $post->user->avatar_url . '40_' . $post->user->avatar_name
-                ]));
-            });
-        });
     }
 }

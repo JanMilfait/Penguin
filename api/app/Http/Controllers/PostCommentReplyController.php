@@ -42,7 +42,7 @@ class PostCommentReplyController extends Controller
     public function show(Request $request, PostsComment $comment)
     {
         $replies = $comment->replies()
-            ->with('user', 'reactions', 'reactions.user')
+            ->with('user',  'reactions.user')
             ->latest('updated_at')
             ->offset($request->get('offset') ?? 0)
             ->limit($request->get('limit') ?? 10)
@@ -73,7 +73,7 @@ class PostCommentReplyController extends Controller
             'body' => $request->input('body')
         ]);
 
-        $reply->load('user', 'reactions', 'reactions.user');
+        $reply->load('user', 'reactions.user');
 
         return response()->json($reply);
     }
@@ -118,7 +118,7 @@ class PostCommentReplyController extends Controller
             'reaction' => $request->input('reaction')
         ]);
 
-        $reply->load('user', 'reactions', 'reactions.user');
+        $reply->load('user', 'reactions.user');
 
         return response()->json($reply);
     }

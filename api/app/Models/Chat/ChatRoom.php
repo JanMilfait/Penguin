@@ -2,19 +2,18 @@
 
 namespace App\Models\Chat;
 
-use App\Events\SendNotification;
-use App\Models\User\Notification;
 use App\Models\User\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
-use Str;
 
 /**
  * Class ChatRoom
  *
  * @property int $id
+ * @property string $type
  * @property string $last_message
+ * @property string $last_message_by
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
@@ -28,8 +27,14 @@ class ChatRoom extends Model
 {
 	protected $table = 'chat_rooms';
 
+    protected $hidden = [
+        'created_at'
+    ];
+
     protected $fillable = [
-        'last_message'
+        'type',
+        'last_message',
+        'last_message_by'
     ];
 
 	public function messages()
@@ -40,5 +45,10 @@ class ChatRoom extends Model
     public function participants()
     {
         return $this->hasMany(ChatParticipant::class, 'room_id');
+    }
+
+    public function last_message_by()
+    {
+        return $this->belongsTo(User::class, 'last_message_by')->select(['id', 'name', 'avatar_name', 'avatar_url']);
     }
 }

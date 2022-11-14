@@ -2,15 +2,36 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Services\ChatImage;
 use App\Models\Chat\ChatRoom;
 use App\Models\User\User;
-use App\Services\ChatImage;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class ChatController extends Controller
 {
+    /**
+     * Display chats
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function index(Request $request)
+    {
+        $chats = ChatRoom::whereHas('participants', function ($query) use ($request) {
+            $query->where('user_id', $request->user()->id);
+        })
+            ->with('last_message_by')
+            ->latest('updated_at')
+            ->offset($request->get('offset') ?? 0)
+            ->limit($request->get('limit') ?? 10)
+            ->get();
+
+        return response()->json($chats);
+    }
+
+
     /**
      * Store a newly created resource in storage.
      *
@@ -50,7 +71,8 @@ class ChatController extends Controller
         ]);
 
         $chat->update([
-            'last_message' => isset($response['url']) ? 'Sent an image.' : $request->input('body')
+            'last_message' => isset($response['url']) ? 'Sent an image.' : $request->input('body'),
+            'last_message_by' => $request->user()->id
         ]);
 
         return response()->json('Message sent.', 201);
@@ -79,6 +101,8 @@ class ChatController extends Controller
             ->whereHas('participants', function ($query) use ($user) {
                 $query->where('user_id', $user->id);
             })
+            ->where('type', 'friend')
+            ->with('last_message_by')
             ->first();
 
         if (!$chat) {
@@ -139,5 +163,82 @@ class ChatController extends Controller
             ->values();
 
         return response()->json($messages);
+    }
+
+
+    /**
+     * Add a user to a chat
+     *
+     * @param Request  $request
+     * @param ChatRoom $chat
+     * @return JsonResponse
+     */
+    public function store_participant(Request $request, ChatRoom $chat)
+    {
+        $request->validate([
+            'user_id' => ['required', 'exists:users,id'],
+        ]);
+
+        $participants = $chat->participants();
+
+        if (!$participants->where('user_id', $request->user()->id)->first()) {
+            return response()->json([
+                'message' => 'You are not allowed to add participants to this chat.',
+            ], 403);
+        }
+
+        if ($participants->count() === 2) {
+            $participants->update(['is_admin' => 1]);
+            $chat->update(['type' => 'group']);
+        } else {
+            if (!$participants->where('user_id', $request->user()->id)->first()->is_admin) {
+                return response()->json([
+                    'message' => 'You are not admin of this chat.',
+                ], 403);
+            }
+        }
+
+        $participants->create([
+            'user_id' => $request->input('user_id'),
+            'room_id' => $chat->id,
+        ]);
+
+        return response()->json('Participant added.', 201);
+    }
+
+
+    /**
+     * Remove a user from a chat
+     *
+     * @param Request  $request
+     * @param ChatRoom $chat
+     * @param User     $user
+     * @return JsonResponse
+     */
+    public function destroy_participant(Request $request, ChatRoom $chat, User $user)
+    {
+        $participants = $chat->participants();
+
+        if (!$participants->where('user_id', $request->user()->id)->first()) {
+            return response()->json([
+                'message' => 'You are not allowed to remove participants from this chat.',
+            ], 403);
+        }
+
+        if (!$participants->where('user_id', $request->user()->id)->first()->is_admin) {
+            return response()->json([
+                'message' => 'You are not admin of this chat.',
+            ], 403);
+        }
+
+        if ($participants->where('user_id', $user->id)->first()->is_admin) {
+            return response()->json([
+                'message' => 'You cannot remove admin from this chat.',
+            ], 403);
+        }
+
+        $participants->where('user_id', $user->id)->delete();
+
+        return response()->json('Participant removed.');
     }
 }

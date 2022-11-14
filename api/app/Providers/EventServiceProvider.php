@@ -2,15 +2,36 @@
 
 namespace App\Providers;
 
+use App\Models\Chat\ChatMessage;
+use App\Models\Chat\ChatParticipant;
+use App\Models\Friend\FriendsPending;
+use App\Models\Post\Post;
+use App\Models\Post\PostsComment;
+use App\Models\Post\PostsCommentsReply;
+use App\Models\Post\PostsSharing;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Event;
 use App\Events\SendNotification;
 use App\Listeners\SaveNotification;
 
 class EventServiceProvider extends ServiceProvider
 {
+    /**
+     * The model observers for your application.
+     *
+     * @var array
+     */
+    protected $observers = [
+        ChatMessage::class => \App\Observers\Chat\ChatMessageObserver::class,
+        ChatParticipant::class => \App\Observers\Chat\ChatParticipantObserver::class,
+        FriendsPending::class => \App\Observers\Friend\FriendsPendingObserver::class,
+        Post::class => \App\Observers\Post\PostObserver::class,
+        PostsComment::class => \App\Observers\Post\PostsCommentObserver::class,
+        PostsCommentsReply::class => \App\Observers\Post\PostsCommentsReplyObserver::class,
+        PostsSharing::class => \App\Observers\Post\PostsSharingObserver::class
+    ];
+
     /**
      * The event to listener mappings for the application.
      *

@@ -3,7 +3,6 @@
 namespace App\Models\Chat;
 
 use App\Models\User\User;
-use Cache;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
@@ -13,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id
  * @property int $user_id
  * @property int $room_id
+ * @property int $is_admin
  * @property Carbon|null $created_at
  *
  * @property ChatRoom $chat_room
@@ -26,9 +26,14 @@ class ChatParticipant extends Model
 
     const UPDATED_AT = null;
 
+    protected $casts = [
+        'is_admin' => 'int',
+    ];
+
 	protected $fillable = [
 		'user_id',
-		'room_id'
+		'room_id',
+        'is_admin'
 	];
 
 	public function room()
@@ -40,17 +45,4 @@ class ChatParticipant extends Model
 	{
 		return $this->belongsTo(User::class);
 	}
-
-
-    /**
-     * Forget cache for non-active users chat notification
-     *
-     * @return void
-     */
-    protected static function booted()
-    {
-        static::created(function ($participant) {
-            Cache::forget('chat_' . $participant->room_id . '_' . $participant->user_id);
-        });
-    }
 }

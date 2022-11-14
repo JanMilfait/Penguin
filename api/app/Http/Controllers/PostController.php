@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Services\PostImage;
+use App\Http\Services\PostMetadata;
+use App\Http\Services\PostVideo;
 use App\Models\Post\Post;
 use App\Models\User\User;
-use App\Services\PostImage;
-use App\Services\PostMetadata;
-use App\Services\PostVideo;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-
 
 class PostController extends Controller
 {
@@ -210,6 +209,10 @@ class PostController extends Controller
      */
     public function share(Request $request, Post $post)
     {
+        if ($post->user_id === $request->user()->id) {
+            return response()->json(['error' => 'Cannot share own post.'], 403);
+        }
+
         $post->sharings()->firstOrCreate([
             'post_id' => $post->id,
             'user_id' => $request->user()->id

@@ -59,8 +59,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/post/comment/reply/{reply}/reaction', [PostCommentReplyController::class, 'store_reaction']);
     Route::delete('/post/comment/reply/{reply}/reaction', [PostCommentReplyController::class, 'destroy_reaction']);
 
+    Route::get('/chats', [ChatController::class, 'index']);
     Route::get('/chat/{user}', [ChatController::class, 'show']);
     Route::get('/chat/{chat}/messages', [ChatController::class, 'show_messages']);
     Route::post('/chat/{chat}/message', [ChatController::class, 'store_message']);
+    Route::post('/chat/{chat}/participant', [ChatController::class, 'store_participant']);
+    Route::delete('/chat/{chat}/participant/{user}', [ChatController::class, 'destroy_participant']);
 
 });

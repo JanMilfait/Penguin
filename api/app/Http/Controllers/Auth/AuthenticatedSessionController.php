@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Auth\LoginRequest;
+use App\Http\Services\Auth\LoginRequest;
 use Illuminate\Http\Request;
 
 class AuthenticatedSessionController extends Controller
@@ -11,7 +11,7 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      *
-     * @param  \App\Http\Requests\Auth\LoginRequest  $request
+     * @param  \App\Http\Services\Auth\LoginRequest $request
      *
      * @return \Illuminate\Http\JsonResponse
      */
