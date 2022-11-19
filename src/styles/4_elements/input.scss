@@ -1,6 +1,15 @@
-//input {
-//  width: 100%;
-//  padding: 16px;
-//  border: 1px solid $gray;
-//  border-radius: 4px;
-//}
+input {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  outline: none;
+  background: $back-darker;
+  box-shadow: 0 2px 2px rgb(0 0 0 / 15%);
+  font-size: 18px;
+  line-height: 21px;
+
+  &::placeholder {
+    color: $text-disabled;
+  }
+}

@@ -1,13 +1,15 @@
 import {AuthApi, setToken} from '../../features/auth/authSlice';
 import {AppStore} from '../store';
 import {GetServerSidePropsContext} from 'next';
-import { setCookie } from 'cookies-next';
+import {deleteCookie, hasCookie, setCookie } from 'cookies-next';
 
 interface InitialFunctionProps {
   (store: AppStore, context: GetServerSidePropsContext): Promise<void>;
 }
 
 export const authenticate: InitialFunctionProps = async (store, {req, res}) => {
+  checkDeleteToken(req, res);
+
   const token = req?.cookies?.token;
   if (token) {
     setCookie('token', token, {
@@ -37,6 +39,8 @@ export const authenticate: InitialFunctionProps = async (store, {req, res}) => {
 };
 
 export const authenticateUnprotected: InitialFunctionProps = async (store, {req, res}) => {
+  checkDeleteToken(req, res);
+
   const token = req?.cookies?.token;
   if (token) {
     setCookie('token', token, {
@@ -55,5 +59,12 @@ export const authenticateUnprotected: InitialFunctionProps = async (store, {req,
       res.writeHead(302, { Location: '/' });
       res.end();
     }
+  }
+};
+
+const checkDeleteToken = (req: GetServerSidePropsContext['req'], res: GetServerSidePropsContext['res']) => {
+  if (hasCookie('httpTokenDelete', {req, res})) {
+    deleteCookie('httpTokenDelete', {req, res});
+    deleteCookie('token', {req, res});
   }
 };

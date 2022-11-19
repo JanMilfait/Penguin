@@ -1,11 +1,12 @@
-import {useLoginMutation} from 'features/auth/authSlice';
+import { useLoginMutation } from 'features/auth/authSlice';
 import type { NextPage } from 'next';
 import Link from 'next/link';
 import { useState } from 'react';
 import Router from 'next/router';
-import {wrapper} from '../../app/store';
-import {authenticateUnprotected} from '../../app/helpers/initialFunctionProps';
+import { wrapper } from '../../app/store';
+import { authenticateUnprotected } from '../../app/helpers/initialFunctionProps';
 import { setCookie } from 'cookies-next';
+import { hasErrMessage } from 'app/helpers/errorHandling';
 
 const Login: NextPage = () => {
 
@@ -40,7 +41,7 @@ const Login: NextPage = () => {
   return (
     <div className="container">
       <h1 className="text-center">
-       Login
+        Login
       </h1>
       {message}
       <form onSubmit={handleSubmit}>

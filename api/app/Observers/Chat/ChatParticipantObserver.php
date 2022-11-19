@@ -34,7 +34,7 @@ class ChatParticipantObserver
                 'names' => $names,
                 'id' => $participant->user->id,
                 'name' => $participant->user->name,
-                'avatar' => $participant->user->avatar_name ? $participant->user->avatar_url . '40_' . $participant->user->avatar_name : null
+                'avatar' => $participant->user->avatar_name ? $participant->user->avatar_url . '50_' . $participant->user->avatar_name : null
             ]));
         });
     }
@@ -77,7 +77,7 @@ class ChatParticipantObserver
                 'names' => $names,
                 'id' => $participant->user->id,
                 'name' => $participant->user->name,
-                'avatar' => $participant->user->avatar_name ? $participant->user->avatar_url . '40_' . $participant->user->avatar_name : null
+                'avatar' => $participant->user->avatar_name ? $participant->user->avatar_url . '50_' . $participant->user->avatar_name : null
             ]));
         });
     }

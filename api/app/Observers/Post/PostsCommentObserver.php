@@ -27,7 +27,7 @@ class PostsCommentObserver
             'preview' => Str::limit($comment->body, 50),
             'id' => $comment->user->id,
             'name' => $comment->user->name,
-            'avatar' => $comment->user->avatar_name ? $comment->user->avatar_url . '40_' . $comment->user->avatar_name : null
+            'avatar' => $comment->user->avatar_name ? $comment->user->avatar_url . '50_' . $comment->user->avatar_name : null
         ]));
     }
 

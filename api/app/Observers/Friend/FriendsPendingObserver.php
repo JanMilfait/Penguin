@@ -24,7 +24,7 @@ class FriendsPendingObserver
             'state' => $pending->state,
             'id' => $user->id,
             'name' => $user->name,
-            'avatar' => $user->avatar_name ? $user->avatar_url . '40_' . $user->avatar_name : null
+            'avatar' => $user->avatar_name ? $user->avatar_url . '50_' . $user->avatar_name : null
         ]));
     }
 
@@ -46,7 +46,7 @@ class FriendsPendingObserver
                 'state' => $pending->state,
                 'id' => $user->id,
                 'name' => $user->name,
-                'avatar' => $user->avatar_name ? $user->avatar_url . '40_' . $user->avatar_name : null
+                'avatar' => $user->avatar_name ? $user->avatar_url . '50_' . $user->avatar_name : null
             ]));
 
         } elseif ($pending->isDirty('state') && $pending->state === 'declined') {
@@ -59,7 +59,7 @@ class FriendsPendingObserver
                 'state' => $pending->state,
                 'id' => $user->id,
                 'name' => $user->name,
-                'avatar' => $user->avatar_name ? $user->avatar_url . '40_' . $user->avatar_name : null
+                'avatar' => $user->avatar_name ? $user->avatar_url . '50_' . $user->avatar_name : null
             ]));
         }
     }

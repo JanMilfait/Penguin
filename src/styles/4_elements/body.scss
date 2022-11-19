@@ -1,6 +1,5 @@
 body {
-  //color: $blue;
-  -webkit-font-smoothing: antialiased;
+  background-color: $back;
 
   &.fixed {
     overflow: hidden;

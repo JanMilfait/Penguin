@@ -5,6 +5,7 @@ use App\Http\Controllers\FriendController;
 use App\Http\Controllers\PostCommentController;
 use App\Http\Controllers\PostCommentReplyController;
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\SearchController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -66,5 +67,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/chat/{chat}/message', [ChatController::class, 'store_message']);
     Route::post('/chat/{chat}/participant', [ChatController::class, 'store_participant']);
     Route::delete('/chat/{chat}/participant/{user}', [ChatController::class, 'destroy_participant']);
+
+    Route::get('/search', SearchController::class);
 
 });

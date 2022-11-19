@@ -24,11 +24,11 @@ class UserAvatar
 
         try {
             $avatarOriginal = Image::make($avatar)->encode('jpg');
-            $avatar40 = Image::make($avatar)->fit(40, 40)->encode('jpg', 80);
+            $avatar50 = Image::make($avatar)->fit(50, 50)->encode('jpg', 80);
             $avatar200 = Image::make($avatar)->fit(200, 200)->encode('jpg', 80);
 
             $avatarOriginal->save($avatarsPath . $avatarName);
-            $avatar40->save($avatarsPath . '40_' . $avatarName);
+            $avatar50->save($avatarsPath . '50_' . $avatarName);
             $avatar200->save($avatarsPath . '200_' . $avatarName);
 
             return [
@@ -57,8 +57,8 @@ class UserAvatar
             unlink($avatarsPath . $avatarName);
         }
 
-        if (file_exists($avatarsPath . '40_' . $avatarName)) {
-            unlink($avatarsPath . '40_' . $avatarName);
+        if (file_exists($avatarsPath . '50_' . $avatarName)) {
+            unlink($avatarsPath . '50_' . $avatarName);
         }
 
         if (file_exists($avatarsPath . '200_' . $avatarName)) {

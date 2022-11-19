@@ -2,12 +2,14 @@ import {AnyAction, combineReducers, configureStore, ThunkAction} from '@reduxjs/
 import {createWrapper, HYDRATE} from 'next-redux-wrapper';
 import {Action} from 'redux';
 import authSlice from 'features/auth/authSlice';
+import searchSlice from 'features/search/searchSlice';
 import {apiSlice} from 'app/api/apiSlice';
 import {pusherMiddleware} from 'app/middlewares/pusherMiddleware';
 
 
 const combinedReducer = combineReducers({
   auth: authSlice,
+  search: searchSlice,
   [apiSlice.reducerPath]: apiSlice.reducer
 });
 
@@ -23,7 +25,7 @@ const makeStore = () => configureStore({
   middleware: (getDefaultMiddleware) => (
     getDefaultMiddleware()
       .concat(apiSlice.middleware)
-      .concat(pusherMiddleware)
+      // .concat(pusherMiddleware)
   )
 });
 

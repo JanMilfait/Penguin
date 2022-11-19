@@ -41,7 +41,7 @@ class ChatMessageObserver
                     'preview' => Str::limit($cached->body, 50),
                     'id' => $cached->user->id,
                     'name' => $cached->user->name,
-                    'avatar' => $cached->user->avatar_name ? $cached->user->avatar_url . '40_' . $cached->user->avatar_name : null
+                    'avatar' => $cached->user->avatar_name ? $cached->user->avatar_url . '50_' . $cached->user->avatar_name : null
                 ]),
                 'expire_at' => now()->addDays(7)
             ]);

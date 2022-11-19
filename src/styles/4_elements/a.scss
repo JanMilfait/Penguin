@@ -1,4 +1,9 @@
-//a {
-//  color: $blue;
-//  text-decoration: none;
-//}
+a {
+  color: $primary;
+  text-decoration: none;
+
+    &:hover {
+      color: $primary;
+      text-decoration: underline;
+    }
+}

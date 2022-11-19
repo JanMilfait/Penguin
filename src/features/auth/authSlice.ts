@@ -1,33 +1,33 @@
 import {createSlice} from '@reduxjs/toolkit';
 import {apiSlice} from '../../app/api/apiSlice';
-
+import * as T from './authSlice.types';
 
 export const AuthApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    fetchClient: builder.query<FetchClientResult, void>({
+    fetchClient: builder.query<T.FetchClientResult, void>({
       query: () => 'api/user'
     }),
-    login: builder.mutation<LoginResult, LoginArg>({
+    login: builder.mutation<T.LoginResult, T.LoginArg>({
       query: (credentials: {email: string; password: string}) => ({
         url: 'login',
         method: 'POST',
         body: credentials
       })
     }),
-    register: builder.mutation<RegisterResult, RegisterArg>({
+    register: builder.mutation<T.RegisterResult, T.RegisterArg>({
       query: (credentials: {name: string, email: string; password: string, password_confirmation: string}) => ({
         url: 'register',
         method: 'POST',
         body: credentials
       })
     }),
-    logout: builder.mutation<LogoutResult, void>({
+    logout: builder.mutation<T.LogoutResult, void>({
       query: () => ({
         url: 'logout',
         method: 'POST'
       })
     }),
-    resetPassword: builder.mutation<ForgotPasswordResult, ForgotPasswordArg>({
+    resetPassword: builder.mutation<T.ForgotPasswordResult, T.ForgotPasswordArg>({
       query: (credentials: {email: string}) => ({
         url: 'forgot-password',
         method: 'POST',
@@ -42,11 +42,15 @@ export const AuthSlice = createSlice({
   name: 'auth',
   initialState: {
     token: null,
-    data: null
-  } as AuthState,
+    data: null,
+    userDropdownOpen: false
+  } as T.AuthState,
   reducers: {
     setToken: (state, action) => {
       state.token = action.payload;
+    },
+    toggleUserDropdown: (state) => {
+      state.userDropdownOpen = !state.userDropdownOpen;
     }
   },
   extraReducers: (builder) => {
@@ -78,6 +82,10 @@ export const {
   useLogoutMutation,
   useResetPasswordMutation
 } = AuthApi;
-export const {setToken} = AuthSlice.actions;
+
+export const {
+  setToken,
+  toggleUserDropdown
+} = AuthSlice.actions;
 
 export default AuthSlice.reducer;
