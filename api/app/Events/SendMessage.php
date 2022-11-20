@@ -31,7 +31,7 @@ class SendMessage implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return new PresenceChannel('chat.' . $this->message->room_id);
+        return new PresenceChannel('chat-room.' . $this->message->room_id);
     }
 
     public function broadcastAs()
@@ -43,7 +43,8 @@ class SendMessage implements ShouldBroadcastNow
     {
         return [
             'user_id' => $this->message->user_id,
-            'body' => $this->message->body
+            'body' => $this->message->body,
+            'image_url' => $this->message->image_url
         ];
     }
 }

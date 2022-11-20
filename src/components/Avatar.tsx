@@ -1,14 +1,15 @@
 import React from 'react';
 import Image from 'next/image';
-import {UserData} from '../features/auth/authSlice.types';
 import {User} from '../features/search/searchSlice.types';
 
-const Avatar = ({user, size, onClick}: {user: UserData|User|null, size: number, onClick?: () => void}) => {
+type avatarType = {user: User|null, size: number, onClick?: (e: React.MouseEvent<HTMLImageElement, MouseEvent>) => unknown, className?: string};
+
+const Avatar = ({user, size, onClick, className}: avatarType) => {
   return (
     <>
       {user && user.avatar_name
-        ? <Image className="avatar" src={user.avatar_url + '50_' + user.avatar_name} alt={'avatar_' + user.id} width={size} height={size} onClick={onClick} />
-        : <Image className="avatar" src={'/images/avatars/default.png'} alt={'avatar_default'} width={size} height={size} onClick={onClick} />}
+        ? <Image className={className ? 'avatar ' + className : 'avatar'} src={user.avatar_url + (size > 50 ? '200_' : '50_') + user.avatar_name} alt={'avatar_' + user.id} width={size} height={size} onClick={onClick} />
+        : <Image className={className ? 'avatar ' + className : 'avatar'} src={'/images/avatars/default.png'} alt={'avatar_default'} width={size} height={size} onClick={onClick} />}
     </>
   );
 };

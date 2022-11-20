@@ -26,9 +26,12 @@ class Notification extends Model
     const UPDATED_AT = null;
 
 	protected $casts = [
-		'user_id' => 'int',
 		'source_id' => 'int'
 	];
+
+    protected $hidden = [
+        'user_id'
+    ];
 
 	protected $fillable = [
 		'user_id',

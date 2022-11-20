@@ -42,15 +42,11 @@ export const AuthSlice = createSlice({
   name: 'auth',
   initialState: {
     token: null,
-    data: null,
-    userDropdownOpen: false
+    data: null
   } as T.AuthState,
   reducers: {
     setToken: (state, action) => {
       state.token = action.payload;
-    },
-    toggleUserDropdown: (state) => {
-      state.userDropdownOpen = !state.userDropdownOpen;
     }
   },
   extraReducers: (builder) => {
@@ -84,8 +80,7 @@ export const {
 } = AuthApi;
 
 export const {
-  setToken,
-  toggleUserDropdown
+  setToken
 } = AuthSlice.actions;
 
 export default AuthSlice.reducer;

@@ -28,8 +28,7 @@ class ChatMessage extends Model
     const UPDATED_AT = null;
 
     protected $hidden = [
-        'id',
-        'room_id',
+        'room_id'
     ];
 
 	protected $fillable = [

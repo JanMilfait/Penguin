@@ -1,5 +1,8 @@
 button {
-  padding: 10px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 11px 40px 9px;
   border: none;
   border-radius: 10px;
   outline: none;
@@ -7,20 +10,55 @@ button {
   color: $white;
   font-size: 18px;
   font-weight: 700;
-  line-height: 22px;
+  line-height: 20px;
   cursor: pointer;
+
+  @include media-breakpoint-down(lg) {
+    padding: 11px 30px 9px;
+    font-size: 16px;
+    line-height: 20px;
+  }
 
   a {
     color: $white;
   }
 
-  @include media-breakpoint-down(lg) {
-    padding: 10px 30px;
-    font-size: 16px;
-    line-height: 20px;
+  span {
+    width: 20px;
+    height: 20px;
+    margin-right: 5px;
+    transform: translateY(-1px);
+  }
+
+  &:hover {
+    background: $button-hover;
   }
 }
 
-button:hover {
-  background: $button-hover;
+.button {
+  &--small {
+    padding: 8px 16px 6px;
+    font-size: 16px;
+    line-height: 20px;
+
+    @include media-breakpoint-down(lg) {
+      padding: 8px 16px 6px;
+      font-size: 16px;
+      line-height: 20px;
+    }
+  }
+
+  &--blue {
+    background: $button-hover;
+
+    &:hover {
+      background: $button;
+    }
+  }
+
+  &--fluid {
+    width: 100%;
+    padding-right: 0;
+    padding-left: 0;
+  }
 }

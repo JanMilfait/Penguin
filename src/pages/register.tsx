@@ -4,8 +4,9 @@ import Link from 'next/link';
 import Router from 'next/router';
 import { useState } from 'react';
 import {wrapper} from '../app/store';
-import {authenticateUnprotected} from '../app/helpers/initialFunctionProps';
+import {authenticateUnprotected} from '../app/ssr/initialFunctions';
 import { setCookie } from 'cookies-next';
+import { hasErrMessage } from 'app/helpers/errorHandling';
 
 const Register: NextPage = () => {
 

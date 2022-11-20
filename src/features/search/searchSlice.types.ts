@@ -1,23 +1,22 @@
 export type User = {
-  entity_id: number;
   id: number;
   name: string;
-  avatar_url: string;
-  avatar_name: string;
+  avatar_url: string | null;
+  avatar_name: string | null;
 }
 
 export type Post = {
-  entity_id: number;
   id: number;
-  user_id: number;
   body: string;
   user: User;
 }
 
 export type SearchResult = {
-  ids: number[] | [];
-  entities: Post[] | User[] | [];
-}
+  items: Post[] | User[];
+  page: number;
+  last_page: number;
+  limit: number;
+};
 
 export type SearchArg = {text: string, page: number}
 

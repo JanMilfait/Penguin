@@ -1,9 +1,33 @@
-* {
-  box-sizing: border-box;
-}
-
 .avatar {
   border-radius: 50%;
-  background: #e2e2e2;
+  background: $back;
   box-shadow: 0 2px 2px rgb(0 0 0 / 25%);
+}
+
+.svg-fill-primary {
+  fill: #06c0d9;
+}
+
+.__react_component_tooltip {
+  box-shadow: 0 2px 2px rgb(0 0 0 / 25%);
+  font-size: 14px !important;
+}
+
+.EmojiPickerReact {
+  --epr-picker-border-radius: 10px !important;
+  --epr-highlight-color: #06c0d9 !important;
+  --epr-header-padding: 10px !important;
+  --epr-category-icon-active-color: #06c0d9 !important;
+
+  border: none !important;
+  box-shadow: 0 0 10px 0 rgb(0 0 0 / 50%) !important;
+  font-family: Montserrat, sans-serif !important;
+}
+
+[data-rmiz-btn-unzoom] {
+  display: none !important;
+}
+
+[data-rmiz-modal-overlay="visible"] {
+  background-color: rgb(255 255 255 / 80%) !important;
 }

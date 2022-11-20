@@ -2,6 +2,11 @@ a {
   color: $primary;
   text-decoration: none;
 
+  @include media-breakpoint-down(md) {
+    font-size: 14px;
+    line-height: 18px;
+  }
+
     &:hover {
       color: $primary;
       text-decoration: underline;

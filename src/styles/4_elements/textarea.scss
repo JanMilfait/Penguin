@@ -1,0 +1,14 @@
+textarea {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 10px;
+  outline: none;
+  background: $back-darker;
+  color: $text;
+  resize: none;
+
+  &::placeholder {
+    color: $text-gray;
+  }
+}

@@ -1,0 +1,25 @@
+import { createSlice } from '@reduxjs/toolkit';
+import {apiSlice} from '../../app/api/apiSlice';
+import * as T from './chatSlice.types';
+
+export const ChatApi = apiSlice.injectEndpoints({
+  endpoints: (builder) => ({
+
+  })
+});
+
+export const ChatSlice = createSlice({
+  name: 'chat',
+  initialState: {
+
+  } as T.ChatState,
+  reducers: {
+
+  }
+});
+
+export const {
+
+} = ChatSlice.actions;
+
+export default ChatSlice.reducer;

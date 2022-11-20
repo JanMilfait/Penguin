@@ -18,9 +18,33 @@ class UserController extends Controller
      * @param  User  $user
      * @return JsonResponse
      */
-    public function show(User $user)
+    public function show(Request $request, User $user)
     {
-        return response()->json($user->load('profile', 'skills.created_by'));
+        switch ($user->profile_visibility) {
+            case 'private':
+                if ($user->id !== $request->user()->id) break;
+
+                $user = $user->makeVisible(['email', 'profile_visibility', 'is_active'])
+                    ->load('profile', 'skills.created_by');
+                break;
+
+            case 'friends':
+                if (!$user->hasFriend($request->user()->id)) break;
+
+                $user = $user->makeVisible(['email', 'profile_visibility', 'is_active'])
+                    ->load('profile', 'skills.created_by');
+                break;
+
+            case 'public':
+                $friendOrMe = $user->hasFriend($request->user()->id) || $user->id === $request->user()->id;
+
+                $user = $user->makeVisibleIf($friendOrMe, 'is_active')
+                    ->makeVisible(['email', 'profile_visibility'])
+                    ->load('profile', 'skills.created_by');
+                break;
+        }
+
+        return response()->json($user);
     }
 
 
@@ -34,9 +58,9 @@ class UserController extends Controller
     {
         $request->validate([
             'name' => ['string', 'max:255'],
+            'profile_visibility' => ['string', 'in:private,friends,public'],
             'avatar' => ['nullable', 'image', 'max:2048', 'dimensions:min_width=200,min_height=200'],
             'password' => ['confirmed', Rules\Password::defaults()],
-            'visibility' => ['string', 'max:100'],
             'age' => ['string', 'max:100','nullable'],
             'description' => ['string', 'max:65535','nullable'],
             'telephone' => ['string', 'max:20','nullable'],
@@ -47,7 +71,7 @@ class UserController extends Controller
 
         $user = $request->user();
 
-        $user->update($request->only('name'));
+        $user->update($request->only('name', 'profile_visibility'));
 
         if ($request->has(['password', 'password_confirmation'])) {
             $user->forceFill([
@@ -57,7 +81,6 @@ class UserController extends Controller
         }
 
         $user->profile->update($request->only([
-            'visibility',
             'age',
             'description',
             'telephone',
@@ -112,7 +135,7 @@ class UserController extends Controller
      */
     public function logged(Request $request)
     {
-        return response()->json($request->user());
+        return response()->json($request->user()->makeVisible(['email', 'profile_visibility', 'is_active'])->load('profile', 'skills.created_by'));
     }
 
 

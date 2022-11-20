@@ -33,6 +33,7 @@ use Illuminate\Database\Eloquent\Collection;
  * @property bool $is_active
  * @property string|null $avatar_name
  * @property string|null $avatar_url
+ * @property string $visibility
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
@@ -66,7 +67,13 @@ class User extends Authenticatable
 	protected $hidden = [
 		'password',
 		'remember_token',
-        'email_verified_at'
+        'email_verified_at',
+        'email',
+        'is_active',
+        'created_at',
+        'updated_at',
+        'laravel_through_key',
+        'profile_visibility'
 	];
 
 	protected $fillable = [
@@ -75,7 +82,8 @@ class User extends Authenticatable
 		'password',
 		'is_active',
         'avatar_name',
-		'avatar_url'
+		'avatar_url',
+        'profile_visibility'
     ];
 
 	public function messages()
@@ -147,5 +155,10 @@ class User extends Authenticatable
     public function skills_created()
     {
         return $this->hasMany(Skill::class, 'created_by');
+    }
+
+    public function hasFriend($user_id)
+    {
+        return $this->friends()->where('user_b', $user_id)->exists();
     }
 }

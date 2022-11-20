@@ -2,7 +2,7 @@ import type {NextPage} from 'next';
 import Link from 'next/link';
 import {useSelector} from 'react-redux';
 import {AppState, wrapper} from '../app/store';
-import {authenticate} from '../app/helpers/initialFunctionProps';
+import {authenticate, getSidebarFriends, init} from '../app/ssr/initialFunctions';
 
 const Profile: NextPage = () => {
   const {token} = useSelector((state: AppState) => state.auth);
@@ -24,6 +24,7 @@ const Profile: NextPage = () => {
 };
 
 export const getServerSideProps = wrapper.getServerSideProps(store => async (ctx) => {
+  await init(store, ctx);
   await authenticate(store, ctx);
 
   return {props: {}};

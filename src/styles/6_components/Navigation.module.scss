@@ -1,7 +1,16 @@
+@import "variables";
+
 .navigation {
+  position: relative;
+  z-index: 1;
+
   &__placeholder {
     width: 100%;
     height: 80px;
+
+    @media (max-width: $lg) {
+      height: 130px;
+    }
   }
 
   &__wrapper {
@@ -9,7 +18,7 @@
     top: 0;
     width: 100%;
     padding: 10px;
-    background: #fff;
+    background: $secondary;
   }
 
   &__icons > li {
@@ -28,10 +37,10 @@
       height: 45px;
       margin-top: 5px;
       padding: 0 12px;
-      fill: #d1d1d1;
+      fill: $svg;
 
       &:hover {
-        fill: #06c0d9;
+        fill: $primary;
       }
     }
   }

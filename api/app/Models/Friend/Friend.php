@@ -4,6 +4,7 @@ namespace App\Models\Friend;
 
 use App\Models\User\User;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -20,6 +21,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Friend extends Model
 {
+    use HasFactory;
+
 	protected $table = 'friends';
 
     const UPDATED_AT = null;
@@ -41,6 +44,6 @@ class Friend extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_b')->select('id', 'name', 'is_active', 'avatar_name', 'avatar_url');
+        return $this->belongsTo(User::class, 'user_b');
     }
 }

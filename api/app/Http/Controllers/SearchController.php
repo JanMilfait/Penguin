@@ -15,44 +15,50 @@ class SearchController extends Controller
             'text' => 'required|string|max:84',
         ]);
 
-        $text = DB::connection()->getPdo()->quote($request->input('text'));
-        $textLikeRight = DB::connection()->getPdo()->quote($request->input('text') . '%');
+        $page = (int) $request->get('page', 1);
+        $limit = (int) $request->get('limit', 5);
+        $offset = ($page - 1) * $limit;
 
-        $offset = $request->input('offset', 0);
-        $limit = $request->input('limit', 5);
 
-        $users = DB::table('users')
+        $queryUsers = DB::table('users')
             ->select(['id', 'name', 'avatar_url', 'avatar_name'])
             ->whereRaw(
-                strlen($text) > 3 ?
-                    'MATCH(name) AGAINST("' . $text . '")'
+                strlen($request->get('text')) > 3 ?
+                    'MATCH(name) AGAINST("' . DB::connection()->getPdo()->quote($request->input('text')) . '")'
                     :
-                    'name LIKE ' . $textLikeRight
+                    'name LIKE ' . DB::connection()->getPdo()->quote($request->input('text') . '%')
             )
-            ->where('id', '!=', $request->user()->id)
-            ->offset($offset)
-            ->limit($limit)
-            ->get();
+            ->where('id', '!=', $request->user()->id);
 
-        if (strlen($text) > 3) {
-            $posts = DB::table('posts')
+        $usersTotal = $queryUsers->count();
+        $users = $queryUsers->limit($limit)->offset($offset)->get();
+
+
+        if (strlen($request->get('text')) > 3) {
+            $queryPosts = DB::table('posts')
                 ->select(['id', 'user_id', 'body'])
-                ->whereRaw('MATCH(body) AGAINST("' . $text . '")')
-                ->offset($offset)
-                ->limit($limit)
-                ->get();
+                ->whereRaw('MATCH(body) AGAINST("' . DB::connection()->getPdo()->quote($request->input('text')) . '")');
+
+            $postsTotal = $queryPosts->count();
+            $posts = $queryPosts->limit($limit)->offset($offset)->get();
+
 
             foreach ($posts as $post) {
                 $post->body = Str::limit($post->body);
                 $post->user = User::find($post->user_id)->only(['id', 'name', 'avatar_url', 'avatar_name']);
+                unset($post->user_id);
             }
+        } else {
+            $posts = collect();
+            $postsTotal = 0;
         }
 
-        $normalized = $this->normalize($users->merge($posts ?? collect()), $offset*2);
 
         return response()->json([
-            'ids' => $normalized['ids'],
-            'entities' => $normalized['entities']
+            'items' => $users->merge($posts),
+            'page' => $page,
+            'last_page' => ceil(max($usersTotal, $postsTotal) / $limit),
+            'limit' => $limit
         ]);
     }
 }

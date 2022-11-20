@@ -47,8 +47,14 @@ class ChatRoom extends Model
         return $this->hasMany(ChatParticipant::class, 'room_id');
     }
 
-    public function last_message_by()
+    public function users()
     {
-        return $this->belongsTo(User::class, 'last_message_by')->select(['id', 'name', 'avatar_name', 'avatar_url']);
+        return $this->hasManyThrough(User::class, ChatParticipant::class, 'room_id', 'id', 'id', 'user_id');
+    }
+
+    // transform last_message_by to user
+    public function getLastMessageByAttribute($value)
+    {
+        return auth()->id() === $value ? 'Já' : User::find($value)->name ?? null;
     }
 }

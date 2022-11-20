@@ -1,0 +1,60 @@
+@import "variables";
+
+.postAdd {
+  max-width: 736px;
+  margin: 0 auto;
+  padding: 15px 22px 22px;
+  border-bottom: 4px solid $primary;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  background: $secondary;
+
+  &__icons {
+    li {
+      display: flex;
+      align-items: center;
+      margin-right: 25px;
+      cursor: pointer;
+      user-select: none;
+
+      @media (max-width: $sm) {
+        margin-right: 15px;
+      }
+
+      &:last-child {
+        margin-right: 0;
+      }
+
+      svg {
+        width: 25px;
+        height: 25px;
+        margin-right: 5px;
+        fill: $svg-dark;
+
+        @media (max-width: $sm) {
+            width: 15px;
+            height: 15px;
+        }
+      }
+
+      p {
+        margin-bottom: 0;
+
+        @media (max-width: $sm) {
+          font-size: 12px;
+          line-height: 14px;
+        }
+      }
+
+      &:hover {
+        svg {
+          fill: $primary;
+        }
+
+        p {
+          color: $primary;
+        }
+      }
+    }
+  }
+}

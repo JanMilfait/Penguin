@@ -1,14 +1,39 @@
 import '../styles/styles.scss';
-import type {AppProps} from 'next/app';
-import {wrapper} from '../app/store';
-import {Provider} from 'react-redux';
+import type { AppProps } from 'next/app';
+import { wrapper } from '../app/store';
+import { Provider } from 'react-redux';
 import Head from 'next/head';
-import {Roboto_Flex} from '@next/font/google';
+import { Roboto } from '@next/font/google';
+import { useEffect } from 'react';
+import { setIsMobile } from '../features/root/rootSlice';
+import debounce from 'lodash.debounce';
+import ComponentShared from 'features/root/ComponentShared';
 
-const roboto = Roboto_Flex();
+const roboto = Roboto({weight: ['400', '500', '700']});
 
 function MyApp({ Component, ...rest }: AppProps) {
   const {store, props} = wrapper.useWrappedStore(rest);
+
+
+  /**
+   * Detect if the user is on a mobile device (first dispatch - ssr init)
+   */
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth < 768) {
+        store.dispatch(setIsMobile(true));
+      } else if (window.innerWidth >= 768) {
+        store.dispatch(setIsMobile(false));
+      }
+    };
+    window.addEventListener('resize', debounce(handleResize, 500));
+    handleResize();
+    return () => {
+      window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+
   return (
     <Provider store={store}>
       <Head>
@@ -28,6 +53,7 @@ function MyApp({ Component, ...rest }: AppProps) {
       <main className={roboto.className}>
         <Component {...props.pageProps} />
       </main>
+      <ComponentShared />
     </Provider>
   );
 }

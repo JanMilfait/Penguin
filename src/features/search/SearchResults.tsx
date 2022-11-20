@@ -1,21 +1,25 @@
-import { AppState } from 'app/store';
-import React, { useEffect, useCallback } from 'react';
+import {AppDispatch, AppState} from 'app/store';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import s from 'styles/6_components/SearchBar.module.scss';
-import {setPage, SearchApi, setDebounced} from './searchSlice';
+import {setPage, setDebounced, useLazyFetchSearchQuery} from './searchSlice';
 import debounce from 'lodash.debounce';
 import { ArrowRightCircle, ArrowLeftCircle } from 'react-bootstrap-icons';
 import SearchUser from './SearchUser';
 import SearchPost from './SearchPost';
 import SearchNothingFound from './SearchNothingFound';
 import DotLoaderSpin from '../../components/DotLoaderSpin';
+import usePerfectScrollbar from '../../app/hooks/usePerfectScrollbar';
 
 
 const SearchResults = () => {
-  const dispatch = useDispatch();
+  // PerfectScrollbar
+  const modalRef = useRef<HTMLDivElement>(null);
+  const { updateScroll } = usePerfectScrollbar(modalRef);
+
+  const dispatch = useDispatch<AppDispatch>();
   const { text, page, debounced } = useSelector((state: AppState) => state.search);
-  const [trigger, result] = SearchApi.endpoints.fetchSearch.useLazyQuery();
-  const { data, isError, error } = result;
+  const [trigger, { data, isError, isFetching, isSuccess }] = useLazyFetchSearchQuery();
 
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -28,29 +32,26 @@ const SearchResults = () => {
    *  Debounce if the user is typing else immediately search
    */
   useEffect(() => {
-    !debounced
-      ? debouncedSearch(text, page)
-      : trigger({text: text, page: page}, true);
-  }, [text, page, debouncedSearch, trigger, debounced]);
+    (async () => {
+      !debounced
+        ? await debouncedSearch(text, page)
+        : await trigger({text: text, page: page}, true);
+
+      updateScroll(true);
+    })();
+  }, [text, page]);
 
 
   const handleSetPage = (e: React.MouseEvent<Element, MouseEvent>, page: number) => {
+    if (!isSuccess || isFetching) return;
     e.stopPropagation();
     dispatch(setPage(page));
   };
 
 
-  /**
-   * Modal content
-   */
-  const content = () => {
-    if (isError) {
-      console.error(error);
-      return <SearchNothingFound />;
-    }
-
-    if (!data) {
-      return (
+  if (!data) {
+    return (
+      <div ref={modalRef} className={s.searchBar__modal}>
         <div className="row m-0">
           <div className="col-12 p-5">
             <div className="d-flex align-items-center justify-content-center h-100 p-5">
@@ -58,47 +59,30 @@ const SearchResults = () => {
             </div>
           </div>
         </div>
-      );
-    }
-
-    if (page > 0 && data.ids.length === 0) {
-      return (
-        <>
-          <div className={s.searchBar__pages}>
-            { page !== 0 && <a onClick={() => dispatch(setPage(-1))} >Go back <ArrowLeftCircle /></a> }
-          </div>
-          <SearchNothingFound />
-        </>
-      );
-    }
-
-    if (data.ids.length === 0) {
-      return <SearchNothingFound />;
-    }
-
-    return (
-      <>
-        <div className={s.searchBar__pages}>
-          { page > 0 && <a onClick={(e) => handleSetPage(e, -1)} ><ArrowLeftCircle /></a> }
-          <a onClick={(e) => handleSetPage(e, +1)} ><ArrowRightCircle /> Search more</a>
-        </div>
-        <ul className="d-flex flex-column">
-          {data.entities.map((result) => (
-            'name' in result
-              ? <SearchUser key={result.id} user={result} />
-              : <SearchPost key={result.id} post={result} />
-          ))}
-        </ul>
-      </>
+      </div>
     );
-  };
+  }
 
-  /**
-   * Modal container
-   */
   return (
-    <div className={s.searchBar__modal}>
-      {content()}
+    <div ref={modalRef} className={s.searchBar__modal}>
+      {data.items.length !== 0 && data.last_page !== 1 &&
+        <div className={s.searchBar__pages}>
+          {page !== 1 && page === data.last_page && <a onClick={(e) => handleSetPage(e, -1)}>Go back <ArrowLeftCircle/></a>}
+          {page > 1 && page < data.last_page && <a onClick={(e) => handleSetPage(e, -1)}><ArrowLeftCircle/></a>}
+          {page !== data.last_page && <a onClick={(e) => handleSetPage(e, +1)}><ArrowRightCircle/> Show more</a>}
+        </div>
+      }
+      { data.items.length === 0 || isError
+        ? <SearchNothingFound />
+        : (
+          <ul className="d-flex flex-column">
+            { data.items.map((result) => (
+              'name' in result
+                ? <SearchUser key={result.id} user={result}/>
+                : <SearchPost key={result.id} post={result}/>
+            ))}
+          </ul>
+        )}
     </div>
   );
 };

@@ -1,0 +1,451 @@
+@import "variables";
+
+.activeChats {
+  position: fixed;
+  z-index: 1;
+  right: 112px;
+  bottom: 0;
+
+  &__tabsContainer {
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    height: 100%;
+  }
+
+  &__tab {
+    display: flex;
+    position: relative;
+    align-items: center;
+    margin: 20px 6px 0;
+    padding: 8px 10px 6px 18px;
+    border: 1px solid $border;
+    border-top-left-radius: 20px;
+    border-top-right-radius: 20px;
+    background: $secondary;
+    box-shadow: 0 0 2px 0 rgb(0 0 0 / 10%);
+    cursor: pointer;
+
+    &:last-child {
+      margin-right: 0;
+    }
+
+    &Shrink {
+      width: 150px;
+      margin-right: -150px;
+      transform: translateX(150px);
+
+      &:last-child {
+        width: auto;
+        margin-right: 150px;
+        transform: translateX(150px);
+      }
+    }
+
+    &Active {
+      border-top: 3px solid lighten($primary, 35%);
+    }
+
+    img {
+      width: 25px;
+      height: 25px;
+    }
+  }
+
+  &__avatar {
+    position: relative;
+    margin-right: -10px;
+    transform: translateX(-10px);
+
+    &:first-child {
+      margin-left: 10px;
+    }
+  }
+
+  &__names {
+    max-width: 180px;
+    margin-right: 2px;
+    margin-bottom: 0;
+    margin-left: 5px;
+    font-size: 12px;
+    font-weight: 600;
+    user-select: none;
+  }
+
+  &__close {
+    padding: 0 8px;
+    cursor: pointer;
+
+    svg {
+      fill: $text-gray;
+      pointer-events: none;
+    }
+  }
+
+  %online {
+    position: absolute;
+    top: 0;
+    right: 0;
+    border: 1px solid $green;
+    border-radius: 50%;
+    background: $green;
+  }
+
+  %offline {
+    position: absolute;
+    top: 0;
+    right: 0;
+    border: 1px solid $green;
+    border-radius: 50%;
+    background: $secondary;
+  }
+
+  &__online {
+    @extend %online;
+
+    width: 7px;
+    height: 7px;
+  }
+
+  &__offline {
+    @extend %offline;
+
+    width: 7px;
+    height: 7px;
+  }
+
+  &__chatsContainer {
+    display: flex;
+    position: absolute;
+    right: 0;
+    bottom: 60px;
+    align-items: flex-end;
+    justify-content: flex-end;
+    height: 100%;
+  }
+
+  &__chat {
+    min-width: 300px;
+    max-width: 300px;
+    margin: 0 8px;
+    animation: pop-up 0.2s ease-in-out;
+    border-radius: 10px;
+    background: $secondary;
+    box-shadow: 0 0 4px 0 rgb(0 0 0 / 25%);
+
+    &Close {
+      animation: pop-down 0.2s ease-in-out;
+    }
+
+    &:last-child {
+      margin-right: 0;
+    }
+
+    &:first-child {
+      margin-left: 0;
+    }
+  }
+
+  @keyframes pop-up {
+    0% {
+      transform: scale(0);
+    }
+
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes pop-down {
+    0% {
+      transform: scale(1);
+    }
+
+    100% {
+      transform: scale(0);
+    }
+  }
+
+  // Chat Head
+
+  &__chatHead {
+    display: flex;
+    position: relative;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    border-bottom: 1px solid $border;
+    user-select: none;
+
+    svg {
+      fill: $text-gray;
+      cursor: pointer;
+    }
+  }
+
+  &__chatHeadButtons {
+    display: flex;
+
+    svg {
+      margin: 0 4px;
+      pointer-events: none;
+
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+  }
+
+  &__chatAvatar {
+    position: relative;
+    margin-right: -20px;
+    transform: translateX(-20px);
+
+    &:first-child {
+      margin-left: 20px;
+    }
+  }
+
+  &__chatOnline {
+    @extend %online;
+
+    width: 11px;
+    height: 11px;
+  }
+
+  &__chatOffline {
+    @extend %offline;
+
+    width: 11px;
+    height: 11px;
+  }
+
+  &__chatNames {
+    margin-bottom: 0;
+    padding: 0 10px;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 16px;
+    user-select: text;
+  }
+
+  &__chatType {
+    margin-bottom: 0;
+    padding: 0 10px;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 14px;
+    user-select: text;
+  }
+
+  &__settings {
+    position: absolute;
+    top: -4px;
+    right: 5px;
+  }
+
+  // Chat Messages
+
+  &__messages {
+    position: relative;
+    height: 320px;
+    padding: 10px 0;
+    overflow: hidden;
+  }
+
+  &__messageDate {
+    width: 100%;
+    padding: 7px 10px 15px;
+    text-align: center;
+
+    p {
+      margin-bottom: 0;
+      color: $text-gray;
+      font-size: 10px;
+      font-weight: 700;
+      line-height: 16px;
+    }
+  }
+
+  %message-p {
+    max-width: 100%;
+    margin-bottom: 0;
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 14px;
+    line-height: 16px;
+    word-break: break-word;
+    white-space: pre-line;
+  }
+
+  &__messageMe {
+    display: flex;
+    justify-content: flex-end;
+    min-width: 0;
+    max-width: 100%;
+    margin: 2px 15px 2px 40px;
+
+    p {
+      @extend %message-p;
+
+      background: $back-darker;
+      color: $text;
+    }
+  }
+
+  &__messageOther {
+    display: flex;
+    position: relative;
+    justify-content: flex-start;
+    min-width: 0;
+    max-width: 100%;
+    margin: 2px 40px 2px 30px;
+
+    p {
+      @extend %message-p;
+
+      background: $primary;
+      color: $text-white;
+    }
+  }
+
+  &__messageAvatar {
+    position: absolute;
+    bottom: 2px;
+    left: -25px;
+  }
+
+  &__messageImg {
+    max-width: 100%;
+    max-height: 300px;
+    border-radius: 10px;
+    cursor: pointer;
+    user-select: none;
+  }
+
+  // Chat Textarea
+
+  &__textarea {
+    position: relative;
+    padding: 5px;
+    border-top: 1px solid $border;
+
+    textarea {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      padding: 7px;
+      border: none;
+      border-radius: 10px;
+      outline: none;
+      background: $back;
+      font-size: 13px;
+      line-height: 17px;
+      resize: none;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+  }
+
+  &__textareaIcons {
+    padding: 2px 5px 0;
+
+    svg {
+      margin-right: 10px;
+      cursor: pointer;
+    }
+  }
+
+  &__textareaSend {
+    padding: 6px 10px 4px;
+    cursor: pointer;
+
+    svg {
+      pointer-events: none;
+    }
+  }
+
+  &__emojiPicker {
+    position: absolute;
+    z-index: 1;
+    bottom: 116px;
+    left: 12px;
+    width: 100%;
+
+    // Prevent global styles from affecting the emoji picker
+    input {
+      border: none !important;
+      outline: none !important;
+      box-shadow: 0 2px 2px rgb(0 0 0 / 10%);
+      color: $text !important;
+      font-size: revert;
+      line-height: revert;
+    }
+
+    ul {
+      display: revert;
+    }
+
+    button {
+      padding: revert;
+      color: revert;
+      font-size: revert;
+      font-weight: revert;
+      line-height: revert;
+    }
+  }
+
+  &__giphyPicker {
+    position: absolute;
+    z-index: 1;
+    bottom: 85px;
+    left: 12px;
+    width: 100%;
+    padding: 10px 10px 0;
+    border-radius: 10px;
+    background: $secondary;
+    box-shadow: 0 0 10px 0 rgb(0 0 0 / 50%);
+  }
+
+  &__giphyContent {
+    margin-right: -10px;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+
+  &__giphyInner {
+    height: 350px;
+  }
+
+  &__giphySearch {
+    position: relative;
+    width: 100%;
+    margin-bottom: 20px;
+
+    input {
+      padding: 14px 30px 12px;
+      border-radius: 8px;
+      color: $text;
+      font-family: sans-serif;
+      font-size: 13px;
+      line-height: 13px;
+
+      &::placeholder {
+        color: #858585;
+      }
+    }
+  }
+
+  &__giphySearchIcon {
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 30px;
+    height: 40px;
+    padding: 14px 1px 14px 10px;
+    transform: translateY(-50%);
+    fill: #858585;
+  }
+}

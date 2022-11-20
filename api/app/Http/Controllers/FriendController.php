@@ -19,16 +19,29 @@ class FriendController extends Controller
      */
     public function show(Request $request, User $user)
     {
+        $isSelf = $request->user()->is($user);
+
+        $page = (int) $request->get('page', 1);
+        $limit = (int) $request->get('limit', 20);
+        $offset = ($page - 1) * $limit;
+
         $friends = Friend::join('users', 'friends.user_b', '=', 'users.id')
             ->where('friends.user_a', $user->id)
-            ->select('users.id as id', 'users.name', 'users.is_active', 'users.avatar_name', 'users.avatar_url')
+            ->selectRaw('users.id as id, users.name, users.avatar_name, users.avatar_url' . ($isSelf ? ', users.is_active' : ''))
             ->orderBy('users.is_active', 'desc')
             ->orderBy('users.name')
-            ->offset($request->get('offset') ?? 0)
-            ->limit($request->get('limit') ?? 30)
+            ->limit($limit)
+            ->offset($offset)
             ->get();
 
-        return response()->json($friends);
+        $total = $user->friends()->count();
+
+        return response()->json([
+            'items' => $friends,
+            'page' => $page,
+            'total' => $total,
+            'limit' => $limit
+        ]);
     }
 
 

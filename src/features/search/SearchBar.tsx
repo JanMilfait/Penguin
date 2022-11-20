@@ -4,10 +4,10 @@ import { Search } from 'react-bootstrap-icons';
 import SearchResults from './SearchResults';
 import { useDispatch, useSelector } from 'react-redux';
 import { setSearch } from './searchSlice';
-import { AppState } from 'app/store';
+import {AppDispatch, AppState} from 'app/store';
 
 const SearchBar = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const search = useSelector((state: AppState) => state.search.text);
 
   const containerRef = useRef<HTMLDivElement>(null),
@@ -24,7 +24,7 @@ const SearchBar = () => {
     return () => {
       document.removeEventListener('click', handleClickOutside);
     };
-  }, [search, dispatch]);
+  }, [search]);
 
 
   return (

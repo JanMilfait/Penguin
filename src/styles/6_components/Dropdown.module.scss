@@ -1,14 +1,16 @@
+@import "variables";
+
 .dropdown {
   display: flex;
   position: absolute;
-  z-index: 1;
+  z-index: 10;
   top: 100%;
   right: 0;
   flex-direction: column;
   padding: 10px;
-  border: 1px solid #e2e2e2;
+  border: 1px solid $border;
   border-radius: 0 0 5px 5px;
-  background: #fff;
+  background: $secondary;
   box-shadow: 0 2px 2px rgb(0 0 0 / 25%);
   cursor: default;
 
@@ -23,7 +25,7 @@
 
     &:hover {
       border-radius: 5px;
-      background: #f3f3f3;
+      background: $back-darker;
       text-decoration: none;
     }
   }

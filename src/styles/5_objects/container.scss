@@ -1,0 +1,13 @@
+.container-1140 {
+  max-width: 1140px;
+}
+
+.container-sidebar {
+  @include media-breakpoint-down(xl) {
+    padding-right: 102px;
+  }
+
+  @include media-breakpoint-down(md) {
+    padding-right: calc(var(--bs-gutter-x) * 0.5);
+  }
+}

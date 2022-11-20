@@ -20,6 +20,7 @@ Route::get('/', function () {
 });
 
 Route::get('/chat/images/{image}', [ChatController::class, 'show_image']);
+Route::get('/chat/images/placeholder/{image}', [ChatController::class, 'show_placeholder']);
 
 require __DIR__.'/webhooks.php';
 require __DIR__.'/auth.php';
