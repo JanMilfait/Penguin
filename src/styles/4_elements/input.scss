@@ -9,7 +9,31 @@ input {
   font-size: 18px;
   line-height: 21px;
 
+  @include media-breakpoint-down(md) {
+    font-size: 14px;
+    line-height: 18px;
+  }
+
   &::placeholder {
     color: $text-gray;
+  }
+}
+
+.isInvalid {
+  padding: 9px;
+  border: 1px solid $red;
+}
+
+.isInvalidText {
+  margin-top: 8px;
+  margin-bottom: 0;
+  color: $red;
+  font-size: 14px;
+  line-height: 16px;
+  white-space: pre-line;
+
+  @include media-breakpoint-down(md) {
+    font-size: 12px;
+    line-height: 14px;
   }
 }

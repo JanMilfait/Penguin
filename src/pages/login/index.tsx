@@ -1,62 +1,22 @@
-import { useLoginMutation } from 'features/auth/authSlice';
 import type { NextPage } from 'next';
-import Link from 'next/link';
-import { useState } from 'react';
-import Router from 'next/router';
 import { wrapper } from '../../app/store';
 import { authenticateUnprotected } from '../../app/ssr/initialFunctions';
-import { setCookie } from 'cookies-next';
-import { hasErrMessage } from 'app/helpers/errorHandling';
+import LoginForm from 'features/auth/LoginForm';
+import Logo from '../../components/Logo';
+import s from '../../styles/6_components/SignForm.module.scss';
 
 const Login: NextPage = () => {
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [login, { isSuccess, isError, error }] = useLoginMutation();
-
-
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
-    if (!email || !password) {
-      // dispatch modal error
-      return;
-    }
-    const response = await login({email, password});
-
-    if ('data' in response && 'token' in response.data) {
-      setCookie('token', response.data.token);
-      Router.push('/');
-    }
-  };
-
-
-  let message = null;
-  if (isSuccess) {
-    message = <p>You have been logged in.</p>;
-  }
-  if (isError) {
-    message = <p>{hasErrMessage(error) ? error.data.message : 'There was an error logging in.'}</p>;
-  }
-
   return (
-    <div className="container">
-      <h1 className="text-center">
-        Login
-      </h1>
-      {message}
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="email">Email address</label>
-          <input type="email" className="form-control" id="email" aria-describedby="email" placeholder="Enter email" onChange={(e) => setEmail(e.target.value)} />
+    <div className={s.signForm}>
+      <div className="container">
+        <div className="row">
+          <div className="col-12 col-lg-6 offset-lg-3">
+            <Logo width={100} height={100} />
+            <LoginForm />
+          </div>
         </div>
-        <div className="form-group">
-          <label htmlFor="password">Password</label>
-          <input type="password" className="form-control" id="password" placeholder="Password" onChange={(e) => setPassword(e.target.value)} />
-        </div>
-        <button type="submit" className="btn btn-primary">Login</button>
-      </form>
-      <Link href="/login/reset">reset password</Link>
-      <Link href="/register">register</Link>
+      </div>
     </div>
   );
 };

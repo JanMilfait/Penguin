@@ -7,24 +7,24 @@ import { appendDatesToMessages } from 'app/helpers/helpers';
 
 export const ChatApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getSidebarFriends: builder.query<T.friendsResult, T.friendsArg>({
+    getSidebarFriends: builder.query<T.FriendsResult, T.FriendsArg>({
       query: ({id, page, limit}) => '/api/friends/' + id + '?page=' + page + '&limit=' + limit,
       providesTags: (result) =>
         result
           ? [...result.items.map(({id}) => ({type: 'SidebarFriend' as const, id})), 'SidebarFriend']
           : ['SidebarFriend']
     }),
-    getChat: builder.query<T.chatResult, T.chatArg>({
+    getChat: builder.query<T.ChatResult, T.ChatArg>({
       query: ({id}) => '/api/chat/' + id,
       keepUnusedDataFor: 0,
-      transformResponse: (response: T.chatResult) => {
+      transformResponse: (response: T.ChatResult) => {
         response.scrollToBottom = 1;
         return response;
       }
     }),
-    getMessages: builder.query<T.messagesResult, T.messagesArg>({
+    getMessages: builder.query<T.MessagesResult, T.MessagesArg>({
       query: ({id, page, limit}) => '/api/chat/' + id + '/messages?page=' + page + '&limit=' + limit,
-      transformResponse: (response: T.messagesResult) => {
+      transformResponse: (response: T.MessagesResult) => {
         response.items.map((message) => {
           const prevMessage = response.items[response.items.indexOf(message) - 1];
           return appendDatesToMessages(prevMessage, message);
@@ -36,7 +36,7 @@ export const ChatApi = apiSlice.injectEndpoints({
           ? [...result.items.map(({id}) => ({type: 'Message' as const, id})), {type: 'Message' as const, id: 'Page' + arg.id + '-' + arg.page}, 'Message']
           : [{type: 'Message' as const, id: 'Page' + arg.id + '-' + arg.page}, 'Message']
     }),
-    sendMessage: builder.mutation<T.messageResult, T.sendMessageArg>({
+    sendMessage: builder.mutation<T.MessageResult, T.SendMessageArg>({
       query: ({id, body, image}) => ({
         url: '/api/chat/' + id + '/message',
         method: 'POST',
@@ -166,6 +166,11 @@ export const {
   minimizeChat,
   deactivateChat
 } = ChatSlice.actions;
+
+export const isSomeChatActive = createSelector(
+  (state: AppState) => state.chat.activeChats,
+  (activeChats) => activeChats.length > 0
+);
 
 export const getActiveChat = createSelector(
   (state: AppState) => state.chat.activeChats,

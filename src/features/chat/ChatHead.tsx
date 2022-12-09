@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { DashCircle, DashCircleFill, XCircle, XCircleFill, ThreeDots } from 'react-bootstrap-icons';
 import {deactivateChat, minimizeChat} from './chatSlice';
 import { Roboto } from '@next/font/google';
-import Modal from '../../components/Modal';
+import ToggleModal from '../../components/ToggleModal';
 
 const roboto = Roboto({weight: ['400', '500', '700']});
 
@@ -72,7 +72,7 @@ const ChatHead = ({id, chat}: {id: number, chat: Chat}) => {
         </div>
       </div>
       <div className={s.activeChats__settings}>
-        <Modal toggle={<ThreeDots size={18} />} modal={
+        <ToggleModal toggle={<ThreeDots size={18} />} modal={
           <ul className={sd.dropdown + ' ' + roboto.className}>
             <li><a>Add to chat</a></li>
             <li className="text-danger"><a>Delete chat</a></li>

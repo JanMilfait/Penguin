@@ -2,7 +2,13 @@ import { SerializedError } from '@reduxjs/toolkit';
 
 export type ApiError = {data: ErrorMessage} | SerializedError | undefined;
 
-export const hasErrMessage = (error: ApiError ): error is {data: ErrorMessage} => {
-  if (error === undefined) return false;
-  return 'data' in error && 'message' in error.data;
+export const hasErrMessage = (error: ApiError, validationType = ''): error is {data: ErrorMessage} => {
+  if (!error || !('data' in error) || !('message' in error.data)) return false;
+
+  if (validationType) {
+    if (!error.data.validationErrors || !error.data.validationErrors[validationType]) {
+      return false;
+    }
+  }
+  return true;
 };

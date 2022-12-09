@@ -2,11 +2,25 @@
 
 namespace App\Exceptions;
 
+use App\Http\Helpers;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
 class Handler extends ExceptionHandler
 {
+    use Helpers;
+
+    private array $transformValidationException = [
+        [
+            'password', // current key
+            'The password confirmation does not match.', // value
+            'password_confirmation' // new key
+        ]
+    ];
+
+
     /**
      * A list of exception types with their corresponding custom log levels.
      *
@@ -45,10 +59,17 @@ class Handler extends ExceptionHandler
     {
         $this->renderable(function (Throwable $e) {
 
-            if ($e instanceof \Symfony\Component\HttpKernel\Exception\NotFoundHttpException) {
+            if ($e instanceof NotFoundHttpException) {
                 return response()->json([
                     'message' => $e->getMessage() ?: 'Nothing found',
                 ], 404);
+            }
+
+            if ($e instanceof ValidationException) {
+                return response()->json([
+                    'message' => $e->getMessage() ?: 'Validation failed',
+                    'validationErrors' => $this->transformValidationKey($e->errors(), $this->transformValidationException),
+                ], 422);
             }
 
             return response()->json([

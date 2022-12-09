@@ -1,9 +1,9 @@
 import {RefObject, useEffect, useState } from 'react';
 
 /**
- * Hook to handle modal state and events
+ * Hook to handle toggle modal state and events
  */
-export const useModal = (containerRef: RefObject<HTMLDivElement>, toggleRef: RefObject<HTMLDivElement>) => {
+export const useToggleModal = (containerRef: RefObject<HTMLDivElement>, toggleRef: RefObject<HTMLDivElement>) => {
   const [isOpenModal, setIsOpenModal] = useState(false);
 
 

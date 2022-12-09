@@ -18,7 +18,9 @@ const SearchResults = () => {
   const { updateScroll } = usePerfectScrollbar(modalRef);
 
   const dispatch = useDispatch<AppDispatch>();
-  const { text, page, debounced } = useSelector((state: AppState) => state.search);
+  const text = useSelector((state: AppState) => state.search.text);
+  const debounced = useSelector((state: AppState) => state.search.debounced);
+  const page = useSelector((state: AppState) => state.search.page);
   const [trigger, { data, isError, isFetching, isSuccess }] = useLazyFetchSearchQuery();
 
 

@@ -1,11 +1,11 @@
-import { useModal } from 'app/hooks/useModal';
+import { useToggleModal } from 'app/hooks/useToggleModal';
 import React from 'react';
 
-const Modal = ({toggle, modal}: {toggle: React.ReactNode, modal: React.ReactNode}) => {
+const ToggleModal = ({toggle, modal}: {toggle: React.ReactNode, modal: React.ReactNode}) => {
   const containerRef = React.useRef<HTMLDivElement>(null);
   const toggleRef = React.useRef<HTMLDivElement>(null);
 
-  const {isOpenModal} = useModal(containerRef, toggleRef);
+  const {isOpenModal} = useToggleModal(containerRef, toggleRef);
 
   return (
     <div className="position-relative">
@@ -17,4 +17,4 @@ const Modal = ({toggle, modal}: {toggle: React.ReactNode, modal: React.ReactNode
   );
 };
 
-export default Modal;
+export default ToggleModal;

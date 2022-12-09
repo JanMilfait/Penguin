@@ -1,14 +1,5 @@
 import {User} from '../auth/authSlice.types';
 
-export type Friend = {
-  id: User['id'];
-  name: User['name'];
-  avatar_name: User['avatar_name'];
-  avatar_url: User['avatar_url'];
-  is_active?: 1 | 0;
-}
-
-
 export type Chat = {
   id: number;
   type: 'friend' | 'group';
@@ -17,6 +8,14 @@ export type Chat = {
   updated_at: string;
   users: Friend[];
   scrollToBottom?: number;
+}
+
+export type Friend = {
+  id: User['id'];
+  name: User['name'];
+  avatar_name: User['avatar_name'];
+  avatar_url: User['avatar_url'];
+  is_active?: 1 | 0;
 }
 
 export type Message = {
@@ -29,31 +28,31 @@ export type Message = {
   formattedDate?: string;
 }
 
-export type friendsResult = {
+export type FriendsResult = {
   items: Friend[];
   page: number;
   total: number;
   limit: number;
 }
 
-export type friendsArg = {id: number, page: number, limit: number};
+export type FriendsArg = {id: number, page: number, limit: number};
 
-export type chatResult = Chat;
+export type ChatResult = Chat;
 
-export type chatArg = {id: number};
+export type ChatArg = {id: number};
 
-export type messagesResult = {
+export type MessagesResult = {
   items: Message[];
   page: number;
   total: number;
   limit: number;
 }
 
-export type messagesArg = {id: number, page: number, limit: number};
+export type MessagesArg = {id: number, page: number, limit: number};
 
-export type messageResult = Message;
+export type MessageResult = Message;
 
-export type sendMessageArg = {id: number, userId: number, body?: string, image?: FormData};
+export type SendMessageArg = {id: number, userId: number, body?: string, image?: FormData};
 
 export type ChatState = {
   activeChats: Chat[];

@@ -19,15 +19,16 @@ function MyApp({ Component, ...rest }: AppProps) {
    * Detect if the user is on a mobile device (first dispatch - ssr init)
    */
   useEffect(() => {
-    const handleResize = () => {
+    const handleResize = debounce(() => {
       if (window.innerWidth < 768) {
         store.dispatch(setIsMobile(true));
       } else if (window.innerWidth >= 768) {
         store.dispatch(setIsMobile(false));
       }
-    };
-    window.addEventListener('resize', debounce(handleResize, 500));
-    handleResize();
+    }, 500);
+
+    window.addEventListener('resize', handleResize);
+    handleResize(); // ssr already guessed the device type, but viewport width is not available on the server
     return () => {
       window.removeEventListener('resize', handleResize);
     };
@@ -50,10 +51,12 @@ function MyApp({ Component, ...rest }: AppProps) {
         <meta name="theme-color" content="#ffffff" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
-      <main className={roboto.className}>
-        <Component {...props.pageProps} />
-      </main>
-      <ComponentShared />
+      <div className={roboto.className}>
+        <main>
+          <Component {...props.pageProps} />
+        </main>
+        <ComponentShared />
+      </div>
     </Provider>
   );
 }

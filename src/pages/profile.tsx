@@ -2,10 +2,10 @@ import type {NextPage} from 'next';
 import Link from 'next/link';
 import {useSelector} from 'react-redux';
 import {AppState, wrapper} from '../app/store';
-import {authenticate, getSidebarFriends, init} from '../app/ssr/initialFunctions';
+import {authenticate, init} from '../app/ssr/initialFunctions';
 
 const Profile: NextPage = () => {
-  const {token} = useSelector((state: AppState) => state.auth);
+  const token = useSelector((state: AppState) => state.auth.token);
 
   return (
     <div className="container">

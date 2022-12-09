@@ -1,12 +1,16 @@
-import {AppDispatch, AppState } from 'app/store';
+import dynamic from 'next/dynamic';
 import React from 'react';
-import {useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
+import {AppState} from '../../app/store';
 
 const ComponentShared = () => {
-  const dispatch = useDispatch<AppDispatch>();
+
+  const isModalOpen = useSelector((state: AppState) => state.root.modal.isOpen);
+  const Modal = dynamic(() => import('./Modal'), { ssr: false }); // TODO: FIX THIS WTFFFFF
 
   return (
     <>
+      {isModalOpen && <Modal />}
     </>
   );
 };

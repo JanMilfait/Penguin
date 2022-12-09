@@ -19,4 +19,33 @@ trait Helpers
             'message' => $message,
         ], $status);
     }
+
+
+
+    public function transformValidationKey($errors, $transform)
+    {
+        foreach ($transform as $transformItem) {
+            $currentKey = $transformItem[0];
+            $value = $transformItem[1];
+            $newKey = $transformItem[2];
+
+            // array_key_exists() - constant time
+            if (array_key_exists($currentKey, $errors)) {
+                foreach ($errors[$currentKey] as $key => $message) {
+                    if ($message === $value) {
+                        $errors[$newKey][] = $message;
+
+                        unset($errors[$currentKey][$key]);
+                        if (empty($errors[$currentKey])) {
+                            unset($errors[$currentKey]);
+                        } else {
+                            $errors[$currentKey] = array_values($errors[$currentKey]);
+                        }
+                    }
+                }
+            }
+        }
+
+        return $errors;
+    }
 }

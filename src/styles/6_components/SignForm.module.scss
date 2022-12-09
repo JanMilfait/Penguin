@@ -1,0 +1,52 @@
+@import "variables";
+
+.signForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+
+  img {
+    display: block;
+    margin: -80px auto 24px;
+  }
+
+  form {
+    max-width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    border-radius: 10px;
+    background: $secondary;
+    box-shadow: 0 0 10px 0 rgb(0 0 0 / 25%);
+  }
+
+  h3 {
+    margin-bottom: 0;
+    padding: 4px 0 10px;
+    text-align: center;
+  }
+
+  input {
+    margin-top: 12px;
+  }
+
+  button {
+    margin-top: 12px;
+  }
+
+  &__links {
+    display: flex;
+    justify-content: center;
+    padding: 20px 0 2px;
+
+    a {
+      margin-right: 5px;
+
+      &:last-child {
+          margin-right: 0;
+      }
+    }
+  }
+}

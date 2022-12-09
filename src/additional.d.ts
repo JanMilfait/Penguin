@@ -1,1 +1,4 @@
-type ErrorMessage = { message: string }
+type ErrorMessage = {
+  message: string
+  validationErrors?: { [key: string]: string[] }
+}
