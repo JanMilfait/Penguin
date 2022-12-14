@@ -67,6 +67,8 @@ class UserController extends Controller
             'address' => ['string', 'max:100','nullable'],
             'nationality' => ['string', 'max:100','nullable'],
             'skills' => ['array', 'nullable'],
+        ], [
+            'avatar.dimensions' => 'The avatar must be at least 200x200 pixels.',
         ]);
 
         $user = $request->user();
@@ -106,6 +108,8 @@ class UserController extends Controller
     {
         $request->validate([
             'avatar' => ['required', 'image', 'max:2048', 'dimensions:min_width=200,min_height=200'],
+        ], [
+            'avatar.dimensions' => 'The avatar must be at least 200x200 pixels.',
         ]);
 
         $user = $request->user();

@@ -8,6 +8,8 @@ import ModalConfirm from './ModalConfirm';
 import ModalForm from './ModalForm';
 import ModalPrompt from './ModalPrompt';
 import { XCircle, XCircleFill, CheckCircleFill, XOctagonFill, ExclamationTriangleFill, InfoCircleFill, QuestionCircleFill  } from 'react-bootstrap-icons';
+import ModalReactions from 'features/post/ModalReactions';
+import ModalSharing from 'features/post/ModalSharing';
 
 const Modal = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -39,14 +41,14 @@ const Modal = () => {
         dispatch(setCloseModal(null));
       }
     };
-    document.addEventListener('click', handleClickOutside);
+    setTimeout(() => document.addEventListener('click', handleClickOutside), 200);
     return () => {
       document.removeEventListener('click', handleClickOutside);
     };
   }, [clickOutside, modalContent]);
 
 
-  if (!type) return;
+  if (!type) return null;
 
   const iconMap = {
     success: <CheckCircleFill className="text-success" />,
@@ -68,6 +70,8 @@ const Modal = () => {
           {type === 'confirm' && <ModalConfirm />}
           {type === 'prompt' && <ModalPrompt />}
           {type === 'form' && <ModalForm />}
+          {type === 'reactions' && <ModalReactions />}
+          {type === 'sharing' && <ModalSharing />}
         </div>
       </div>
     </div>

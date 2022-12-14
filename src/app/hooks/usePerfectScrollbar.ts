@@ -4,12 +4,14 @@ import {RefObject, useEffect, useState } from 'react';
 /**
  * Hook to initialize and update PerfectScrollbar on a ref
  */
-const usePerfectScrollbar = (ref: RefObject<HTMLElement>, options?: PerfectScrollbar.Options) => {
+const usePerfectScrollbar = (ref: RefObject<HTMLElement>, options?: PerfectScrollbar.Options, timeout = 0) => {
   const [ps, setPs] = useState<PerfectScrollbar | null>(null);
 
   useEffect(() => {
     if (ref.current) {
-      setPs(new PerfectScrollbar(ref.current, options));
+      timeout
+        ? setTimeout(() => setPs(new PerfectScrollbar(ref.current as HTMLElement, options)), timeout)
+        : setPs(new PerfectScrollbar(ref.current, options));
     }
 
     return () => {

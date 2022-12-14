@@ -1,4 +1,5 @@
 import {BaseQueryFn, createApi, FetchArgs, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
+import { ErrorMessage } from 'app/helpers/errorHandling';
 import { AppState } from 'app/store';
 
 export const apiSlice = createApi({
@@ -7,7 +8,8 @@ export const apiSlice = createApi({
     'SearchResult',
     'SidebarFriend',
     'Chat',
-    'Message'
+    'Message',
+    'Post'
   ],
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.NEXT_PUBLIC_API_BASE_URL,

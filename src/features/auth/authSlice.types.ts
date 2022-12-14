@@ -1,8 +1,6 @@
-export type UserData = {
-  id: User['id'];
-  name: User['name'];
-  avatar_name: User['avatar_name'];
-  avatar_url: User['avatar_url'];
+import { ErrorMessage } from 'app/helpers/errorHandling';
+
+export type UserData = User & {
   email: string;
   is_active?: 1 | 0;
   profile_visibility: 'private' | 'friends' | 'public';
@@ -50,7 +48,7 @@ export type RegisterArg = {
 
 export type LogoutResult = { message: string } | ErrorMessage
 
-export type ForgotPasswordResult = { message: string } | ErrorMessage
+export type ForgotPasswordResult = { status: string } | ErrorMessage
 
 export type ForgotPasswordArg = { email: string } | ErrorMessage
 

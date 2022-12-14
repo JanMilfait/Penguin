@@ -61,4 +61,15 @@ button {
     padding-right: 0;
     padding-left: 0;
   }
+
+  &--grayed {
+    background: $back-darker;
+    color: $text-gray;
+    cursor: default;
+
+    &:hover {
+      opacity: 0.8;
+      background: $back-darker;
+    }
+  }
 }

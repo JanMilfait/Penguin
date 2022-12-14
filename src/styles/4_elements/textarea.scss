@@ -12,3 +12,8 @@ textarea {
     color: $text-gray;
   }
 }
+
+.isInvalidTextarea {
+  padding: 14px;
+  border: 1px solid $red;
+}

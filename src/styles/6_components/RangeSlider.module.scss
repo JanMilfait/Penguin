@@ -1,0 +1,25 @@
+@import "variables";
+
+.rangeSlider {
+  display: flex;
+  align-items: center;
+  height: 100%;
+
+  input {
+    height: 4px;
+    padding: 0;
+    border-radius: 0;
+    background: $button;
+    box-shadow: none;
+    appearance: none;
+
+    &::-webkit-slider-thumb {
+      width: 15px;
+      height: 15px;
+      border-radius: 50%;
+      background: $primary;
+      cursor: pointer;
+      appearance: none;
+    }
+  }
+}

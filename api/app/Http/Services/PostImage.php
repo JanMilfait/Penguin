@@ -15,19 +15,32 @@ class PostImage
      */
     public static function save($image)
     {
-        $imageName = Str::uuid() . '.jpg';
+        $isGif = Str::contains($image->getMimeType(), 'gif');
+
+        $imageName = Str::uuid() . ($isGif ? '.gif' : '.jpg');
         $imagesPath = public_path('storage/posts/images/');
+        $placeholderPath = public_path('storage/posts/images/placeholder/');
 
         if (!file_exists($imagesPath)) {
             mkdir($imagesPath, 0775, true);
         }
 
-        try {
-            $imageOriginal = Image::make($image)->encode('jpg');
-            $image600 = Image::make($image)->widen(600)->encode('jpg', 80);
+        if (!file_exists($placeholderPath)) {
+            mkdir($placeholderPath, 0775, true);
+        }
 
-            $imageOriginal->save($imagesPath . $imageName);
-            $image600->save($imagesPath . '600_' . $imageName);
+        try {
+            if ($isGif) {
+                $image->move($imagesPath, $imageName);
+            } else {
+                $imageOriginal = Image::make($image);
+                $imageOriginal->save($imagesPath . $imageName, 90, 'jpg');
+
+                $image700 = Image::make($image)->widen(700);
+                $image700->save($imagesPath . '700_' . $imageName, 90, 'jpg');
+                $image700->pixelate(10);
+                $image700->save($placeholderPath . '700_' . $imageName, 0, 'jpg');
+            }
 
             return [
                 'name' => $imageName,
@@ -55,8 +68,8 @@ class PostImage
             unlink($imagesPath . $imageName);
         }
 
-        if (file_exists($imagesPath . '600_' . $imageName)) {
-            unlink($imagesPath . '600_' . $imageName);
+        if (file_exists($imagesPath . '700_' . $imageName)) {
+            unlink($imagesPath . '700_' . $imageName);
         }
 
         return true;

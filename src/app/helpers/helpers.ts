@@ -1,5 +1,6 @@
 import * as T from '../../features/chat/chatSlice.types';
 import {UserData} from '../../features/auth/authSlice.types';
+import { Reaction } from 'features/post/postSlice.types';
 
 export const appendDatesToMessages = (prevMessage: T.Message, newMessage: T.Message, inactivityTime = 300000) => {
   if (!prevMessage) {
@@ -28,7 +29,7 @@ export const formatMessageTime = (createdAt: string) => {
 };
 
 export const calculateUserCompletion = (user: UserData) => {
-  const profile = {avatar: user.avatar_name || null, skills: user.skills.length || null, ...user.profile};
+  const profile = {avatar: user.avatar_name || null, skills: user.skills?.length || null, ...user.profile};
   const optionalData = ['avatar', 'address', 'age', 'description', 'nationality', 'telephone', 'skills'] as const;
   let count = 0;
   const result = {
@@ -45,6 +46,30 @@ export const calculateUserCompletion = (user: UserData) => {
   result.percent = Math.round((count / optionalData.length) * 100);
 
   return result;
+};
+
+export const getMostUsedReaction = (reactions: Reaction[]): number => {
+  const counts = new Map<number, number>();
+  reactions.forEach((reaction) => {
+    const count = counts.get(reaction.reaction) || 0;
+    counts.set(reaction.reaction, count + 1);
+  });
+  let mostUsedReaction = 1000;
+  let mostUsedCount = -1;
+  counts.forEach((count, reaction) => {
+    if (count > mostUsedCount || (count === mostUsedCount && reaction < mostUsedReaction)) {
+      mostUsedReaction = reaction;
+      mostUsedCount = count;
+    }
+  });
+  return mostUsedReaction;
+};
+
+export const roundCount = (count: number) => {
+  if (count > 1000) {
+    return `${Math.round(count / 100) / 10}k`;
+  }
+  return count;
 };
 
 export const sleep = (ms: number) => {

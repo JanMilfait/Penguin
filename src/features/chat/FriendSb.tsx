@@ -6,20 +6,20 @@ import { AppDispatch } from '../../app/store';
 import { useDispatch } from 'react-redux';
 import React from 'react';
 
-export const FriendSb = ({friend}: {friend: Friend}) => {
+export const FriendSb = ({id, name, is_active, avatar_url, avatar_name}: Friend) => {
   const dispatch = useDispatch<AppDispatch>();
 
   return (
     <>
       <div className={s.friendsSideBar__friend}
-        data-tip={friend.name}
+        data-tip={name}
         data-for="friendTooltip"
       >
-        {friend.is_active
+        {is_active
           ? <div className={s.friendsSideBar__online} ></div>
           : <div className={s.friendsSideBar__offline} ></div>
         }
-        <Avatar user={friend} size={50} onClick={()=>dispatch(activateChat({id: friend.id}))} />
+        <Avatar {...{id, name, avatar_url, avatar_name}} size={50} onClick={()=>dispatch(activateChat({id: id}))} />
       </div>
     </>
   );

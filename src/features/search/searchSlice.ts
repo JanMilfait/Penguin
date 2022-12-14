@@ -5,9 +5,7 @@ import * as T from './searchSlice.types';
 export const SearchApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     fetchSearch: builder.query<T.SearchResult, T.SearchArg>({
-      query: ({text, page}) => 'api/search?text=' + text + '&page=' + page,
-      providesTags: (result) =>
-        result ? [...result.items.map(({id}) => ({type: 'SearchResult' as const, id})), 'SearchResult'] : ['SearchResult']
+      query: ({text, page}) => 'api/search?text=' + text + '&page=' + page
     })
   })
 });

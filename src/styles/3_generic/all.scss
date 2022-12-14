@@ -5,7 +5,11 @@
 }
 
 .svg-fill-primary {
-  fill: #06c0d9;
+  fill: #06c0d9 !important;
+}
+
+.react-player__preview {
+  aspect-ratio: 16/9;
 }
 
 .__react_component_tooltip {
@@ -30,4 +34,63 @@
 
 [data-rmiz-modal-overlay="visible"] {
   background-color: rgb(255 255 255 / 80%) !important;
+}
+
+[data-rmiz-modal-content] {
+  img {
+    user-select: none;
+  }
+}
+
+.toggleModal-open {
+  .rotate-90 {
+    svg {
+      transform: rotate(-90deg);
+    }
+  }
+}
+
+.f--medium {
+  font-size: 18px !important;
+  line-height: 22px !important;
+
+  @include media-breakpoint-down(md) {
+    font-size: 16px !important;
+    line-height: 20px !important;
+  }
+
+  @include media-breakpoint-down(sm) {
+    font-size: 14px !important;
+    line-height: 18px !important;
+  }
+}
+
+.f--small {
+  font-size: 16px !important;
+  line-height: 20px !important;
+
+  @include media-breakpoint-down(md) {
+    font-size: 14px !important;
+    line-height: 18px !important;
+  }
+}
+
+.f--x-small {
+  font-size: 14px !important;
+  line-height: 18px !important;
+
+    @include media-breakpoint-down(md) {
+        font-size: 12px !important;
+        line-height: 16px !important;
+    }
+}
+
+.f--xx-small {
+  font-size: 12px !important;
+  line-height: 16px !important;
+
+    @include media-breakpoint-down(md) {
+        font-size: 10px !important;
+        line-height: 14px !important;
+    }
 }

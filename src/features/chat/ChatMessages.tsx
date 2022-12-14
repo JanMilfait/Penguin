@@ -8,18 +8,28 @@ import MessageMe from './MessageMe';
 import MessageOther from './MessageOther';
 import MessageDate from './MessageDate';
 import useLazyInfiniteData from '../../app/hooks/useLazyInfiniteData';
+import {AppState} from '../../app/store';
+import { useSelector } from 'react-redux';
 
 const ChatMessages = ({id, chat}: {id: number, chat: Chat}) => {
   // PerfectScrollbar
   const containerRef = useRef<HTMLDivElement>(null);
   const scrollToRef = useRef<HTMLDivElement>(null);
   const [oldScrollHeight, setOldScrollHeight] = React.useState(0);
-  const { updateScroll, scrollTop } = usePerfectScrollbar(containerRef, {suppressScrollX: true, minScrollbarLength: 50});
+  const timeout = useSelector((state: AppState) => state.chat.animation.time);
+  const infiniteScrollSync = useSelector((state: AppState) => state.chat.infiniteScrollSync);
+  const { updateScroll, scrollTop } = usePerfectScrollbar(containerRef, {suppressScrollX: true, minScrollbarLength: 50, wheelPropagation: false}, timeout);
 
   const [lastMessageId, setLastMessageId] = React.useState(0);
   const [firstMessagesRendered, setFirstMessagesRendered] = React.useState(false);
-  const { combinedData, hasMore, loadMore } = useLazyInfiniteData({api: ChatApi, apiEndpointName: 'getMessages', apiArgs: {id: chat.id}, limit: 20});
+  const { combinedData, loadMore, syncDataAndCache } = useLazyInfiniteData({api: ChatApi, apiEndpointName: 'getMessages', apiArgs: {id: chat.id}, limit: 20});
 
+
+  useEffect(() => {
+    if (infiniteScrollSync) {
+      syncDataAndCache();
+    }
+  }, [infiniteScrollSync]);
 
   /**
    * Whenever image is loaded inside chat, scroll by the height of the image to prevent disorientation
@@ -79,7 +89,7 @@ const ChatMessages = ({id, chat}: {id: number, chat: Chat}) => {
 
     // Reverse infinite scroll must be throttled, otherwise client might hold cursor on top of container and get server timeout
     const throttled = throttle(() => {
-      hasMore && loadMore(true);
+      loadMore(true);
       setOldScrollHeight(container.scrollHeight);
     }, 500, {trailing: false});
 
@@ -113,7 +123,7 @@ const ChatMessages = ({id, chat}: {id: number, chat: Chat}) => {
               { message.showDate && <MessageDate date={message.formattedDate} /> }
               { message.user_id === id
                 ? <MessageMe body={message.body} img={message.image_url} />
-                : <MessageOther user={users[message.user_id]} body={message.body} img={message.image_url} />
+                : <MessageOther {...users[message.user_id]} body={message.body} img={message.image_url} />
               }
             </div>
           ))}

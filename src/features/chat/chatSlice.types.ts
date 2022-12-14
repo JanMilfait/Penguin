@@ -28,18 +28,11 @@ export type Message = {
   formattedDate?: string;
 }
 
-export type FriendsResult = {
-  items: Friend[];
-  page: number;
-  total: number;
-  limit: number;
-}
-
-export type FriendsArg = {id: number, page: number, limit: number};
-
 export type ChatResult = Chat;
-
 export type ChatArg = {id: number};
+
+export type DeleteChatResult = {message: string};
+export type DeleteChatArg = {id: number};
 
 export type MessagesResult = {
   items: Message[];
@@ -48,17 +41,26 @@ export type MessagesResult = {
   limit: number;
 }
 
+export type MessageResult = Message;
 export type MessagesArg = {id: number, page: number, limit: number};
 
-export type MessageResult = Message;
-
 export type SendMessageArg = {id: number, userId: number, body?: string, image?: FormData};
+
+export type AddParticipantResult = {message: string};
+export type AddParticipantArg = {id: number, userId: number};
+
+export type RemoveParticipantResult = {message: string};
+export type RemoveParticipantArg = {id: number, userId: number};
 
 export type ChatState = {
   activeChats: Chat[];
   openedChats: number[];
   openedEmojiPicker: number[];
   openedGiphyPicker: number[];
-  closeAnimationTimeout: number;
   expandChats: boolean;
+  animation: {
+    time: number,
+    closeTimeout: number
+  };
+  infiniteScrollSync: number;
 };

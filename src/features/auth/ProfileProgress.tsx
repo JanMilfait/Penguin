@@ -8,12 +8,12 @@ import Link from 'next/link';
 import { calculateUserCompletion } from '../../app/helpers/helpers';
 
 const ProfileProgress = () => {
-  const user = useSelector((state: AppState) => state.auth.data);
+  const user = useSelector((state: AppState) => state.auth.data!);
   const {percent} = calculateUserCompletion(user!);
 
   return (
     <div className={s.profileProgress}>
-      <div className={s.profileProgress__image}><Avatar user={user} size={130} /></div>
+      <div className={s.profileProgress__image}><Avatar {...user} size={130} /></div>
       <div className={s.profileProgress__content}>
         <div className={s.profileProgress__text}>
           <h3 className="text-truncate mb-0">{user?.name}</h3>

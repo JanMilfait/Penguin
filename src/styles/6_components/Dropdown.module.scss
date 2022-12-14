@@ -14,6 +14,14 @@
   box-shadow: 0 2px 2px rgb(0 0 0 / 25%);
   cursor: default;
 
+  & > li {
+    margin-bottom: 1px;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
   & > li > a {
     display: block;
     width: 100%;
@@ -27,6 +35,16 @@
       border-radius: 5px;
       background: $back-darker;
       text-decoration: none;
+    }
+  }
+
+  &__active {
+    border-radius: 5px;
+    background: $primary;
+    color: #fff !important;
+
+    &:hover {
+      background: $primary !important;
     }
   }
 }

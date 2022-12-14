@@ -7,8 +7,10 @@ use App\Http\Services\PostMetadata;
 use App\Http\Services\PostVideo;
 use App\Models\Post\Post;
 use App\Models\User\User;
+use Cache;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class PostController extends Controller
 {
@@ -20,18 +22,44 @@ class PostController extends Controller
      */
     public  function feed (Request $request)
     {
-        $posts = Post::where('user_id', $request->user()->id)
-            ->orWhereIn('user_id', $request->user()->friends()->pluck('user_b'))
-            ->latest('updated_at')
-            ->offset($request->get('offset') ?? 0)
-            ->limit($request->get('limit') ?? 3)
+        $page = (int) $request->get('page', 1);
+        $limit = (int) $request->get('limit', 6);
+        $offset = ($page - 1) * $limit;
+
+        $category = $request->get('category', 'latest');
+        $media = $request->get('media', 'all');
+
+        $posts = Post::whereIn('user_id', $request->user()->friends()->pluck('user_b')->push($request->user()->id));
+
+        if ($category === 'shared') {
+            $posts->has('sharings');
+
+        } elseif ($category === 'trending') {
+            $posts->orderBy('interaction_score', 'desc')
+                ->where('created_at', '>=', now()->subDays($request->get('trending-days', 7)));
+        }
+
+        if ($media === 'photo') {
+            $posts->has('image');
+
+        } elseif ($media === 'video') {
+            $posts->has('video');
+        }
+
+        $posts = $posts->latest('updated_at')
+            ->limit($limit)
+            ->offset($offset)
             ->get();
 
-        $posts = $posts->map(function ($post) {
+        $posts->map(function ($post) {
             return PostMetadata::append($post);
         });
 
-        return response()->json($posts);
+        return response()->json([
+            'items' => $posts,
+            'page' => $page,
+            'limit' => $limit
+        ]);
     }
 
     /**
@@ -43,16 +71,27 @@ class PostController extends Controller
      */
     public function index(Request $request, User $user)
     {
-        $posts = $user->posts()->latest('updated_at')
-            ->offset($request->get('offset') ?? 0)
-            ->limit($request->get('limit') ?? 3)
-            ->get();
+        $page = (int) $request->get('page', 1);
+        $limit = (int) $request->get('limit', 6);
+        $offset = ($page - 1) * $limit;
+
+        $posts = Cache::remember('posts:user:' . $user->id . ':page:' . $page, 86400, function () use ($user, $limit, $offset) {
+            return $user->posts()
+                ->latest('updated_at')
+                ->limit($limit)
+                ->offset($offset)
+                ->get();
+        });
 
         $posts->map(function ($post) {
             return PostMetadata::append($post);
         });
 
-        return response()->json($posts);
+        return response()->json([
+            'items' => $posts,
+            'page' => $page,
+            'limit' => $limit
+        ]);
     }
 
 
@@ -64,11 +103,29 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
+        if ($request->user()->posts()->where('created_at', '>=', now()->subHours())->count() >= 3) {
+            return response()->json([
+                'message' => 'You can\'t add more than 3 posts per hour.',
+                'validationErrors' => [
+                    'body' => ['You can\'t add more than 3 posts per hour.']
+                ]
+            ], 403);
+        }
+
         $request->validate([
             'body' => ['required', 'string', 'max:65535'],
-            'image' => ['nullable', 'image', 'max:8192', 'dimensions:min_width=600,min_height=300'],
-            'video' => ['nullable', 'mimetypes:video/mp4,video/x-m4v,video/*', 'max:104857600'] // TODO: CHANGE MAX IN PRODUCTION
+            'image' => ['nullable', 'mimes:jpeg,png,jpg,gif,svg', 'dimensions:min_width=300,min_height=150', 'max:8192'],
+            'video' => ['nullable', 'mimes:mp4,mov,ogg,webm', 'max:104857600'] // TODO: CHANGE MAX IN PRODUCTION
+        ], [
+            'body.required' => 'Please enter some text of your post.',
+            'image.dimensions' => 'The image must be at least 300x150 pixels.'
         ]);
+
+        if ($request->hasFile('image') && $request->hasFile('video')) {
+            return response()->json([
+                'message' => 'Post can\'t have both image and video.'
+            ], 422);
+        }
 
         $post = $request->user()->posts()->create($request->only('body'));
 
@@ -86,7 +143,7 @@ class PostController extends Controller
         }
 
         if ($request->hasFile('video')) {
-            $response = PostVideo::save($request->file('video'), $post);
+            $response = PostVideo::save($request->file('video'));
 
             if (isset($response['error'])) {
                 return $this->jsonError($response['error'], 500);
@@ -94,9 +151,12 @@ class PostController extends Controller
 
             $post->video()->create([
                 'name' => $response['name'],
-                'url' => $response['url']
+                'url' => $response['url'],
+                'poster' => $response['poster']
             ]);
         }
+
+        $post = PostMetadata::append($post);
 
         return response()->json($post, 201);
     }
@@ -131,8 +191,10 @@ class PostController extends Controller
 
         $request->validate([
             'body' => ['string', 'max:65535'],
-            'image' => ['nullable', 'image', 'max:8192', 'dimensions:min_width=600,min_height=300'],
-            'video' => ['nullable', 'mimetypes:video/mp4,video/x-m4v,video/*', 'max:104857600']
+            'image' => ['nullable', 'mimes:jpeg,png,jpg,gif,svg', 'dimensions:min_width=300,min_height=150', 'max:8192'],
+            'video' => ['nullable', 'mimes:mp4,mov,ogg,webm', 'max:104857600'] // TODO: CHANGE MAX IN PRODUCTION
+        ], [
+            'image.dimensions' => 'The image must be at least 300x150 pixels.'
         ]);
 
         $post->update($request->only('body'));
@@ -171,7 +233,8 @@ class PostController extends Controller
                 'id' => $post->video->id ?? null
             ], [
                 'name' => $response['name'],
-                'url' => $response['url']
+                'url' => $response['url'],
+                'poster' => $response['poster']
             ]);
         }
 
@@ -244,7 +307,7 @@ class PostController extends Controller
      * @param Post    $post
      * @return JsonResponse
      */
-    public function store_reaction(Request $request, Post $post)
+    public function react(Request $request, Post $post)
     {
         $request->validate([
             'reaction' => ['required', 'integer', 'min:1', 'max:7'],
@@ -257,20 +320,18 @@ class PostController extends Controller
             'reaction' => $request->input('reaction')
         ]);
 
-        $post = PostMetadata::append($post);
-
-        return response()->json($post);
+        return response()->json(['message' => 'Reaction added successfully.']);
     }
 
 
     /**
-     * Remove reaction from post.
+     * Unreact post.
      *
      * @param Request $request
      * @param Post    $post
      * @return JsonResponse
      */
-    public function destroy_reaction(Request $request, Post $post)
+    public function unreact(Request $request, Post $post)
     {
         $post->reactions()->where([
             'post_id' => $post->id,
@@ -278,5 +339,109 @@ class PostController extends Controller
         ])->delete();
 
         return response()->json(['message' => 'Reaction deleted successfully.']);
+    }
+
+
+    /**
+     * Report post.
+     *
+     * @param Request $request
+     * @param Post    $post
+     * @return JsonResponse
+     */
+    public function report(Request $request, Post $post)
+    {
+        $request->validate([
+            'reason' => ['required', 'string', 'max:500']
+        ]);
+
+        if ($post->user_id === $request->user()->id) {
+            return $this->jsonError('Can\'t report your own post.', 403);
+        }
+
+        if ($post->reports()->where('user_id', $request->user()->id)->exists()) {
+            return $this->jsonError('Post is already reported and is being reviewed.', 403);
+        }
+
+        $post->reports()->firstOrCreate([
+            'post_id' => $post->id,
+            'user_id' => $request->user()->id,
+            'reason' => $request->input('reason')
+        ]);
+
+        return response()->json(['message' => 'Post reported successfully.']);
+    }
+
+
+    /**
+     * Video with range header support.
+     *
+     * @param $video
+     * @return JsonResponse | BinaryFileResponse
+     */
+    public function show_video($video)
+    {
+        $path = public_path('storage/posts/videos/' . $video);
+
+        if (!file_exists($path)) {
+            return $this->jsonError('Video not found.', 404);
+        }
+
+        /**
+         * If video is not mp4, return it as it is.
+         */
+        if (pathinfo($path, PATHINFO_EXTENSION) !== 'mp4') {
+            return response()->file($path);
+        }
+
+        $file = new \Symfony\Component\HttpFoundation\File\File($path);
+        $size = $file->getSize();
+        $time = date('r', filemtime($path));
+
+        $fm = @fopen($path, 'rb');
+        if (!$fm) {
+            header("HTTP/1.1 505 Internal server error");
+            return $this->jsonError('Internal server error', 500);
+        }
+
+        $begin = 0;
+        $end = $size - 1;
+
+        if (isset($_SERVER['HTTP_RANGE'])) {
+            if (preg_match('/bytes=\h*(\d+)-(\d*)[\D.*]?/i', $_SERVER['HTTP_RANGE'], $matches)) {
+                $begin = intval($matches[1]);
+                if (!empty($matches[2])) {
+                    $end = intval($matches[2]);
+                }
+            }
+        }
+
+        if (isset($_SERVER['HTTP_RANGE'])) {
+            header('HTTP/1.1 206 Partial Content');
+        } else {
+            header('HTTP/1.1 200 OK');
+        }
+
+        header("Content-Type: video/mp4");
+        header('Cache-Control: public, must-revalidate, max-age=0');
+        header('Pragma: no-cache');
+        header('Accept-Ranges: bytes');
+        header('Content-Length:' . (($end - $begin) + 1));
+        if (isset($_SERVER['HTTP_RANGE'])) {
+            header("Content-Range: bytes $begin-$end/$size");
+        }
+        header("Content-Disposition: inline; filename=$video");
+        header("Content-Transfer-Encoding: binary");
+        header("Last-Modified: $time");
+
+        $cur = $begin;
+        fseek($fm, $begin, 0);
+
+        while (!feof($fm) && $cur <= $end && (connection_status() == 0)) {
+            print fread($fm, min(1024 * 16, ($end - $cur) + 1));
+            $cur += 1024 * 16;
+        }
+
+        fclose($fm);
     }
 }

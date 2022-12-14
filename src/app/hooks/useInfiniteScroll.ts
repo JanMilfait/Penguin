@@ -1,66 +1,38 @@
-import { UseQuery } from '@reduxjs/toolkit/dist/query/react/buildHooks';
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, RefObject } from 'react';
 
-const calculateMaxPages = (total: number, limit: number) => {
-  return Math.ceil(total / limit);
-};
-
-export const isValidNotEmptyArray = (array: any[]): boolean => {
-  return !!(array && array?.length && array?.length > 0);
-};
-
-export interface IListQueryResponse {
-  items: any[];
-  total: number;
-  page: number;
-  limit: number;
-}
-
-const useInfiniteScroll = (useGetDataListQuery: UseQuery<any>, { limit = 10, ...queryParameters }) => {
-  const [loadPrepend, setLoadPrepend] = useState(false);
-  const [localPage, setLocalPage] = useState(1);
-  const [combinedData, setCombinedData] = useState<any>([]);
-
-  const queryResponse = useGetDataListQuery({
-    ...queryParameters,
-    limit,
-    page: localPage
-  });
-  const {
-    items: fetchData = [],
-    page: remotePage = 1,
-    total: remoteTotal = 0,
-    limit: remoteLimit = 10
-  } = queryResponse?.data as IListQueryResponse || {};
+/**
+ * Infinite scroll hook for already loaded data
+ *
+ * @param data
+ * @param dataDependency
+ * @param container
+ * @param itemHeight - it's better to pass the height of the item without the margin
+ */
+export const useInfiniteScroll = (data: any, container: RefObject<HTMLElement>, itemHeight: number, dataDependency = 0 as any) => {
+  const numItems = Math.ceil((container.current ? (container.current.offsetHeight / itemHeight) : 10));
+  const [items, setItems] = useState(data.slice(0, numItems));
 
   useEffect(() => {
-    if (isValidNotEmptyArray(fetchData)) {
-      if (localPage === 1) setCombinedData(fetchData);
-      else if (localPage === remotePage) {
-        loadPrepend
-          ? setCombinedData((previousData: any[]) => [...fetchData, ...previousData])
-          : setCombinedData((previousData: any[]) => [...previousData, ...fetchData]);
+    if (!container.current) return;
+    const el = container.current;
+
+    function handleScroll() {
+      const { scrollHeight, scrollTop, clientHeight } = el;
+
+      if (scrollHeight - scrollTop === clientHeight) {
+        setItems((prevItems: any) => [...prevItems, ...data.slice(prevItems.length, prevItems.length + numItems)]);
       }
     }
-  }, [fetchData]);
 
-  const maxPages = useMemo<number>(() => {
-    return calculateMaxPages(remoteTotal, remoteLimit);
-  }, [remoteTotal, remoteLimit]);
+    el.addEventListener('scroll', handleScroll);
+    return () => {
+      el.removeEventListener('scroll', handleScroll);
+    };
+  }, [data]);
 
-  const refresh = useCallback(() => {
-    setLocalPage(1);
-  }, []);
+  useEffect(() => {
+    setItems(data.slice(0, numItems));
+  }, [data, dataDependency]);
 
-  const loadMore = (prepend = false) => {
-    if (prepend && !loadPrepend) setLoadPrepend(true);
-
-    if (localPage < maxPages && localPage === remotePage) {
-      setLocalPage((page) => page + 1);
-    }
-  };
-
-  return { combinedData, localPage, loadMore, refresh, isLoading: queryResponse?.isLoading, isFetching: queryResponse?.isFetching };
+  return [items];
 };
-
-export default useInfiniteScroll;

@@ -1,14 +1,14 @@
 import React from 'react';
 import Image from 'next/image';
-import {User} from '../features/search/searchSlice.types';
+import { Friend } from '../features/chat/chatSlice.types';
 
-type avatarType = {user: User|null, size: number, onClick?: (e: React.MouseEvent<HTMLImageElement, MouseEvent>) => unknown, className?: string};
+type AvatarT = {size: number, onClick?: (e: React.MouseEvent<HTMLImageElement, MouseEvent>) => unknown, className?: string};
 
-const Avatar = ({user, size, onClick, className}: avatarType) => {
+const Avatar = ({id, avatar_name, avatar_url, size, onClick, className}: Friend & AvatarT) => {
   return (
     <>
-      {user && user.avatar_name
-        ? <Image className={className ? 'avatar ' + className : 'avatar'} src={user.avatar_url + (size > 50 ? '200_' : '50_') + user.avatar_name} alt={'avatar_' + user.id} width={size} height={size} onClick={onClick} />
+      {avatar_name
+        ? <Image className={className ? 'avatar ' + className : 'avatar'} src={avatar_url + (size > 50 ? '200_' : '50_') + avatar_name} alt={'avatar_' + id} width={size} height={size} onClick={onClick} />
         : <Image className={className ? 'avatar ' + className : 'avatar'} src={'/images/avatars/default.png'} alt={'avatar_default'} width={size} height={size} onClick={onClick} />}
     </>
   );

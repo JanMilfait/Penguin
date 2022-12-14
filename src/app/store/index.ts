@@ -1,14 +1,16 @@
-import {AnyAction, combineReducers, configureStore, ThunkAction} from '@reduxjs/toolkit';
-import {createWrapper, HYDRATE} from 'next-redux-wrapper';
-import {Action} from 'redux';
+import { AnyAction, combineReducers, configureStore, ThunkAction } from '@reduxjs/toolkit';
+import { createWrapper, HYDRATE } from 'next-redux-wrapper';
+import { Action } from 'redux';
 import rootSlice from '../../features/root/rootSlice';
 import authSlice from 'features/auth/authSlice';
 import searchSlice from 'features/search/searchSlice';
 import chatSlice from '../../features/chat/chatSlice';
 import postSlice from '../../features/post/postSlice';
-import {apiSlice} from 'app/api/apiSlice';
-import {pusherMiddleware} from 'app/middlewares/pusherMiddleware';
-import {unsubscribeApi} from '../ssr/hydrate';
+import { apiSlice } from 'app/api/apiSlice';
+import { pusherMiddleware } from 'app/middlewares/pusherMiddleware';
+import { modalMiddleware } from '../middlewares/modalMiddleware';
+import { unsubscribeApi } from '../ssr/hydrate';
+import friendSlice from '../../features/friend/friendSlice';
 
 
 const combinedReducer = combineReducers({
@@ -17,6 +19,7 @@ const combinedReducer = combineReducers({
   search: searchSlice,
   chat: chatSlice,
   post: postSlice,
+  friend: friendSlice,
   [apiSlice.reducerPath]: apiSlice.reducer
 });
 
@@ -36,7 +39,8 @@ const makeStore = () => configureStore({
   middleware: (getDefaultMiddleware) => (
     getDefaultMiddleware()
       .concat(apiSlice.middleware)
-      // .concat(pusherMiddleware)
+      .concat(modalMiddleware)
+      .concat(process.env.NEXT_PUBLIC_PUSHER_ACTIVE === 'on' ? pusherMiddleware : <any>[])
   )
 });
 

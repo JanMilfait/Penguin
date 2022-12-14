@@ -1,22 +1,19 @@
 import React, { useMemo } from 'react';
 import s from '../../styles/6_components/Chats.module.scss';
-import sd from '../../styles/6_components/Dropdown.module.scss';
 import Avatar from '../../components/Avatar';
 import { Chat } from './chatSlice.types';
 import { AppDispatch, AppState } from '../../app/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { DashCircle, DashCircleFill, XCircle, XCircleFill, ThreeDots } from 'react-bootstrap-icons';
 import {deactivateChat, minimizeChat} from './chatSlice';
-import { Roboto } from '@next/font/google';
 import ToggleModal from '../../components/ToggleModal';
-
-const roboto = Roboto({weight: ['400', '500', '700']});
+import ChatHeadDropdown from './ChatHeadDropdown';
 
 const ChatHead = ({id, chat}: {id: number, chat: Chat}) => {
   const dispatch = useDispatch<AppDispatch>();
   const [minimizeHover, setMinimizeHover] = React.useState(false);
   const [closeHover, setCloseHover] = React.useState(false);
-  const closeTimeout = useSelector((state: AppState) => state.chat.closeAnimationTimeout);
+  const closeTimeout = useSelector((state: AppState) => state.chat.animation.closeTimeout);
 
   const usersFiltered = useMemo(() => chat.users.filter((user) => user.id !== id), [chat.users.length, id]);
 
@@ -50,7 +47,7 @@ const ChatHead = ({id, chat}: {id: number, chat: Chat}) => {
                 ? <div className={s.activeChats__chatOnline} ></div>
                 : <div className={s.activeChats__chatOffline} ></div>
               }
-              <Avatar size={40} user={user} />
+              <Avatar {...user} size={40} />
             </div>
           ))}
         </div>
@@ -72,15 +69,10 @@ const ChatHead = ({id, chat}: {id: number, chat: Chat}) => {
         </div>
       </div>
       <div className={s.activeChats__settings}>
-        <ToggleModal toggle={<ThreeDots size={18} />} modal={
-          <ul className={sd.dropdown + ' ' + roboto.className}>
-            <li><a>Add to chat</a></li>
-            <li className="text-danger"><a>Delete chat</a></li>
-          </ul>
-        } />
+        <ToggleModal toggle={<ThreeDots size={18} />} modal={<ChatHeadDropdown id={chat.id} />} anchorClickClose={true} />
       </div>
     </div>
   );
 };
-// TODO: ADD TO CHAT, DELETE CHAT
+
 export default ChatHead;

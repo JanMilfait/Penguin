@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Services\ChatImage;
+use App\Models\Chat\ChatParticipant;
 use App\Models\Chat\ChatRoom;
 use App\Models\User\User;
 use Illuminate\Http\JsonResponse;
@@ -37,14 +38,9 @@ class ChatController extends Controller
                 });
             });
 
-        $total = ChatRoom::whereHas('participants', function ($query) use ($request) {
-            $query->where('user_id', $request->user()->id);
-        })->count();
-
         return response()->json([
             'items' => $chats,
             'page' => $page,
-            'total' => $total,
             'limit' => $limit
         ]);
     }
@@ -103,7 +99,7 @@ class ChatController extends Controller
     public function show(Request $request, User $user)
     {
         if ($request->user()->id === $user->id) {
-            return $this->jsonError('You cannot chat with yourself', 400);
+            return $this->jsonError('You cannot chat with yourself');
         }
 
         $chat = ChatRoom::
@@ -130,6 +126,23 @@ class ChatController extends Controller
         });
 
         return response()->json($chat);
+    }
+
+
+    /**
+     * Delete chat
+     *
+     * @param Request $request
+     * @param ChatRoom $chat
+     * @return JsonResponse
+     */
+    public function destroy(Request $request, ChatRoom $chat) {
+        if (!$chat->participants()->where('user_id', $request->user()->id)->first()->is_admin) {
+            return $this->jsonError('You are not admin of this chat.', 403);
+        }
+        $chat->delete();
+
+        return response()->json(['message' => 'Chat deleted.']);
     }
 
 
@@ -196,12 +209,9 @@ class ChatController extends Controller
             ->reverse()
             ->values();
 
-        $total = $chat->messages()->count();
-
         return response()->json([
             'items' => $messages,
             'page' => $page,
-            'total' => $total,
             'limit' => $limit
         ]);
     }
@@ -220,29 +230,25 @@ class ChatController extends Controller
             'user_id' => ['required', 'exists:users,id'],
         ]);
 
-        if (!$chat->participants()->where('user_id', $request->user()->id)->first()) {
-            return $this->jsonError('You are not allowed to add participants to this chat.', 403);
-        }
-
-        if ($chat->participants()->count() === 2) {
-            $chat->participants()->update(['is_admin' => 1]);
-            $chat->update(['type' => 'group']);
-        } else {
-            if (!$chat->participants()->where('user_id', $request->user()->id)->first()->is_admin) {
-                return $this->jsonError('You are not admin of this chat.', 403);
-            }
+        if (!$chat->participants()->where('user_id', $request->user()->id)->first()->is_admin) {
+            return $this->jsonError('You are not admin of this chat.', 403);
         }
 
         if (!$request->user()->friends()->where('user_b', $request->input('user_id'))->first()) {
             return $this->jsonError('Cannot add a user that is not your friend.', 403);
         }
 
+        if ($chat->participants()->count() === 2) {
+            $chat->update(['type' => 'group']);
+        }
+
         $chat->participants()->firstOrCreate([
             'user_id' => $request->input('user_id'),
             'room_id' => $chat->id,
+            'is_admin' => 0
         ]);
 
-        return response()->json('Participant added.', 201);
+        return response()->json(['message' => 'User added to chat.']);
     }
 
 
@@ -256,16 +262,12 @@ class ChatController extends Controller
      */
     public function destroy_participant(Request $request, ChatRoom $chat, User $user)
     {
-        if (!$chat->participants()->where('user_id', $request->user()->id)->first()) {
-            return $this->jsonError('You are not allowed to remove participants from this chat.', 403);
+        if (!$chat->participants()->where('user_id', $request->user()->id)->first()->is_admin) {
+            return $this->jsonError('You are not admin of this chat.', 403);
         }
 
         if (!$chat->participants()->where('user_id', $user->id)->first()) {
             return $this->jsonError('User is not participant of this chat.', 404);
-        }
-
-        if (!$chat->participants()->where('user_id', $request->user()->id)->first()->is_admin) {
-            return $this->jsonError('You are not admin of this chat.', 403);
         }
 
         if ($chat->participants()->where('user_id', $user->id)->first()->is_admin) {
@@ -274,6 +276,6 @@ class ChatController extends Controller
 
         $chat->participants()->where('user_id', $user->id)->first()->delete();
 
-        return response()->json('Participant removed.');
+        return response()->json(['message' => 'User removed from chat.']);
     }
 }

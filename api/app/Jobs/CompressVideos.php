@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use FFMpeg\FFMpeg;
 use FFMpeg\Format\Video\X264;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
@@ -43,7 +44,7 @@ class CompressVideos implements ShouldQueue
                 mkdir(storage_path('temp'), 0775, true);
             }
 
-            $ffmpeg = \FFMpeg\FFMpeg::create([
+            $ffmpeg = FFMpeg::create([
                 'ffmpeg.binaries' => '/usr/bin/ffmpeg',
                 'ffprobe.binaries' => '/usr/bin/ffprobe',
                 'timeout' => 1800
@@ -55,6 +56,7 @@ class CompressVideos implements ShouldQueue
             }
             $format = new X264();
             $format->setKiloBitrate(1500);
+            $format->setAdditionalParameters(['-movflags', 'faststart']); // for streaming
             $video->save($format, $this->temp);
 
             if (file_exists($this->temp)) {

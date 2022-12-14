@@ -1,20 +1,24 @@
 import { AuthApi, setToken } from '../../features/auth/authSlice';
 import { AppStore } from '../store';
 import { GetServerSidePropsContext } from 'next';
-import { deleteCookie, hasCookie, setCookie } from 'cookies-next';
-import { ChatApi } from 'features/chat/chatSlice';
+import { deleteCookie, hasCookie, setCookie, getCookie } from 'cookies-next';
 import { setIsMobile } from '../../features/root/rootSlice';
+import {PostApi} from '../../features/post/postSlice';
+import { FriendApi } from 'features/friend/friendSlice';
 
 interface InitialFunctions {
   (store: AppStore, context: GetServerSidePropsContext): Promise<void>;
 }
 
-export const init: InitialFunctions = async (store, {req} ) => {
+export const init: InitialFunctions = async (store, {req, res} ) => {
 
   if (req.headers['user-agent'] && req.headers['user-agent'].includes('Mobile')) {
     store.dispatch(setIsMobile(true));
   }
-
+  if (hasCookie('dispatch', {req, res})) {
+    store.dispatch(JSON.parse(getCookie('dispatch', {req, res}) as string));
+    deleteCookie('dispatch', {req, res});
+  }
 };
 
 export const authenticate: InitialFunctions = async (store, {req, res}) => {
@@ -83,5 +87,9 @@ const checkDeleteToken = (req: GetServerSidePropsContext['req'], res: GetServerS
 
 export const getSidebarFriends = async (store: AppStore) => {
   const id = await store.getState().auth.data?.id;
-  id && await store.dispatch(ChatApi.endpoints.getSidebarFriends.initiate({id: id, page: 1, limit: 20}));
+  id && await store.dispatch(FriendApi.endpoints.getFriends.initiate({id: id, page: 1, limit: 20}));
+};
+
+export const getPosts = async (store: AppStore) => {
+  await store.dispatch(PostApi.endpoints.getPosts.initiate({page: 1, limit: 3, media: 'all', category: 'latest'}));
 };

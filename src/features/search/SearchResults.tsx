@@ -15,7 +15,7 @@ import usePerfectScrollbar from '../../app/hooks/usePerfectScrollbar';
 const SearchResults = () => {
   // PerfectScrollbar
   const modalRef = useRef<HTMLDivElement>(null);
-  const { updateScroll } = usePerfectScrollbar(modalRef);
+  const { updateScroll } = usePerfectScrollbar(modalRef, {wheelPropagation: false});
 
   const dispatch = useDispatch<AppDispatch>();
   const text = useSelector((state: AppState) => state.search.text);

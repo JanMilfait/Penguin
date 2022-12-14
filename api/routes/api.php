@@ -29,6 +29,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/user/avatar', [UserController::class, 'upload_avatar']);
 
     Route::get('/friends/{user}', [FriendController::class, 'show']);
+    Route::get('/friends/{user}/ids', [FriendController::class, 'show_ids']);
     Route::delete('/friend/{user}', [FriendController::class, 'destroy']);
     Route::get('/pendings', [FriendController::class, 'logged']);
     Route::get('/pendings/received', [FriendController::class, 'logged_received']);
@@ -44,8 +45,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/post/{post}', [PostController::class, 'destroy']);
     Route::post('/post/{post}/share', [PostController::class, 'share']);
     Route::delete('/post/{post}/share', [PostController::class, 'unshare']);
-    Route::post('/post/{post}/reaction', [PostController::class, 'store_reaction']);
-    Route::delete('/post/{post}/reaction', [PostController::class, 'destroy_reaction']);
+    Route::post('/post/{post}/reaction', [PostController::class, 'react']);
+    Route::delete('/post/{post}/reaction', [PostController::class, 'unreact']);
+    Route::post('/post/{post}/report', [PostController::class, 'report']);
 
     Route::get('/post/{post}/comments', [PostCommentController::class, 'show']);
     Route::post('/post/{post}/comment', [PostCommentController::class, 'store']);
@@ -63,6 +65,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('/chats', [ChatController::class, 'index']);
     Route::get('/chat/{user}', [ChatController::class, 'show']);
+    Route::delete('/chat/{chat}', [ChatController::class, 'destroy']);
     Route::get('/chat/{chat}/messages', [ChatController::class, 'show_messages']);
     Route::post('/chat/{chat}/message', [ChatController::class, 'store_message']);
     Route::post('/chat/{chat}/participant', [ChatController::class, 'store_participant']);

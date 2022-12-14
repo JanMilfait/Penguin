@@ -30,7 +30,8 @@ class PostsComment extends Model
 
     protected $hidden = [
         'post_id',
-        'user_id'
+        'user_id',
+        'reactions_count'
     ];
 
 	protected $fillable = [

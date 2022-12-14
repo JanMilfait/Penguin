@@ -34,14 +34,40 @@ class FriendController extends Controller
             ->offset($offset)
             ->get();
 
-        $total = $user->friends()->count();
-
         return response()->json([
             'items' => $friends,
             'page' => $page,
-            'total' => $total,
             'limit' => $limit
         ]);
+    }
+
+
+    /**
+     * Display user's friends ids.
+     *
+     * @param Request $request
+     * @param User    $user
+     * @return JsonResponse
+     */
+    public function show_ids(Request $request, User $user)
+    {
+        if ($user->profile_visibility === 'private') {
+            if ($user->id !== $request->user()->id) {
+                return $this->jsonError('User profile is private', 403);
+            }
+        } elseif ($user->profile_visibility === 'friends') {
+            if (!$user->hasFriend($request->user()->id)) {
+                return $this->jsonError('User profile is private', 403);
+            }
+        }
+
+        $friendsIds = Friend::join('users', 'friends.user_b', '=', 'users.id')
+            ->where('friends.user_a', $user->id)
+            ->selectRaw('users.id as id')
+            ->get()
+            ->pluck('id');
+
+        return response()->json($friendsIds);
     }
 
 

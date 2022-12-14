@@ -24,24 +24,23 @@ trait Helpers
 
     public function transformValidationKey($errors, $transform)
     {
+        $errorsMap = [];
+        foreach ($errors as $currentKey => $messages) {
+            foreach ($messages as $message) {
+                $errorsMap[$currentKey][$message] = true;
+            }
+        }
+
         foreach ($transform as $transformItem) {
             $currentKey = $transformItem[0];
             $value = $transformItem[1];
             $newKey = $transformItem[2];
 
-            // array_key_exists() - constant time
-            if (array_key_exists($currentKey, $errors)) {
-                foreach ($errors[$currentKey] as $key => $message) {
-                    if ($message === $value) {
-                        $errors[$newKey][] = $message;
-
-                        unset($errors[$currentKey][$key]);
-                        if (empty($errors[$currentKey])) {
-                            unset($errors[$currentKey]);
-                        } else {
-                            $errors[$currentKey] = array_values($errors[$currentKey]);
-                        }
-                    }
+            if (isset($errorsMap[$currentKey][$value])) {
+                $errors[$newKey][] = $value;
+                unset($errorsMap[$currentKey][$value]);
+                if (count($errorsMap[$currentKey]) === 0) {
+                    unset($errorsMap[$currentKey]);
                 }
             }
         }

@@ -1,0 +1,55 @@
+@import "variables";
+
+.modalReactionsSharing {
+  svg {
+    fill: $svg-dark;
+  }
+
+  &__tabs {
+    margin-bottom: 10px;
+    padding-bottom: 8px;
+    overflow-y: auto;
+
+    li {
+      padding-bottom: 8px;
+
+      &.modalReactionsSharing__tabsSelected {
+        border-bottom: 2px solid $primary;
+      }
+
+      & > div {
+        display: inline-flex;
+        align-items: center;
+        padding: 0 14px;
+        border-right: 1px solid $border;
+        cursor: pointer;
+        user-select: none;
+
+        p {
+          margin-top: 2px;
+          margin-right: 5px;
+          margin-bottom: 0;
+
+          &.modalReactions__all {
+            margin-right: 0;
+          }
+
+          @media (max-width: $md) {
+            margin-top: 0;
+          }
+        }
+      }
+
+      &:last-child > div {
+        border-right: none;
+      }
+    }
+  }
+
+  &__users {
+    height: 450px;
+    padding-right: 10px;
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+}

@@ -1,48 +1,40 @@
 import type { NextPage } from 'next';
-import {AppDispatch, wrapper} from '../../app/store';
-import {authenticateUnprotected} from '../../app/ssr/initialFunctions';
+import { AppDispatch, wrapper } from '../../app/store';
+import { authenticateUnprotected } from '../../app/ssr/initialFunctions';
 import s from '../../styles/6_components/SignForm.module.scss';
 import Logo from '../../components/Logo';
-import {hasErrMessage} from '../../app/helpers/errorHandling';
+import { hasErrMessage } from '../../app/helpers/errorHandling';
 import Link from 'next/link';
 import { useResetPasswordMutation } from '../../features/auth/authSlice';
 import Router from 'next/router';
 import { useDispatch } from 'react-redux';
-import {setModal} from '../../features/root/rootSlice';
+import { setOpenModal } from '../../features/root/rootSlice';
+import { useState } from 'react';
 
 const Reset: NextPage = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const [reset, { error, isSuccess }] = useResetPasswordMutation();
+  const [reset, { error }] = useResetPasswordMutation();
+  const [clicked, setClicked] = useState(false);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
+    setClicked(true);
 
-    // await reset({email: e.target.email.value});
-    //
-    // isSuccess && Router.push('/login').then(() => {
-    //   dispatch(setModal({
-    //     isOpen: true,
-    //     props: {
-    //       type: 'alert',
-    //       icon: 'success',
-    //       title: 'Reset password',
-    //       message: 'Check your email for a link to reset your password. If it doesn’t appear within a few minutes, check your spam folder.'
-    //     }
-    //   }));
-    // });
+    const response = await reset({email: e.target.email.value});
 
-
-    Router.push('/login').then(() => {
-      dispatch(setModal({
-        isOpen: true,
-        props: {
-          type: 'alert',
-          icon: 'success',
-          title: 'Password reset email successfully sent',
-          message: 'Check your email for a link to reset your password. If it doesn’t appear within a few minutes, check your spam.'
-        }
-      }));
-    });
+    if ('data' in response && 'status' in response.data && response.data.status === 'We have emailed your password reset link!') {
+      Router.push('/login').then(() => {
+        dispatch(setOpenModal({
+          props: {
+            type: 'alert',
+            icon: 'success',
+            title: 'Password reset email successfully sent',
+            message: 'Check your email for a link to reset your password. If it doesn’t appear within a few minutes, check your spam.'
+          }
+        }));
+      });
+    }
+    setClicked(false);
   };
 
   return (
@@ -57,7 +49,7 @@ const Reset: NextPage = () => {
                 {hasErrMessage(error, 'email') && <p className="isInvalidText">{error.data?.validationErrors?.email.join('\n')}</p>}
               </div>
               <div>
-                <button className="button--fluid button--blue" type="submit">Reset Password</button>
+                <button className="button--fluid button--blue" type="submit" disabled={clicked}>Reset password</button>
               </div>
               <div className={s.signForm__links + ' justify-content-start'}>
                 <Link href="/login">Go back</Link>

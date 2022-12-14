@@ -19,7 +19,7 @@ class ChatMessageObserver
     public function created(ChatMessage $message)
     {
         // 1 day / add or delete participant -> clear cache
-        $cached = Cache::remember('chat_' . $message->room_id . '_' . $message->user_id, 86400, function () use ($message) {
+        $cached = Cache::remember('chat:' . $message->room_id . ':user:' . $message->user_id, 86400, function () use ($message) {
             return $message->load('user', 'chat.participants');
         });
         $cached->body = $message->body;

@@ -14,7 +14,7 @@ export const SearchUser = ({post}: {post: Post}) => {
             <div className="row mb-1">
               <div className="col-2">
                 <div className="d-flex align-items-center justify-content-center h-100">
-                  <Avatar user={post.user} size={30} />
+                  <Avatar {...post.user} size={30} />
                 </div>
               </div>
               <div className="col-10">

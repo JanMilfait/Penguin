@@ -1,9 +1,8 @@
-import { ChatApi } from 'features/chat/chatSlice';
+import {ChatApi, syncInfiniteScroll} from 'features/chat/chatSlice';
 import Pusher from 'pusher-js';
 import { Middleware } from 'redux';
 import * as CT from '../../features/chat/chatSlice.types';
 import { appendDatesToMessages } from '../helpers/helpers';
-import * as T from './pusherMiddleware.types';
 
 export const pusherMiddleware: Middleware = (store) => (next) => (action) => {
   const pusher = Pusher.instances[0];
@@ -42,7 +41,7 @@ export const pusherMiddleware: Middleware = (store) => (next) => (action) => {
        *
        * Add new message to all clients rtk-query cache
        */
-      channel.bind('new-message', (data: T.EventNewMessage) => {
+      channel.bind('new-message', (data: EventNewMessage) => {
         if (data.user_id === auth.data.id) return;
 
         const message: CT.Message = {
@@ -56,6 +55,7 @@ export const pusherMiddleware: Middleware = (store) => (next) => (action) => {
           const prevMessage = draft.items[draft.items.length - 1];
           appendDatesToMessages(prevMessage, message);
           draft.items.push(message);
+          store.dispatch(syncInfiniteScroll());
         }));
       });
 
@@ -68,3 +68,11 @@ export const pusherMiddleware: Middleware = (store) => (next) => (action) => {
 
   return next(action);
 };
+
+
+export type EventNewMessage = {
+  id: number;
+  user_id: number;
+  body: string|null;
+  image_url: string|null;
+}

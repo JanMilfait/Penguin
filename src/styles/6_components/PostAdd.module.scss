@@ -1,8 +1,6 @@
 @import "variables";
 
 .postAdd {
-  max-width: 736px;
-  margin: 0 auto;
   padding: 15px 22px 22px;
   border-bottom: 4px solid $primary;
   border-top-left-radius: 10px;
@@ -47,6 +45,16 @@
       }
 
       &:hover {
+        svg {
+          fill: $primary;
+        }
+
+        p {
+          color: $primary;
+        }
+      }
+
+      &.active {
         svg {
           fill: $primary;
         }

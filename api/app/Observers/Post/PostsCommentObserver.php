@@ -16,7 +16,9 @@ class PostsCommentObserver
      */
     public function created(PostsComment $comment)
     {
-        // Don't send notification if commenting own post
+        $comment->post->commentScore('inc');
+
+        // Don't send notification and add score if commenting own post
         if ($comment->post->user_id === $comment->user_id) {
             return;
         }
@@ -50,7 +52,7 @@ class PostsCommentObserver
      */
     public function deleted(PostsComment $comment)
     {
-        //
+        $comment->post->commentScore('dec');
     }
 
     /**

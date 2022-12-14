@@ -6,7 +6,7 @@ import {AppState} from '../../app/store';
 const ComponentShared = () => {
 
   const isModalOpen = useSelector((state: AppState) => state.root.modal.isOpen);
-  const Modal = dynamic(() => import('./Modal'), { ssr: false }); // TODO: FIX THIS WTFFFFF
+  const Modal = dynamic(() => import('./Modal'), { ssr: false });
 
   return (
     <>
