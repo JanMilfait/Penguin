@@ -1,25 +1,32 @@
 import { createSlice } from '@reduxjs/toolkit';
 import {apiSlice} from '../../app/api/apiSlice';
-import * as T from './chatSlice.types';
+import * as T from './notificationSlice.types';
 
-export const ChatApi = apiSlice.injectEndpoints({
+
+export const NotificationApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
 
   })
 });
 
-export const ChatSlice = createSlice({
-  name: 'chat',
+
+export const NotificationSlice = createSlice({
+  name: 'notification',
   initialState: {
 
-  } as T.ChatState,
+  } as T.NotificationState,
   reducers: {
 
   }
 });
 
+
 export const {
 
-} = ChatSlice.actions;
+} = NotificationApi;
 
-export default ChatSlice.reducer;
+export const {
+
+} = NotificationSlice.actions;
+
+export default NotificationSlice.reducer;

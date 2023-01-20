@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Services\UserPrivacy;
 use App\Models\Friend\Friend;
 use App\Models\Friend\FriendsPending;
 use App\Models\User\User;
@@ -19,11 +20,19 @@ class FriendController extends Controller
      */
     public function show(Request $request, User $user)
     {
-        $isSelf = $request->user()->is($user);
+        $isSelf =  auth('sanctum')->user() && auth('sanctum')->user()->id === $user->id;
 
         $page = (int) $request->get('page', 1);
         $limit = (int) $request->get('limit', 20);
         $offset = ($page - 1) * $limit;
+
+        if (UserPrivacy::isPrivate($user)) {
+            return response()->json([
+                'items' => [],
+                'page' => $page,
+                'limit' => $limit
+            ]);
+        }
 
         $friends = Friend::join('users', 'friends.user_b', '=', 'users.id')
             ->where('friends.user_a', $user->id)
@@ -34,14 +43,33 @@ class FriendController extends Controller
             ->offset($offset)
             ->get();
 
-        $total = $user->friends()->count();
-
         return response()->json([
             'items' => $friends,
             'page' => $page,
-            'total' => $total,
             'limit' => $limit
         ]);
+    }
+
+
+    /**
+     * Display user's friends ids.
+     *
+     * @param User    $user
+     * @return JsonResponse
+     */
+    public function show_ids(User $user)
+    {
+        if (UserPrivacy::isPrivate($user)) {
+            return $this->jsonError('User profile is private', 403);
+        }
+
+        $friendsIds = Friend::join('users', 'friends.user_b', '=', 'users.id')
+            ->where('friends.user_a', $user->id)
+            ->selectRaw('users.id as id')
+            ->get()
+            ->pluck('id');
+
+        return response()->json($friendsIds);
     }
 
 
@@ -72,13 +100,11 @@ class FriendController extends Controller
 
         FriendsPending::firstOrCreate([
             'user_id' => $request->user()->id,
-            'user_name' => $request->user()->name,
             'pending_user' => $user->id,
-            'pending_name' => $user->name,
             'state' => 'waiting'
         ]);
 
-        return response()->json(['message' => 'Friend request sent.']);
+        return response()->json(['message' => 'Friend request sent']);
     }
 
 
@@ -110,7 +136,7 @@ class FriendController extends Controller
             'user_b' => $pending->user_id,
         ]);
 
-        return response()->json(['message' => 'Friend request accepted.']);
+        return response()->json(['message' => 'Friend request accepted']);
     }
 
 
@@ -133,7 +159,7 @@ class FriendController extends Controller
 
         $pending->update(['state' => 'declined']);
 
-        return response()->json(['message' => 'Friend request declined.']);
+        return response()->json(['message' => 'Friend request declined']);
     }
 
 
@@ -157,7 +183,7 @@ class FriendController extends Controller
         $request->user()->friends->where('user_b', $user->id)->first()->delete();
         $user->friends->where('user_b', $request->user()->id)->first()->delete();
 
-        return response()->json(['message' => 'Friend removed.']);
+        return response()->json(['message' => 'Friend removed']);
     }
 
 
@@ -171,10 +197,9 @@ class FriendController extends Controller
     {
         $pendings = $request->user()->pendings()
             ->where('updated_at', '>', now()->subMonth())
-            ->select('id', 'pending_user', 'pending_name', 'state', 'created_at', 'updated_at')
             ->latest('updated_at')
-            ->offset($request->get('offset') ?? 0)
-            ->limit($request->get('limit') ?? 10)
+            ->with('pending')
+            ->limit(100)
             ->get();
 
         return response()->json($pendings);
@@ -191,10 +216,9 @@ class FriendController extends Controller
     {
         $received = FriendsPending::where('pending_user', $request->user()->id)
             ->where('updated_at', '>', now()->subMonth())
-            ->select('id', 'user_id', 'user_name', 'state', 'created_at', 'updated_at')
             ->latest('updated_at')
-            ->offset($request->get('offset') ?? 0)
-            ->limit($request->get('limit') ?? 10)
+            ->with('user')
+            ->limit(100)
             ->get();
 
         return response()->json($received);

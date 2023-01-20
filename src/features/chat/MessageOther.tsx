@@ -4,15 +4,15 @@ import {Friend, Message} from './chatSlice.types';
 import MessageImage from './MessageImage';
 import Avatar from '../../components/Avatar';
 
-const MessageOther = ({user, body, img}: {user: Friend, body: Message['body'], img: Message['image_url']}) => {
+const MessageOther = ({id, name, avatar_url, avatar_name, body, img}: Friend & {body: Message['body'], img: Message['image_url']}) => {
   return (
     <div className="d-flex justify-content-start">
       <div className={s.activeChats__messageOther}>
         { img
           ? <MessageImage img={img} />
-          : <p>{body}</p>
+          : <p className={s.activeChats__messageP}>{body}</p>
         }
-        <Avatar className={s.activeChats__messageAvatar} user={user} size={20} />
+        <Avatar className={s.activeChats__messageAvatar} {...{id, name, avatar_url, avatar_name}} size={20} />
       </div>
     </div>
   );

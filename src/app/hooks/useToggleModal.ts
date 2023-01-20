@@ -3,7 +3,7 @@ import {RefObject, useEffect, useState } from 'react';
 /**
  * Hook to handle toggle modal state and events
  */
-export const useToggleModal = (containerRef: RefObject<HTMLDivElement>, toggleRef: RefObject<HTMLDivElement>) => {
+export const useToggleModal = (containerRef: RefObject<HTMLDivElement>, toggleRef: RefObject<HTMLDivElement>, clickClose = false, disabled = false) => {
   const [isOpenModal, setIsOpenModal] = useState(false);
 
 
@@ -37,16 +37,21 @@ export const useToggleModal = (containerRef: RefObject<HTMLDivElement>, toggleRe
         setIsOpenModal(false);
       }
     };
-    document.addEventListener('click', handleClickOutside);
+    const handleClickAnywhere = (event: MouseEvent) => {
+      if (toggleRef.current && !toggleRef.current.contains(event.target as Node)) {
+        setIsOpenModal(false);
+      }
+    };
+    document.addEventListener('click', !clickClose ? handleClickOutside : handleClickAnywhere);
     return () => {
-      document.removeEventListener('click', handleClickOutside);
+      document.removeEventListener('click', !clickClose ? handleClickOutside : handleClickAnywhere);
     };
   }, [containerRef]);
 
 
   useEffect(() => {
     const toggle = toggleRef.current;
-    if (!toggle) return;
+    if (!toggle || disabled) return;
 
     const handleToggleClick = () => {
       setIsOpenModal(!isOpenModal);

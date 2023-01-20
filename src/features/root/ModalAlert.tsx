@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector } from 'react-redux';
-import {AppState} from '../../app/store';
+import { AppState } from '../../app/store';
 import s from 'styles/6_components/Modal.module.scss';
 
 

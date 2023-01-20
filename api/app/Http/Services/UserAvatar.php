@@ -16,24 +16,25 @@ class UserAvatar
     public static function save($avatar)
     {
         $avatarName = Str::uuid() . '.jpg';
-        $avatarsPath = public_path('storage/images/avatars/');
+        $avatarsPath = public_path('storage/avatars/images/');
 
         if (!file_exists($avatarsPath)) {
             mkdir($avatarsPath, 0775, true);
         }
 
         try {
-            $avatarOriginal = Image::make($avatar)->encode('jpg');
-            $avatar50 = Image::make($avatar)->fit(50, 50)->encode('jpg', 80);
-            $avatar200 = Image::make($avatar)->fit(200, 200)->encode('jpg', 80);
+            $avatarOriginal = Image::make($avatar);
+            $avatarOriginal->save($avatarsPath . $avatarName, 90, 'jpg');
 
-            $avatarOriginal->save($avatarsPath . $avatarName);
-            $avatar50->save($avatarsPath . '50_' . $avatarName);
-            $avatar200->save($avatarsPath . '200_' . $avatarName);
+            $avatar50 = Image::make($avatar)->fit(50, 50);
+            $avatar50->save($avatarsPath . '50_' . $avatarName, 90, 'jpg');
+
+            $avatar200 = Image::make($avatar)->fit(200, 200);
+            $avatar200->save($avatarsPath . '200_' . $avatarName, 90, 'jpg');
 
             return [
                 'name' => $avatarName,
-                'url' => env('APP_URL') . '/storage/images/avatars/'
+                'url' => env('APP_URL') . '/storage/avatars/images/'
             ];
 
         } catch (\Exception $e) {
@@ -50,7 +51,7 @@ class UserAvatar
      */
     public static function delete($user)
     {
-        $avatarsPath = public_path('storage/images/avatars/');
+        $avatarsPath = public_path('storage/avatars/images/');
         $avatarName = $user->avatar_name;
 
         if (file_exists($avatarsPath . $avatarName)) {

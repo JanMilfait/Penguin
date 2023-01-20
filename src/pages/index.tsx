@@ -1,5 +1,5 @@
 import {AppState, wrapper} from '../app/store';
-import {authenticate, getSidebarFriends, init} from '../app/ssr/initialFunctions';
+import {authenticate, getPosts, getFriends, init} from '../app/ssr/initialFunctions';
 import type { NextPage } from 'next';
 import { useSelector } from 'react-redux';
 import Navigation from 'components/Navigation';
@@ -40,7 +40,8 @@ export const getServerSideProps = wrapper.getServerSideProps(store => async (ctx
   await authenticate(store, ctx);
 
   await Promise.all([
-    getSidebarFriends(store)
+    getFriends(store),
+    getPosts(store)
   ]);
 
   return {props: {}};

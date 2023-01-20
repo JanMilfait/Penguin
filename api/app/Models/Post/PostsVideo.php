@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $post_id
  * @property string $name
  * @property string $url
+ * @property string $poster
  * @property Carbon|null $created_at
  *
  * @property Post $post
@@ -32,7 +33,8 @@ class PostsVideo extends Model
 	protected $fillable = [
 		'post_id',
 		'name',
-		'url'
+		'url',
+        'poster'
 	];
 
 	public function post()

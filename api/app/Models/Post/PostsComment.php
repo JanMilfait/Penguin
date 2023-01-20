@@ -30,7 +30,8 @@ class PostsComment extends Model
 
     protected $hidden = [
         'post_id',
-        'user_id'
+        'user_id',
+        'reactions_count'
     ];
 
 	protected $fillable = [
@@ -59,7 +60,7 @@ class PostsComment extends Model
 		return $this->hasMany(PostsCommentsReply::class, 'comment_id');
 	}
 
-    public function getUpdatedAtAttribute($value)
+    public function getCreatedAtAttribute($value)
     {
         return Carbon::parse($value)->diffForHumans();
     }

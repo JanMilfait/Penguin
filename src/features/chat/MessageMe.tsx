@@ -9,7 +9,7 @@ const MessageMe = ({body, img}: {body: Message['body'], img: Message['image_url'
       <div className={s.activeChats__messageMe}>
         { img
           ? <MessageImage img={img} />
-          : <p>{body}</p>
+          : <p className={s.activeChats__messageP}>{body}</p>
         }
       </div>
     </div>

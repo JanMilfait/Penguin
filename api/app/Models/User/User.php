@@ -103,7 +103,7 @@ class User extends Authenticatable
 
 	public function notifications()
 	{
-		return $this->hasMany(Notification::class, 'user_id');
+		return $this->hasMany(Notification::class);
 	}
 
 	public function posts()
@@ -154,11 +154,19 @@ class User extends Authenticatable
 
     public function skills_created()
     {
-        return $this->hasMany(Skill::class, 'created_by');
+        return $this->hasMany(Skill::class);
     }
 
     public function hasFriend($user_id)
     {
-        return $this->friends()->where('user_b', $user_id)->exists();
+        if ($this->friends()->where('user_b', $user_id)->exists()) {
+            return true;
+        }
+
+        if ($this->id === $user_id) { // It's me
+            return true;
+        }
+
+        return false;
     }
 }

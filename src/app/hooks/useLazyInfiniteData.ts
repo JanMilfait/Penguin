@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch } from 'react-redux';
 import range from 'ramda/es/range';
 import chain from 'ramda/es/chain';
@@ -16,7 +16,6 @@ interface UseLazeyInfiniteDataProps<T, N> {
   /** apiArgs are the query arguments it should have a params objec */
   limit?: number;
   /** limit or page-size per request (defaults 20) */
-  invalidatesTags?: any[];
 }
 /**
  * This hook is for having infinite loading experience with caching posibility of rtk-query
@@ -31,102 +30,98 @@ const useLazyInfiniteData = <
     api,
     apiEndpointName,
     apiArgs,
-    limit = 20,
-    invalidatesTags
+    limit = 20
   }: UseLazeyInfiniteDataProps<T, N>) => {
   const dispatch = useDispatch<any>();
-  const [pageNumber, setPageNumber] = useState(1); // first load only page 1
-  const [maxPage, setMaxPage] = useState(0); // we don't know how many pages could exists yet
-  const [accData, setAccData] = useState<any[]>([]);
-  const [isFetchingMore, setIsFetchingMore] = useState(false);
+  const [pageNumber, setPageNumber] = useState(0);
+  const [combinedData, setCombinedData] = useState<any[]>([]);
+  const [isFetching, setIsFetching] = useState(false);
   const [prependData, setPrependData] = useState(false);
+  const [disabled, setDisabled] = useState(1000);
+  const [forceSync, setForceSync] = useState(0);
+  const lastInits = useRef<any[]>([]);
 
   const apiEndpoint: ApiEndpointQuery<any, any> & QueryHooks<any> =
     api.endpoints[apiEndpointName];
-  // we need this extra hook to automate refetching when invalidating tag
-  // this will make the useEffect rerender if the first page data changes
-  const {
-    currentData: firstPageData,
-    isLoading,
-    isFetching,
-    refetch: refetch_
-  } = apiEndpoint.useQuery({
-    ...apiArgs,
-    page: 1,
-    limit
-  });
 
-  const refetch = useCallback(() => {
-    if (invalidatesTags) {
-      dispatch(api.util.invalidateTags());
+  const reset = useCallback(() => {
+    setDisabled(1000);
+    setPageNumber(0);
+  }, []);
+
+  const hardReset = useCallback(() => {
+    setDisabled(1000);
+    setPageNumber(0);
+    lastInits.current.shift();
+    return Promise.all(
+      lastInits.current.map((init) => {
+        return init.unsubscribe();
+      })
+    );
+  }, [lastInits]);
+
+
+  /** when args change like changing filters in the args then we reset the loading pages to 1 */
+  useEffect(() => {
+    reset();
+    setForceSync(inc);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, Object.values(apiArgs));
+
+  useEffect(() => {
+    // Prevent fetching if any of args is defined but has no value
+    if (Object.values(apiArgs).some((value) => value === null)) {
+      return;
     }
-    refetch_();
-  }, [api.util, dispatch, invalidatesTags, refetch_]);
+    setIsFetching(true);
+    const inits = [] as any[];
 
-  /** when params change like changing filters in the params then we reset the loading pages to 1 */
-  useEffect(
-    function resetPageLoadDataForSinglePage() {
-      setPageNumber(1);
-    },
-    [apiArgs.params]
-  );
+    const pages = pageNumber >= disabled
+      ? range(0, disabled + 1)
+      : range(0, pageNumber + 1);
 
-  useEffect(
-    function loadMoreDataOnPageNumberIncrease() {
-      if (firstPageData)
-        setMaxPage(Math.ceil((firstPageData as any).total / limit));
+    const promises = pages.map((page: number) => {
+      page = page + 1;
+      const init = dispatch(
+        apiEndpoint.initiate({
+          ...apiArgs,
+          page,
+          limit
+        }),
+      );
+      inits.push(init);
+      return init.unwrap();
+    });
+    lastInits.current = inits;
 
-      if (pageNumber === 1) {
-        setAccData((firstPageData as any)?.items ?? []);
-      }
-      if (pageNumber > 1) {
-        setIsFetchingMore(true);
+    Promise.all(promises)
+      .then((data: any) => {
+        if (pageNumber < disabled) {
+          if (data[data.length - 1]?.items.length === 0) {
+            setDisabled(pageNumber);
+          }
+        }
+        if (prependData) {
+          data = data.reverse();
+        }
+        const items = chain(propOr([], 'items'), data);
 
-        const inits = [] as any[];
-        const promises = range(1, pageNumber + 1).map((page: any) => {
-          const init = dispatch(
-            apiEndpoint.initiate({
-              ...apiArgs,
-              page,
-              limit
-            }),
-          );
-          inits.push(init);
-          return init.unwrap();
-        });
-        inits[0].unsubscribe();
+        setCombinedData(items as any);
+      })
+      .catch(console.error)
+      .finally(() => {
+        setIsFetching(false);
+      });
 
-        Promise.all(promises)
-          .then((data: any) => {
-            data = data.filter((d: any) => d !== firstPageData);
-            let items;
+    return () => {
+      inits.forEach((init: any) => init.unsubscribe());
+    };
+  }, [pageNumber, prependData, disabled, forceSync]);
 
-            if (prependData) {
-              data = data.reverse();
-              items = chain(propOr([], 'items'), [
-                ...data,
-                firstPageData
-              ]);
-            } else {
-              items = chain(propOr([], 'items'), [
-                firstPageData,
-                ...data
-              ]);
-            }
-            setAccData(items);
-          })
-          .catch(console.error)
-          .finally(() => {
-            setIsFetchingMore(false);
-          });
 
-        return () => {
-          inits.forEach((init: any) => init.unsubscribe());
-        };
-      }
-    },
-    [firstPageData, pageNumber, prependData]
-  );
+  const syncDataAndCache = useCallback(() => {
+    setForceSync(inc);
+  }, []);
 
   /** increasing pageNumber will make the useEffect run */
   const loadMore = useCallback((prepend = false) => {
@@ -137,13 +132,12 @@ const useLazyInfiniteData = <
   }, [prependData]);
 
   return {
-    combinedData: accData,
+    combinedData,
     loadMore,
-    hasMore: pageNumber < maxPage,
-    isLoading,
+    syncDataAndCache,
     isFetching,
-    isFetchingMore,
-    refetch
+    hardReset,
+    isDone: disabled <= pageNumber
   };
 };
 

@@ -1,15 +1,22 @@
 import PerfectScrollbar from 'perfect-scrollbar';
 import {RefObject, useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
+import {AppState} from '../store';
 
 /**
  * Hook to initialize and update PerfectScrollbar on a ref
  */
-const usePerfectScrollbar = (ref: RefObject<HTMLElement>, options?: PerfectScrollbar.Options) => {
+const usePerfectScrollbar = (ref: RefObject<HTMLElement>, options?: PerfectScrollbar.Options, timeout = 0) => {
   const [ps, setPs] = useState<PerfectScrollbar | null>(null);
+  const isMobile = useSelector((state: AppState) => state.root.isMobile);
 
   useEffect(() => {
+    if (isMobile) return;
+
     if (ref.current) {
-      setPs(new PerfectScrollbar(ref.current, options));
+      timeout
+        ? setTimeout(() => setPs(new PerfectScrollbar(ref.current as HTMLElement, {minScrollbarLength: 50, ...options})), timeout)
+        : setPs(new PerfectScrollbar(ref.current, {minScrollbarLength: 50, ...options}));
     }
 
     return () => {
@@ -18,7 +25,7 @@ const usePerfectScrollbar = (ref: RefObject<HTMLElement>, options?: PerfectScrol
         setPs(null);
       }
     };
-  }, [ref]);
+  }, [isMobile, ref.current]);
 
   const updateScroll = (reset = false) => {
     if (ps) {

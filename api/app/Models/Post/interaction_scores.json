@@ -1,0 +1,8 @@
+{
+    "sharing": 0.5,
+    "reaction": 0.5,
+    "comment": 0.6,
+    "comment_reaction": 0.2,
+    "reply": 0.2,
+    "reply_reaction": 0.1
+}

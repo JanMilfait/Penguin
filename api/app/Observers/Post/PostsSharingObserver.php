@@ -16,6 +16,8 @@ class PostsSharingObserver
      */
     public function created(PostsSharing $sharing)
     {
+        $sharing->post->sharingScore('inc');
+
         broadcast(new SendNotification($sharing->post->user->id, 'sharing', $sharing->id, [
             'source' => 'sharing',
             'source_id' => $sharing->post->id,
@@ -45,7 +47,7 @@ class PostsSharingObserver
      */
     public function deleted(PostsSharing $sharing)
     {
-        //
+        $sharing->post->sharingScore('dec');
     }
 
     /**

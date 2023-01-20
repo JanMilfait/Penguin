@@ -16,7 +16,7 @@ const Tab = ({ chatId }: { chatId: number }) => {
   const chat = useSelector((state: AppState) => getActiveChat(state, chatId)!);
   const isExpanded = useSelector((state: AppState) => state.chat.expandChats);
   const isOpened = useSelector((state: AppState) => isOpenedChat(state, chatId));
-  const closeTimeout = useSelector((state: AppState) => state.chat.closeAnimationTimeout);
+  const closeTimeout = useSelector((state: AppState) => state.chat.animation.closeTimeout);
 
   const users = useMemo(() => chat.users.filter((user) => user.id !== id), [chat.users.length, id]);
 
@@ -43,10 +43,10 @@ const Tab = ({ chatId }: { chatId: number }) => {
         {users.map((user) => (
           <div key={user.id} className={s.activeChats__avatar} >
             {user.is_active
-              ? <div className={s.activeChats__online} ></div>
-              : <div className={s.activeChats__offline} ></div>
+              ? <div className={s.activeChats__online + ' ' + s.activeChats__onlineS} ></div>
+              : <div className={s.activeChats__offline + ' ' + s.activeChats__offlineS} ></div>
             }
-            <Avatar size={40} user={user} />
+            <Avatar {...user} size={40} />
           </div>
         ))}
       </div>

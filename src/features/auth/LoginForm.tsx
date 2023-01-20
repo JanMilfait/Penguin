@@ -8,9 +8,11 @@ import s from 'styles/6_components/SignForm.module.scss';
 
 const LoginForm = () => {
   const [login, { error }] = useLoginMutation();
+  const [clicked, setClicked] = React.useState(false);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
+    setClicked(true);
 
     const response = await login({
       email: e.target.email.value,
@@ -21,6 +23,7 @@ const LoginForm = () => {
       setCookie('token', response.data.token);
       Router.push('/');
     }
+    setClicked(false);
   };
 
   return (
@@ -35,7 +38,7 @@ const LoginForm = () => {
         {hasErrMessage(error, 'password') && <p className="isInvalidText">{error.data?.validationErrors?.password.join('\n')}</p>}
       </div>
       <div>
-        <button className="button--fluid button--blue" type="submit">Log In</button>
+        <button className="button--fluid button--blue" type="submit" disabled={clicked}>Log In</button>
       </div>
       <div className={s.signForm__links}>
         <Link href="/register">Register</Link>

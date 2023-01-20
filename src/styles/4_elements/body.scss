@@ -1,4 +1,5 @@
 body {
+  overflow-y: scroll !important;
   background-color: $back;
 
   &.fixed {

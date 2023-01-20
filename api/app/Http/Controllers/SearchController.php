@@ -28,7 +28,7 @@ class SearchController extends Controller
                     :
                     'name LIKE ' . DB::connection()->getPdo()->quote($request->input('text') . '%')
             )
-            ->where('id', '!=', $request->user()->id);
+            ->where('id', '!=', auth('sanctum')->user()->id ?? null);
 
         $usersTotal = $queryUsers->count();
         $users = $queryUsers->limit($limit)->offset($offset)->get();

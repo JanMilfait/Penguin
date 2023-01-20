@@ -1,0 +1,60 @@
+@import "variables";
+
+.allChats {
+  width: 100%;
+  height: 100%;
+  padding-right: 8px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior-y: contain;
+
+  &__chat {
+    margin: 2px 0;
+    padding: 6px;
+
+    &:first-child {
+      margin-top: 0;
+    }
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+
+    &:hover {
+      border-radius: 5px;
+      background: $back-darker;
+    }
+  }
+
+  &__avatars {
+    position: relative;
+    margin-right: -35px;
+    transform: translateX(-35px);
+
+    &:first-child {
+      margin-left: 35px;
+    }
+
+    &Online {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 14px;
+      height: 14px;
+      border: 1px solid $green;
+      border-radius: 50%;
+      background: $green;
+    }
+
+    &Offline {
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 14px;
+      height: 14px;
+      border: 1px solid $green;
+      border-radius: 50%;
+      background: $secondary;
+    }
+  }
+}

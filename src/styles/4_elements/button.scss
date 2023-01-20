@@ -48,11 +48,31 @@ button {
     }
   }
 
+  &--x-small {
+    padding: 6px 12px 4px;
+    font-size: 14px;
+    line-height: 20px;
+
+    @include media-breakpoint-down(lg) {
+      padding: 6px 12px 4px;
+      font-size: 14px;
+      line-height: 20px;
+    }
+  }
+
   &--blue {
-    background: $button-hover;
+    background: $button-blue;
 
     &:hover {
       background: $button;
+    }
+  }
+
+  &--red {
+    background: $button-red;
+
+    &:hover {
+      background: $button-red;
     }
   }
 
@@ -60,5 +80,34 @@ button {
     width: 100%;
     padding-right: 0;
     padding-left: 0;
+  }
+
+  &--grayed {
+    background: $back-darker;
+    color: $text-gray;
+    cursor: default;
+
+    &:hover {
+      opacity: 0.8;
+      background: $back-darker;
+    }
+  }
+
+  &[disabled] {
+    &:hover {
+      background: $button;
+    }
+
+    .button--blue {
+      &:hover {
+        background: $button-hover;
+      }
+    }
+
+    .button--grayed {
+      &:hover {
+        background: $back-darker;
+      }
+    }
   }
 }

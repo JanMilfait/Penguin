@@ -7,13 +7,15 @@ import {AppDispatch, AppState } from 'app/store';
 import { useDispatch, useSelector } from 'react-redux';
 import EmojiPickerReact from './EmojiPickerReact';
 import GiphyPickerReact from './GiphyPickerReact';
+import TextareaAutosize from 'react-textarea-autosize';
 
-const ChatTextarea = ({id, chat}: {id: number, chat: Chat}) => {
+const ChatTextarea = ({chat}: {chat: Chat}) => {
   const dispatch = useDispatch<AppDispatch>();
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement|null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [hoverSend, setHoverSend] = useState(false);
-  const [moreRows, setMoreRows] = useState(false);
+  const id = useSelector((state: AppState) => state.auth.data!.id);
+  const isMobile = useSelector((state: AppState) => state.root.isMobile);
 
   const [sendMessage] = useSendMessageMutation();
   const isOpenedEmoji = useSelector((state: AppState) => isOpenedEmojiPicker(state, chat.id));
@@ -47,21 +49,24 @@ const ChatTextarea = ({id, chat}: {id: number, chat: Chat}) => {
   }, [fileInputRef]);
 
 
-  const handleFocus = () => {
-    if (textareaRef.current && textareaRef.current.value) {
-      setMoreRows(true);
-    }
-  };
+  /**
+   * Prevent scroll on mobile if Emoji or Giphy is opened
+   */
+  useEffect(() => {
+    if (!isMobile) return;
 
-  const handleBlur = () => {
-    setTimeout(()=>setMoreRows(false), 100);
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (e.target.value) {
-      setMoreRows(true);
+    if (isOpenedEmoji || isOpenedGiphy) {
+      document.documentElement.style.overflow = 'hidden';
     } else {
-      setMoreRows(false);
+      document.documentElement.style.overflow = 'auto';
+    }
+  }, [isOpenedEmoji, isOpenedGiphy]);
+
+
+  const handleFocus = () => {
+    if (isMobile) {
+      isOpenedEmoji && dispatch(toggleEmojiPicker(chat.id));
+      isOpenedGiphy && dispatch(toggleGiphyPicker(chat.id));
     }
   };
 
@@ -89,16 +94,13 @@ const ChatTextarea = ({id, chat}: {id: number, chat: Chat}) => {
   return (
     <div className={s.activeChats__textarea}>
       <div className="position-relative d-flex align-items-center">
-        <textarea
-          ref={textareaRef}
+        <TextareaAutosize
+          ref={(el) => textareaRef.current = el}
           placeholder="Type a message..."
           onFocus={handleFocus}
-          onBlur={handleBlur}
           onKeyDown={(e) => handleKeyDown(e)}
-          onChange={(e) => handleChange(e)}
-          rows={isOpenedEmoji || moreRows ? 3 : 1}
-          autoFocus
-        ></textarea>
+          autoFocus={!isMobile}
+        ></TextareaAutosize>
         <div className={s.activeChats__textareaSend}
           onMouseEnter={() => setHoverSend(true)}
           onMouseLeave={() => setHoverSend(false)}

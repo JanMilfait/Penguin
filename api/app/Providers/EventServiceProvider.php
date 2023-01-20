@@ -7,7 +7,10 @@ use App\Models\Chat\ChatParticipant;
 use App\Models\Friend\FriendsPending;
 use App\Models\Post\Post;
 use App\Models\Post\PostsComment;
+use App\Models\Post\PostsCommentsReaction;
+use App\Models\Post\PostsCommentsRepliesReaction;
 use App\Models\Post\PostsCommentsReply;
+use App\Models\Post\PostsReaction;
 use App\Models\Post\PostsSharing;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -28,7 +31,10 @@ class EventServiceProvider extends ServiceProvider
         FriendsPending::class => \App\Observers\Friend\FriendsPendingObserver::class,
         Post::class => \App\Observers\Post\PostObserver::class,
         PostsComment::class => \App\Observers\Post\PostsCommentObserver::class,
+        PostsCommentsReaction::class => \App\Observers\Post\PostsCommentsReactionObserver::class,
+        PostsCommentsRepliesReaction::class => \App\Observers\Post\PostsCommentsRepliesReactionObserver::class,
         PostsCommentsReply::class => \App\Observers\Post\PostsCommentsReplyObserver::class,
+        PostsReaction::class => \App\Observers\Post\PostsReactionObserver::class,
         PostsSharing::class => \App\Observers\Post\PostsSharingObserver::class
     ];
 

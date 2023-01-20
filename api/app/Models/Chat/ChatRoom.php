@@ -52,9 +52,13 @@ class ChatRoom extends Model
         return $this->hasManyThrough(User::class, ChatParticipant::class, 'room_id', 'id', 'id', 'user_id');
     }
 
-    // transform last_message_by to user
     public function getLastMessageByAttribute($value)
     {
-        return auth()->id() === $value ? 'Já' : User::find($value)->name ?? null;
+        return auth()->id() === $value ? 'Me:' : User::find($value)->name ?? null;
+    }
+
+    public function getUpdatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->diffForHumans();
     }
 }

@@ -1,0 +1,16 @@
+select {
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 10px;
+    outline: none;
+    background: $back-darker;
+    box-shadow: 0 2px 2px rgb(0 0 0 / 15%);
+    font-size: 18px;
+    line-height: 21px;
+
+    @include media-breakpoint-down(md) {
+        font-size: 14px;
+        line-height: 18px;
+    }
+}

@@ -11,16 +11,14 @@ import { getActiveChat, isOpenedChat } from './chatSlice';
 const montserrat = Montserrat();
 
 const Chat = ({chatId}: {chatId: number}) => {
-  const id = useSelector((state: AppState) => state.auth.data!.id);
   const chat = useSelector((state: AppState) => getActiveChat(state, chatId)!);
   const isOpened = useSelector((state: AppState) => isOpenedChat(state, chatId));
 
   return (
-
     <div className={s.activeChats__chat + (' ' + montserrat.className) + (isOpened ? '' : ' d-none')} data-id={chatId}>
-      <ChatHead id={id} chat={chat} />
-      <ChatMessages id={id} chat={chat} />
-      <ChatTextarea id={id} chat={chat} />
+      <ChatHead chat={chat} />
+      <ChatMessages chat={chat} />
+      <ChatTextarea chat={chat} />
     </div>
   );
 };

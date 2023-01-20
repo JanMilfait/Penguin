@@ -22,33 +22,13 @@ class PostCommentReplyController extends Controller
             'body' => ['required', 'string', 'max:8000'],
         ]);
 
-        $reply = $comment->replies()->create([
+        $comment->replies()->create([
             'comment_id' => $comment->id,
             'user_id' => $request->user()->id,
             'body' => $request->input('body')
         ]);
 
-        return response()->json($reply->load('user'));
-    }
-
-
-    /**
-     * Display the specified resource.
-     *
-     * @param Request      $request
-     * @param PostsComment $comment
-     * @return JsonResponse
-     */
-    public function show(Request $request, PostsComment $comment)
-    {
-        $replies = $comment->replies()
-            ->with('user',  'reactions.user')
-            ->latest('updated_at')
-            ->offset($request->get('offset') ?? 0)
-            ->limit($request->get('limit') ?? 10)
-            ->get();
-
-        return response()->json($replies);
+        return response()->json(['message' => 'Reply created']);
     }
 
 
@@ -73,9 +53,7 @@ class PostCommentReplyController extends Controller
             'body' => $request->input('body')
         ]);
 
-        $reply->load('user', 'reactions.user');
-
-        return response()->json($reply);
+        return response()->json(['message' => 'Reply updated']);
     }
 
 
@@ -94,7 +72,7 @@ class PostCommentReplyController extends Controller
 
         $reply->delete();
 
-        return response()->json(['message' => 'Comment deleted.']);
+        return response()->json(['message' => 'Reply deleted']);
     }
 
 
@@ -118,9 +96,7 @@ class PostCommentReplyController extends Controller
             'reaction' => $request->input('reaction')
         ]);
 
-        $reply->load('user', 'reactions.user');
-
-        return response()->json($reply);
+        return response()->json(['message' => 'Reaction created']);
     }
 
 
@@ -138,6 +114,6 @@ class PostCommentReplyController extends Controller
             'user_id' => $request->user()->id,
         ])->delete();
 
-        return response()->json(['message' => 'Reaction deleted successfully.']);
+        return response()->json(['message' => 'Reaction deleted']);
     }
 }

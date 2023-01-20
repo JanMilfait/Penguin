@@ -17,7 +17,7 @@ class ChatParticipantObserver
     public function created(ChatParticipant $participant)
     {
         $participant->chat->participants->each(function ($participant) {
-            Cache::forget('chat_' . $participant->room_id . '_' . $participant->user_id);
+            Cache::forget('chat:' . $participant->room_id . ':user:' . $participant->user_id);
         });
 
         if ($participant->chat->participants->count() <= 2) return;
@@ -62,7 +62,7 @@ class ChatParticipantObserver
         $participant->chat->participants->push($participant);
 
         $participant->chat->participants->each(function ($participant) {
-            Cache::forget('chat_' . $participant->room_id . '_' . $participant->user_id);
+            Cache::forget('chat:' . $participant->room_id . ':user:' . $participant->user_id);
         });
 
         $ids = $participant->chat->participants->pluck('user_id')->toArray();

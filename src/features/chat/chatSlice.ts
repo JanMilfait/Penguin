@@ -7,12 +7,9 @@ import { appendDatesToMessages } from 'app/helpers/helpers';
 
 export const ChatApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getSidebarFriends: builder.query<T.FriendsResult, T.FriendsArg>({
-      query: ({id, page, limit}) => '/api/friends/' + id + '?page=' + page + '&limit=' + limit,
-      providesTags: (result) =>
-        result
-          ? [...result.items.map(({id}) => ({type: 'SidebarFriend' as const, id})), 'SidebarFriend']
-          : ['SidebarFriend']
+    getChats: builder.query<T.ChatsResult, void>({
+      query: () => '/api/chats',
+      providesTags: ['Chats']
     }),
     getChat: builder.query<T.ChatResult, T.ChatArg>({
       query: ({id}) => '/api/chat/' + id,
@@ -22,6 +19,20 @@ export const ChatApi = apiSlice.injectEndpoints({
         return response;
       }
     }),
+    getChatFriend: builder.query<T.ChatResult, T.ChatArg>({
+      query: ({id}) => '/api/chat/friend/' + id,
+      keepUnusedDataFor: 0,
+      transformResponse: (response: T.ChatResult) => {
+        response.scrollToBottom = 1;
+        return response;
+      }
+    }),
+    deleteChat: builder.mutation<T.DeleteChatResult, T.DeleteChatArg>({
+      query: ({id}) => ({
+        url: '/api/chat/' + id,
+        method: 'DELETE'
+      })
+    }),
     getMessages: builder.query<T.MessagesResult, T.MessagesArg>({
       query: ({id, page, limit}) => '/api/chat/' + id + '/messages?page=' + page + '&limit=' + limit,
       transformResponse: (response: T.MessagesResult) => {
@@ -30,11 +41,7 @@ export const ChatApi = apiSlice.injectEndpoints({
           return appendDatesToMessages(prevMessage, message);
         });
         return response;
-      },
-      providesTags: (result, error, arg) =>
-        result
-          ? [...result.items.map(({id}) => ({type: 'Message' as const, id})), {type: 'Message' as const, id: 'Page' + arg.id + '-' + arg.page}, 'Message']
-          : [{type: 'Message' as const, id: 'Page' + arg.id + '-' + arg.page}, 'Message']
+      }
     }),
     sendMessage: builder.mutation<T.MessageResult, T.SendMessageArg>({
       query: ({id, body, image}) => ({
@@ -57,6 +64,7 @@ export const ChatApi = apiSlice.injectEndpoints({
             };
             appendDatesToMessages(prevMessage, message);
             draft.items.push(message);
+            dispatch(syncInfiniteScroll());
           }));
         } else {
           const result = await queryFulfilled;
@@ -66,9 +74,23 @@ export const ChatApi = apiSlice.injectEndpoints({
 
             appendDatesToMessages(prevMessage, message);
             draft.items.push(message);
+            dispatch(syncInfiniteScroll());
           }));
         }
       }
+    }),
+    addParticipant: builder.mutation<T.AddParticipantResult, T.AddParticipantArg>({
+      query: ({id, userId}) => ({
+        url: '/api/chat/' + id + '/participant',
+        method: 'POST',
+        body: {user_id: userId}
+      })
+    }),
+    removeParticipant: builder.mutation<T.RemoveParticipantResult, T.RemoveParticipantArg>({
+      query: ({id, userId}) => ({
+        url: '/api/chat/' + id + '/participant/' + userId,
+        method: 'DELETE'
+      })
     })
   })
 });
@@ -76,10 +98,10 @@ export const ChatApi = apiSlice.injectEndpoints({
 
 /**
  * Create action for pusher middleware and fetch on every dispatch
- * (server automatically create private chat if previous was changed to group)
+ * (friend clicked -> api automatically create private chat if previous was changed to group)
  */
-export const activateChat = createAsyncThunk('chat/activateChat', async ({id}: {id: number}, {dispatch, rejectWithValue}): Promise<Chat|any> => {
-  const chatInit = dispatch(ChatApi.endpoints.getChat.initiate({id}, {forceRefetch: true}));
+export const activateChat = createAsyncThunk('chat/activateChat', async ({friendId, chatId}: {friendId?: number, chatId?: number}, {dispatch, rejectWithValue}): Promise<Chat|any> => {
+  const chatInit = dispatch(ChatApi.endpoints[friendId ? 'getChatFriend' : 'getChat'].initiate({id: friendId ?? chatId!}, {forceRefetch: true}));
   const chat = await chatInit;
   await chatInit.unsubscribe();
   if (!chat.data || chat.isError) {
@@ -96,8 +118,12 @@ export const ChatSlice = createSlice({
     openedChats: [],
     openedEmojiPicker: [],
     openedGiphyPicker: [],
-    closeAnimationTimeout: 180, // unmount chat just before animation ends to prevent flickering (css 200)
-    expandChats: false
+    expandChats: false,
+    animation: {
+      time: 200,
+      closeTimeout: 180 // unmount chat just before animation ends to prevent flickering
+    },
+    infiniteScrollSync: 0
   } as T.ChatState,
   reducers: {
     setExpandChats: (state, action: PayloadAction<boolean>) => {
@@ -133,13 +159,14 @@ export const ChatSlice = createSlice({
     deactivateChat: (state, action: PayloadAction<number>) => {
       state.openedChats = state.openedChats.filter((id) => id !== action.payload);
       state.activeChats = state.activeChats.filter(chat => chat.id !== action.payload);
+    },
+    syncInfiniteScroll: (state) => {
+      state.infiniteScrollSync++;
     }
   },
   extraReducers: (builder) => {
     builder
       .addCase(activateChat.fulfilled, (state, action: PayloadAction<Chat>) => {
-        state.expandChats = false;
-
         // If 6 or more chats are opened, remove last activated
         if (state.activeChats.length >= 6) {
           state.activeChats = state.activeChats.slice(1);
@@ -154,7 +181,7 @@ export const ChatSlice = createSlice({
 });
 
 export const {
-  useGetSidebarFriendsQuery,
+  useGetChatsQuery,
   useSendMessageMutation
 } = ChatApi;
 
@@ -164,7 +191,8 @@ export const {
   toggleEmojiPicker,
   toggleGiphyPicker,
   minimizeChat,
-  deactivateChat
+  deactivateChat,
+  syncInfiniteScroll
 } = ChatSlice.actions;
 
 export const isSomeChatActive = createSelector(

@@ -1,0 +1,15 @@
+.friendsHorizontal {
+  padding: 3px 3px 16px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior: contain;
+
+  p {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 50px;
+    margin-top: 0;
+    margin-bottom: 0;
+  }
+}

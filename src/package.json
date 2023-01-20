@@ -17,6 +17,7 @@
     "abortcontroller-polyfill": "^1.7.5",
     "bootstrap": "^5.2.2",
     "cookies-next": "^2.1.1",
+    "dompurify": "^2.4.3",
     "emoji-picker-react": "^4.4.6",
     "lodash.debounce": "^4.0.8",
     "lodash.throttle": "^4.1.1",
@@ -30,13 +31,18 @@
     "react-bootstrap-icons": "^1.9.1",
     "react-dom": "^18.2.0",
     "react-medium-image-zoom": "^5.1.2",
+    "react-player": "^2.11.0",
+    "react-quill": "^2.0.0",
     "react-redux": "^8.0.5",
     "react-resize-observer": "^1.1.1",
     "react-spinners": "^0.13.6",
+    "react-textarea-autosize": "^8.4.0",
     "react-tooltip": "^4.5.0",
-    "sass": "^1.56.1"
+    "sass": "^1.56.1",
+    "sharp": "^0.31.3"
   },
   "devDependencies": {
+    "@types/dompurify": "^2.4.0",
     "@types/lodash.debounce": "^4.0.7",
     "@types/lodash.throttle": "^4.1.7",
     "@types/node": "18.11.9",

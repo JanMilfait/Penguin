@@ -15,7 +15,11 @@ import usePerfectScrollbar from '../../app/hooks/usePerfectScrollbar';
 const SearchResults = () => {
   // PerfectScrollbar
   const modalRef = useRef<HTMLDivElement>(null);
-  const { updateScroll } = usePerfectScrollbar(modalRef);
+  const { updateScroll } = usePerfectScrollbar(modalRef, {wheelPropagation: false});
+
+  const id = useSelector((state: AppState) => state.auth.data?.id);
+  const isAuth = typeof id === 'number';
+  const isMobile = useSelector((state: AppState) => state.root.isMobile);
 
   const dispatch = useDispatch<AppDispatch>();
   const text = useSelector((state: AppState) => state.search.text);
@@ -53,7 +57,7 @@ const SearchResults = () => {
 
   if (!data) {
     return (
-      <div ref={modalRef} className={s.searchBar__modal}>
+      <div ref={modalRef} className={s.searchBar__modal} style={!isAuth && isMobile ? {top: '80px'} : {}}>
         <div className="row m-0">
           <div className="col-12 p-5">
             <div className="d-flex align-items-center justify-content-center h-100 p-5">
@@ -66,7 +70,7 @@ const SearchResults = () => {
   }
 
   return (
-    <div ref={modalRef} className={s.searchBar__modal}>
+    <div ref={modalRef} className={s.searchBar__modal} style={!isAuth && isMobile ? {top: '80px'} : {}}>
       {data.items.length !== 0 && data.last_page !== 1 &&
         <div className={s.searchBar__pages}>
           {page !== 1 && page === data.last_page && <a onClick={(e) => handleSetPage(e, -1)}>Go back <ArrowLeftCircle/></a>}

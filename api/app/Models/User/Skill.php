@@ -9,11 +9,11 @@ use Illuminate\Database\Eloquent\Model;
  * Class Skill
  *
  * @property int $id
- * @property string $created_by
+ * @property string $user_id
  * @property string $name
+ * @property string $tag
  * @property string|null $description
- * @property string|null $tag
- * @property string|null $image_url
+ * @property string|null $icon_url
  *
  * @property Collection|User[] $users
  *
@@ -23,19 +23,20 @@ class Skill extends Model
 {
 	protected $table = 'skills';
 
-    public $timestamps = false;
+    const UPDATED_AT = null;
 
     protected $hidden = [
+        'user_id',
         'pivot',
-        'id'
+        'created_at',
     ];
 
 	protected $fillable = [
-        'created_by',
+        'user_id',
 		'name',
 		'description',
 		'tag',
-		'image_url'
+		'icon_url'
 	];
 
 	public function users()
@@ -46,7 +47,11 @@ class Skill extends Model
 
     public function created_by()
     {
-        return $this->belongsTo(User::class, 'created_by');
+        return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function setTagAttribute($value)
+    {
+        $this->attributes['tag'] = strtoupper($value);
+    }
 }

@@ -2,7 +2,7 @@
 
 .activeChats {
   position: fixed;
-  z-index: 1;
+  z-index: 20;
   right: 112px;
   bottom: 0;
 
@@ -82,36 +82,32 @@
     }
   }
 
-  %online {
+  &__online {
     position: absolute;
     top: 0;
     right: 0;
     border: 1px solid $green;
     border-radius: 50%;
     background: $green;
+
+    &S {
+      width: 7px;
+      height: 7px;
+    }
   }
 
-  %offline {
+  &__offline {
     position: absolute;
     top: 0;
     right: 0;
     border: 1px solid $green;
     border-radius: 50%;
     background: $secondary;
-  }
 
-  &__online {
-    @extend %online;
-
-    width: 7px;
-    height: 7px;
-  }
-
-  &__offline {
-    @extend %offline;
-
-    width: 7px;
-    height: 7px;
+    &S {
+      width: 7px;
+      height: 7px;
+    }
   }
 
   &__chatsContainer {
@@ -133,8 +129,22 @@
     background: $secondary;
     box-shadow: 0 0 4px 0 rgb(0 0 0 / 25%);
 
+    @media (max-width: $md) {
+      display: flex;
+      flex-direction: column;
+      min-width: 100%;
+      max-width: 100%;
+      height: 100%;
+      animation: none;
+      box-shadow: none;
+    }
+
     &Close {
       animation: pop-down 0.2s ease-in-out;
+
+      @media (max-width: $md) {
+        animation: none;
+      }
     }
 
     &:last-child {
@@ -183,19 +193,6 @@
     }
   }
 
-  &__chatHeadButtons {
-    display: flex;
-
-    svg {
-      margin: 0 4px;
-      pointer-events: none;
-
-      &:last-child {
-        margin-right: 0;
-      }
-    }
-  }
-
   &__chatAvatar {
     position: relative;
     margin-right: -20px;
@@ -207,15 +204,11 @@
   }
 
   &__chatOnline {
-    @extend %online;
-
     width: 11px;
     height: 11px;
   }
 
   &__chatOffline {
-    @extend %offline;
-
     width: 11px;
     height: 11px;
   }
@@ -250,7 +243,13 @@
     position: relative;
     height: 320px;
     padding: 10px 0;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+
+    @media (max-width: $md) {
+      height: 100%;
+    }
   }
 
   &__messageDate {
@@ -267,7 +266,7 @@
     }
   }
 
-  %message-p {
+  &__messageP {
     max-width: 100%;
     margin-bottom: 0;
     padding: 10px;
@@ -286,8 +285,6 @@
     margin: 2px 15px 2px 40px;
 
     p {
-      @extend %message-p;
-
       background: $back-darker;
       color: $text;
     }
@@ -302,8 +299,6 @@
     margin: 2px 40px 2px 30px;
 
     p {
-      @extend %message-p;
-
       background: $primary;
       color: $text-white;
     }
@@ -370,9 +365,13 @@
   &__emojiPicker {
     position: absolute;
     z-index: 1;
-    bottom: 116px;
+    bottom: 85px;
     left: 12px;
     width: 100%;
+
+    @media (max-width: $md) {
+      left: 0;
+    }
 
     // Prevent global styles from affecting the emoji picker
     input {
@@ -407,6 +406,10 @@
     border-radius: 10px;
     background: $secondary;
     box-shadow: 0 0 10px 0 rgb(0 0 0 / 50%);
+
+    @media (max-width: $md) {
+      left: 0;
+    }
   }
 
   &__giphyContent {
@@ -436,16 +439,30 @@
         color: #858585;
       }
     }
+
+    svg {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 30px;
+      height: 40px;
+      padding: 14px 1px 14px 10px;
+      transform: translateY(-50%);
+      fill: #858585;
+      pointer-events: none;
+    }
   }
 
-  &__giphySearchIcon {
-    position: absolute;
-    top: 50%;
-    left: 0;
-    width: 30px;
-    height: 40px;
-    padding: 14px 1px 14px 10px;
-    transform: translateY(-50%);
-    fill: #858585;
+  &__chatHeadButtons {
+    display: flex;
+
+    svg {
+      margin: 0 4px;
+      pointer-events: none;
+
+      &:last-child {
+        margin-right: 0;
+      }
+    }
   }
 }

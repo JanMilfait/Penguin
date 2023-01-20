@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property string $source
  * @property int|null $source_id
  * @property string|null $source_data
+ * @property Carbon|null $readed_at
  * @property Carbon|null $created_at
  *
  * @property User $user
@@ -37,7 +38,8 @@ class Notification extends Model
 		'user_id',
 		'source',
 		'source_id',
-        'source_data'
+        'source_data',
+        'readed_at'
 	];
 
 	public function user()

@@ -21,31 +21,42 @@ trait Helpers
     }
 
 
-
+    /**
+     * Change keys of validation errors to match the frontend
+     *
+     * @param $errors
+     * @param $transform
+     * @return array
+     */
     public function transformValidationKey($errors, $transform)
     {
-        foreach ($transform as $transformItem) {
-            $currentKey = $transformItem[0];
-            $value = $transformItem[1];
-            $newKey = $transformItem[2];
-
-            // array_key_exists() - constant time
-            if (array_key_exists($currentKey, $errors)) {
-                foreach ($errors[$currentKey] as $key => $message) {
-                    if ($message === $value) {
-                        $errors[$newKey][] = $message;
-
-                        unset($errors[$currentKey][$key]);
-                        if (empty($errors[$currentKey])) {
-                            unset($errors[$currentKey]);
-                        } else {
-                            $errors[$currentKey] = array_values($errors[$currentKey]);
-                        }
-                    }
-                }
+        $transformedErrors = [];
+        foreach ($transform as [$currentKey, $value, $newKey]) {
+            if (isset($errors[$currentKey]) && in_array($value, $errors[$currentKey])) {
+                $transformedErrors[$newKey][] = $value;
+                unset($errors[$currentKey][array_search($value, $errors[$currentKey])]);
+                $errors[$currentKey] = array_values($errors[$currentKey]);
             }
         }
 
-        return $errors;
+        return array_merge($errors, $transformedErrors);
+    }
+
+
+    /**
+     * request has at least one of the given keys
+     *
+     * @param $keys array
+     * @return boolean
+     */
+    public function requestHasOne($keys)
+    {
+        foreach ($keys as $key) {
+            if (request()->has($key)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

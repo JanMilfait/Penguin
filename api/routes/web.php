@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\PostController;
 use App\Http\Controllers\Webhooks\Pusher\ChannelExistence;
 use Illuminate\Support\Facades\Route;
 
@@ -21,6 +22,8 @@ Route::get('/', function () {
 
 Route::get('/chat/images/{image}', [ChatController::class, 'show_image']);
 Route::get('/chat/images/placeholder/{image}', [ChatController::class, 'show_placeholder']);
+
+Route::get('/posts/videos/{video}', [PostController::class, 'show_video']);
 
 require __DIR__.'/webhooks.php';
 require __DIR__.'/auth.php';

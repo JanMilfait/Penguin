@@ -16,7 +16,9 @@ class PostsCommentsReplyObserver
      */
     public function created(PostsCommentsReply $reply)
     {
-        // Don't send notification if replying to own comment
+        $reply->comment->post->replyScore('inc');
+
+        // Don't send notification and add score if replying to own comment
         if ($reply->comment->user_id === $reply->user_id) {
             return;
         }
@@ -50,7 +52,7 @@ class PostsCommentsReplyObserver
      */
     public function deleted(PostsCommentsReply $reply)
     {
-        //
+        $reply->comment->post->replyScore('dec');
     }
 
     /**

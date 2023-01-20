@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id
  * @property int $user_id
  * @property string|null $body
+ * @property float $interaction_score
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  *
@@ -27,15 +28,26 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Post extends Model
 {
+    protected array $scores = [];
+
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+
+        $this->scores = json_decode(file_get_contents(__DIR__ . '/interaction_scores.json'), true);
+    }
+
 	protected $table = 'posts';
 
     protected $hidden = [
-        'user_id'
+        'user_id',
+        'interaction_score'
     ];
 
 	protected $fillable = [
 		'user_id',
-		'body'
+		'body',
+        'interaction_score'
 	];
 
 	public function user()
@@ -68,8 +80,89 @@ class Post extends Model
 		return $this->hasOne(PostsVideo::class);
 	}
 
+    public function reports()
+    {
+        return $this->hasMany(PostsReport::class);
+    }
+
     public function getUpdatedAtAttribute($value)
     {
         return Carbon::parse($value)->diffForHumans();
+    }
+
+
+    /////////////////////////////////////////////
+    /// SCORES
+    /////////////////////////////////////////////
+    public function sharingScore($action)
+    {
+        $this->timestamps = false;
+        if ($action === 'inc') {
+            $this->interaction_score += $this->scores['sharing'];
+        } elseif ($action === 'dec') {
+            $this->interaction_score -= $this->scores['sharing'];
+        }
+        $this->save();
+        $this->timestamps = true;
+    }
+
+    public function reactionScore($action)
+    {
+        $this->timestamps = false;
+        if ($action === 'inc') {
+            $this->interaction_score += $this->scores['reaction'];
+        } elseif ($action === 'dec') {
+            $this->interaction_score -= $this->scores['reaction'];
+        }
+        $this->save();
+        $this->timestamps = true;
+    }
+
+    public function commentScore($action)
+    {
+        $this->timestamps = false;
+        if ($action === 'inc') {
+            $this->interaction_score += $this->scores['comment'];
+        } elseif ($action === 'dec') {
+            $this->interaction_score -= $this->scores['comment'];
+        }
+        $this->save();
+        $this->timestamps = true;
+    }
+
+    public function commentReactionScore($action)
+    {
+        $this->timestamps = false;
+        if ($action === 'inc') {
+            $this->interaction_score += $this->scores['comment_reaction'];
+        } elseif ($action === 'dec') {
+            $this->interaction_score -= $this->scores['comment_reaction'];
+        }
+        $this->save();
+        $this->timestamps = true;
+    }
+
+    public function replyScore($action)
+    {
+        $this->timestamps = false;
+        if ($action === 'inc') {
+            $this->interaction_score += $this->scores['reply'];
+        } elseif ($action === 'dec') {
+            $this->interaction_score -= $this->scores['reply'];
+        }
+        $this->save();
+        $this->timestamps = true;
+    }
+
+    public function replyReactionScore($action)
+    {
+        $this->timestamps = false;
+        if ($action === 'inc') {
+            $this->interaction_score += $this->scores['reply_reaction'];
+        } elseif ($action === 'dec') {
+            $this->interaction_score -= $this->scores['reply_reaction'];
+        }
+        $this->save();
+        $this->timestamps = true;
     }
 }

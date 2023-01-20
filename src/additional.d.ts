@@ -1,4 +1,1 @@
-type ErrorMessage = {
-  message: string
-  validationErrors?: { [key: string]: string[] }
-}
+import 'redux-thunk/extend-redux';

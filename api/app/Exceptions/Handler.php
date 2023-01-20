@@ -61,7 +61,7 @@ class Handler extends ExceptionHandler
 
             if ($e instanceof NotFoundHttpException) {
                 return response()->json([
-                    'message' => $e->getMessage() ?: 'Nothing found',
+                    'message' => env('APP_DEBUG') ? $e->getMessage() : 'Not found.',
                 ], 404);
             }
 
@@ -73,7 +73,7 @@ class Handler extends ExceptionHandler
             }
 
             return response()->json([
-                'message' => $e->getMessage(),
+                'message' => env('APP_DEBUG') ? $e->getMessage() : 'Something went wrong.',
             ], 500);
         });
     }

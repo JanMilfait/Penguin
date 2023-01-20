@@ -1,12 +1,8 @@
-export type UserData = {
-  id: User['id'];
-  name: User['name'];
-  avatar_name: User['avatar_name'];
-  avatar_url: User['avatar_url'];
+export type UserData = User & {
   email: string;
   is_active?: 1 | 0;
   profile_visibility: 'private' | 'friends' | 'public';
-  profile: UserProfile;
+  profile: UserProfile| null;
   skills: Skill[];
 }
 
@@ -26,35 +22,47 @@ export type UserProfile = {
 }
 
 export type Skill = {
+  id: number;
   name: string;
+  tag: string;
   description: string | null;
-  tag: string | null;
-  image_url: string | null;
+  icon_url: string | null;
   created_by: User;
 }
 
-export type FetchClientResult = UserData | ErrorMessage
+export type FetchClientResult = UserData
 
-export type LoginResult = { token: string, user: UserData } | ErrorMessage
+export type LoginResult = { token: string, user: UserData }
 
-export type LoginArg = { email?: string, password?: string } | ErrorMessage
+export type LoginArg = { email?: string, password?: string }
 
-export type RegisterResult = { token: string, user: UserData } | ErrorMessage
+export type RegisterResult = { token: string, user: UserData }
 
 export type RegisterArg = {
   name: string;
   email: string;
   password: string;
   password_confirmation: string;
-} | ErrorMessage
+}
 
-export type LogoutResult = { message: string } | ErrorMessage
+export type LogoutResult = { message: string }
 
-export type ForgotPasswordResult = { message: string } | ErrorMessage
+export type ForgotPasswordResult = { status: string }
 
-export type ForgotPasswordArg = { email: string } | ErrorMessage
+export type ForgotPasswordArg = { email: string }
+
+export type GetUserResult = UserData
+
+export type GetUserArg = { id: number };
+
+export type UpdateUserArg = { formData: FormData; }
 
 export type AuthState = {
   token: null | string;
   data: null | UserData;
+  profile: {
+    id: null | number;
+    edit: null | number;
+    quill: string;
+  }
 }

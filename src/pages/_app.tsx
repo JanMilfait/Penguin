@@ -5,9 +5,10 @@ import { Provider } from 'react-redux';
 import Head from 'next/head';
 import { Roboto } from '@next/font/google';
 import { useEffect } from 'react';
-import { setIsMobile } from '../features/root/rootSlice';
+import { setIsMobile, setWindow } from '../features/root/rootSlice';
 import debounce from 'lodash.debounce';
 import ComponentShared from 'features/root/ComponentShared';
+import {isSSR} from '../app/helpers/helpers';
 
 const roboto = Roboto({weight: ['400', '500', '700']});
 
@@ -16,10 +17,15 @@ function MyApp({ Component, ...rest }: AppProps) {
 
 
   /**
-   * Detect if the user is on a mobile device (first dispatch - ssr init)
+   * 1. Calculate visual viewport for mobile devices
+   * 2. Detect if the user is on a mobile device (first dispatch - ssr init)
    */
   useEffect(() => {
+    const calculateVisualViewport = () => {
+      document.documentElement.style.setProperty('--visual100vh', `${visualViewport?.height}px`);
+    };
     const handleResize = debounce(() => {
+      store.dispatch(setWindow({width: window.innerWidth, height: window.innerHeight}));
       if (window.innerWidth < 768) {
         store.dispatch(setIsMobile(true));
       } else if (window.innerWidth >= 768) {
@@ -27,9 +33,14 @@ function MyApp({ Component, ...rest }: AppProps) {
       }
     }, 500);
 
+    !isSSR() && visualViewport?.addEventListener('resize', calculateVisualViewport);
     window.addEventListener('resize', handleResize);
+
+    !isSSR() && calculateVisualViewport();
     handleResize(); // ssr already guessed the device type, but viewport width is not available on the server
+
     return () => {
+      !isSSR() && visualViewport?.removeEventListener('resize', calculateVisualViewport);
       window.removeEventListener('resize', handleResize);
     };
   }, []);
@@ -52,7 +63,7 @@ function MyApp({ Component, ...rest }: AppProps) {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </Head>
       <div className={roboto.className}>
-        <main>
+        <main className="pb-5">
           <Component {...props.pageProps} />
         </main>
         <ComponentShared />

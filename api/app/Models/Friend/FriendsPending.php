@@ -12,7 +12,6 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $id
  * @property int $user_id
  * @property int $pending_user
- * @property string $pending_name
  * @property string $state
  * @property Carbon|null $created_at
  *
@@ -24,16 +23,14 @@ class FriendsPending extends Model
 {
 	protected $table = 'friends_pendings';
 
-	protected $casts = [
-		'user_id' => 'int',
-		'pending_user' => 'int'
+	protected $hidden = [
+		'user_id',
+        'pending_user',
 	];
 
 	protected $fillable = [
 		'user_id',
-        'user_name',
 		'pending_user',
-        'pending_name',
 		'state'
 	];
 
@@ -42,8 +39,13 @@ class FriendsPending extends Model
 		return $this->belongsTo(User::class);
 	}
 
-    public function pending_user()
+    public function pending()
     {
         return $this->belongsTo(User::class, 'pending_user');
+    }
+
+    public function getUpdatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->diffForHumans();
     }
 }

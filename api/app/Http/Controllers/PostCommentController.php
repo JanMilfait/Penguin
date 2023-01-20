@@ -23,13 +23,13 @@ class PostCommentController extends Controller
             'body' => ['required', 'string', 'max:8000'],
         ]);
 
-        $comment = $post->comments()->create([
+        $post->comments()->create([
             'post_id' => $post->id,
             'user_id' => $request->user()->id,
             'body' => $request->input('body')
         ]);
 
-        return response()->json($comment->load('user'));
+        return response()->json(['message' => 'Comment created']);
     }
 
 
@@ -42,14 +42,22 @@ class PostCommentController extends Controller
      */
     public function show(Request $request, Post $post)
     {
+        $page = (int) $request->get('page', 1);
+        $limit = (int) $request->get('limit', 6);
+        $offset = ($page - 1) * $limit;
+
         $comments = $post->comments()
-            ->with('user', 'replies.user', 'replies.reactions.user', 'reactions.user')
-            ->latest('updated_at')
-            ->offset($request->get('offset') ?? 0)
-            ->limit($request->get('limit') ?? 10)
+            ->with(['replies' => function ($query) {$query->latest();}, 'user', 'replies.user', 'replies.reactions.user', 'reactions.user'])
+            ->latest()
+            ->limit($limit)
+            ->offset($offset)
             ->get();
 
-        return response()->json($comments);
+        return response()->json([
+            'items' => $comments,
+            'page' => $page,
+            'limit' => $limit
+        ]);
     }
 
 
@@ -74,9 +82,7 @@ class PostCommentController extends Controller
             'body' => $request->input('body')
         ]);
 
-        $comment->load('user', 'replies.user', 'replies.reactions.user', 'reactions.user');
-
-        return response()->json($comment);
+        return response()->json(['message' => 'Comment updated']);
     }
 
 
@@ -95,7 +101,7 @@ class PostCommentController extends Controller
 
         $comment->delete();
 
-        return response()->json(['message' => 'Comment deleted.']);
+        return response()->json(['message' => 'Comment deleted']);
     }
 
 
@@ -119,9 +125,7 @@ class PostCommentController extends Controller
             'reaction' => $request->input('reaction')
         ]);
 
-        $comment->load('user', 'replies.user', 'replies.reactions.user', 'reactions.user');
-
-        return response()->json($comment);
+        return response()->json(['message' => 'Reaction created']);
     }
 
 
@@ -139,6 +143,6 @@ class PostCommentController extends Controller
             'user_id' => $request->user()->id,
         ])->delete();
 
-        return response()->json(['message' => 'Reaction deleted successfully.']);
+        return response()->json(['message' => 'Reaction deleted']);
     }
 }

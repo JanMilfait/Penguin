@@ -5,14 +5,15 @@ import ResizeObserver from 'react-resize-observer';
 import s from '../../styles/6_components/Chats.module.scss';
 import { Search } from 'react-bootstrap-icons';
 import { IGif } from '@giphy/js-types';
-import { AppDispatch } from 'app/store';
-import { useDispatch } from 'react-redux';
+import { AppDispatch, AppState } from 'app/store';
+import { useDispatch, useSelector } from 'react-redux';
 import {toggleGiphyPicker, useSendMessageMutation} from './chatSlice';
 
 const giphyFetch = new GiphyFetch(process.env.NEXT_PUBLIC_GIPHY_API_KEY!);
 
 const GiphyPicker = ({userId, chatId}: {userId: number, chatId: number}) => {
   const dispatch = useDispatch<AppDispatch>();
+  const isMobile = useSelector((state: AppState) => state.root.isMobile);
   const inputRef = React.useRef<HTMLInputElement>(null);
   const [search, setSearch] = useState('');
   const [width, setWidth] = useState(window.innerWidth);
@@ -50,8 +51,8 @@ const GiphyPicker = ({userId, chatId}: {userId: number, chatId: number}) => {
   return (
     <div className={s.activeChats__giphyPicker}>
       <div className={s.activeChats__giphySearch}>
-        <Search className={s.activeChats__giphySearchIcon} onClick={() => inputRef.current?.focus()} />
-        <input ref={inputRef} placeholder="Search" onChange={(e) => setSearch(e.target.value)} autoFocus />
+        <Search />
+        <input placeholder="Search" onChange={(e) => setSearch(e.target.value)} autoFocus={!isMobile} />
       </div>
       <div className={s.activeChats__giphyContent}>
         <div className={s.activeChats__giphyInner}>

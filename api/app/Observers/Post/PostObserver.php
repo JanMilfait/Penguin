@@ -4,6 +4,7 @@ namespace App\Observers\Post;
 
 use App\Events\SendNotification;
 use App\Models\Post\Post;
+use Cache;
 use Str;
 
 class PostObserver
@@ -16,6 +17,11 @@ class PostObserver
      */
     public function created(Post $post)
     {
+        // Laravel file driver not support cache tags, use redis or memcached in real project
+        foreach (range(0, 1000) as $i) {
+            Cache::forget('posts:user:' . $post->user->id . ':page:' . $i);
+        }
+
         $post->user->friends->each(function ($friend) use ($post) {
             broadcast(new SendNotification($friend->user->id, 'post', $post->id,[
                 'source' => 'post',
@@ -47,7 +53,10 @@ class PostObserver
      */
     public function deleted(Post $post)
     {
-        //
+        // Laravel file driver not support cache tags, use redis or memcached in real project
+        foreach (range(0, 1000) as $i) {
+            Cache::forget('posts:user:' . $post->user->id . ':page:' . $i);
+        }
     }
 
     /**

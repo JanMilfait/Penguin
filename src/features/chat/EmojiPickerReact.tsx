@@ -2,15 +2,18 @@ import { EmojiClickData } from 'emoji-picker-react';
 import dynamic from 'next/dynamic';
 import React from 'react';
 import s from '../../styles/6_components/Chats.module.scss';
+import {AppState} from '../../app/store';
+import { useSelector } from 'react-redux';
 
 const EmojiPickerReact = ({textarea}: {textarea: React.RefObject<HTMLTextAreaElement>}) => {
+  const isMobile = useSelector((state: AppState) => state.root.isMobile);
 
   const EmojiPicker = dynamic(() => import('emoji-picker-react'), { ssr: false });
 
   const handleEmojiClick = (data: EmojiClickData) => {
     if (!textarea.current) return;
     textarea.current.value += data.emoji;
-    textarea.current.focus();
+    !isMobile && textarea.current.focus();
   };
 
   return (
@@ -21,6 +24,7 @@ const EmojiPickerReact = ({textarea}: {textarea: React.RefObject<HTMLTextAreaEle
         previewConfig={{showPreview: false}}
         skinTonesDisabled
         onEmojiClick={(emojiData) => handleEmojiClick(emojiData)}
+        autoFocusSearch={!isMobile}
       />
     </div>
   );

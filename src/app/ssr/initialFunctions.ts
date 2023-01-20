@@ -1,25 +1,32 @@
 import { AuthApi, setToken } from '../../features/auth/authSlice';
 import { AppStore } from '../store';
 import { GetServerSidePropsContext } from 'next';
-import { deleteCookie, hasCookie, setCookie } from 'cookies-next';
-import { ChatApi } from 'features/chat/chatSlice';
-import { setIsMobile } from '../../features/root/rootSlice';
+import { deleteCookie, hasCookie, setCookie, getCookie } from 'cookies-next';
+import { setIsMobile, setRouterPath,  } from '../../features/root/rootSlice';
+import { PostApi } from '../../features/post/postSlice';
+import { FriendApi } from 'features/friend/friendSlice';
 
 interface InitialFunctions {
-  (store: AppStore, context: GetServerSidePropsContext): Promise<void>;
+  (store: AppStore, context: GetServerSidePropsContext, redirect?: string|boolean): unknown;
 }
 
-export const init: InitialFunctions = async (store, {req} ) => {
+export const init: InitialFunctions = async (store, {req, res, resolvedUrl} ) => {
+  store.dispatch(setRouterPath(resolvedUrl));
 
   if (req.headers['user-agent'] && req.headers['user-agent'].includes('Mobile')) {
     store.dispatch(setIsMobile(true));
   }
-
+  if (hasCookie('dispatch', {req, res})) {
+    store.dispatch(JSON.parse(getCookie('dispatch', {req, res}) as string));
+    deleteCookie('dispatch', {req, res});
+  }
+  if (hasCookie('httpTokenDelete', {req, res})) {
+    deleteCookie('httpTokenDelete', {req, res});
+    deleteCookie('token', {req, res});
+  }
 };
 
 export const authenticate: InitialFunctions = async (store, {req, res}) => {
-  checkDeleteToken(req, res);
-
   const token = req?.cookies?.token;
 
   if (!token) {
@@ -49,9 +56,7 @@ export const authenticate: InitialFunctions = async (store, {req, res}) => {
   }
 };
 
-export const authenticateUnprotected: InitialFunctions = async (store, {req, res}) => {
-  checkDeleteToken(req, res);
-
+export const authenticateUnprotected: InitialFunctions = async (store, {req, res}, redirect = '/') => {
   const token = req?.cookies?.token;
 
   if (token) {
@@ -67,21 +72,37 @@ export const authenticateUnprotected: InitialFunctions = async (store, {req, res
     await store.dispatch(setToken(token));
     const response = await store.dispatch(AuthApi.endpoints.fetchClient.initiate());
 
-    if (response.isSuccess) {
-      res.writeHead(302, { Location: '/' });
+    if (!redirect) {
+      return response.data;
+    } else {
+      res.writeHead(302, {Location: redirect as string});
       res.end();
     }
   }
 };
 
-const checkDeleteToken = (req: GetServerSidePropsContext['req'], res: GetServerSidePropsContext['res']) => {
-  if (hasCookie('httpTokenDelete', {req, res})) {
-    deleteCookie('httpTokenDelete', {req, res});
-    deleteCookie('token', {req, res});
-  }
+export const getFriends = async (store: AppStore) => {
+  const id = await store.getState().auth.data?.id;
+  id && await store.dispatch(FriendApi.endpoints.getFriends.initiate({id: id, page: 1, limit: 10}));
+  id && await store.dispatch(FriendApi.endpoints.getFriends.initiate({id: id, page: 2, limit: 10}));
 };
 
-export const getSidebarFriends = async (store: AppStore) => {
-  const id = await store.getState().auth.data?.id;
-  id && await store.dispatch(ChatApi.endpoints.getSidebarFriends.initiate({id: id, page: 1, limit: 20}));
+export const getFriendsIds = async (store: AppStore, id: number) => {
+  await store.dispatch(FriendApi.endpoints.getFriendsIds.initiate({id: id}));
+};
+
+export const getSendPendings = async (store: AppStore) => {
+  await store.dispatch(FriendApi.endpoints.getSendPendings.initiate(undefined));
+};
+
+export const getPosts = async (store: AppStore) => {
+  await store.dispatch(PostApi.endpoints.getPosts.initiate({page: 1, limit: 3, media: 'all', category: 'latest'}));
+};
+
+export const getUser = async (store: AppStore, id: number) => {
+  await store.dispatch(AuthApi.endpoints.getUser.initiate({id}));
+};
+
+export const getUserPosts = async (store: AppStore, id: number) => {
+  await store.dispatch(PostApi.endpoints.getUserPosts.initiate({page: 1, limit: 3, id}));
 };
