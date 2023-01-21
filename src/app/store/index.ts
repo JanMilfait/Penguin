@@ -13,6 +13,7 @@ import friendSlice from '../../features/friend/friendSlice';
 import commentSlice from '../../features/comment/commentSlice';
 import skillSlice from '../../features/skill/skillSlice';
 import notificationSlice from '../../features/notification/notificationSlice';
+import { localStorageMiddleware } from 'app/middlewares/localStorageMiddleware';
 
 
 const combinedReducer = combineReducers({
@@ -47,6 +48,7 @@ const makeStore = () => {
       getDefaultMiddleware()
         .concat(apiSlice.middleware)
         .concat(modalMiddleware)
+        .concat(localStorageMiddleware)
         .concat(process.env.NEXT_PUBLIC_PUSHER_ACTIVE === 'on' ? pusherMiddleware : <any>[])
     )
   });

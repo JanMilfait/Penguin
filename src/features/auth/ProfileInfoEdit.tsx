@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { calculateUserCompletion, containsOnlyTags } from '../../app/helpers/helpers';
+import { calculateUserCompletion } from '../../app/helpers/helpers';
 import { AppDispatch, AppState } from '../../app/store';
 import s from '../../styles/6_components/Profile.module.scss';
 import 'react-quill/dist/quill.snow.css';

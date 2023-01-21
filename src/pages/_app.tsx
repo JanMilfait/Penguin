@@ -5,7 +5,7 @@ import { Provider } from 'react-redux';
 import Head from 'next/head';
 import { Roboto } from '@next/font/google';
 import { useEffect } from 'react';
-import { setIsMobile, setWindow } from '../features/root/rootSlice';
+import { setAppLoaded, setIsMobile, setWindow } from '../features/root/rootSlice';
 import debounce from 'lodash.debounce';
 import ComponentShared from 'features/root/ComponentShared';
 import {isSSR} from '../app/helpers/helpers';
@@ -15,12 +15,14 @@ const roboto = Roboto({weight: ['400', '500', '700']});
 function MyApp({ Component, ...rest }: AppProps) {
   const {store, props} = wrapper.useWrappedStore(rest);
 
-
   /**
-   * 1. Calculate visual viewport for mobile devices
-   * 2. Detect if the user is on a mobile device (first dispatch - ssr init)
+   * 1. Dispatch appLoaded
+   * 2. Calculate visual viewport for mobile devices
+   * 3. Detect if the user is on a mobile device (first dispatch - ssr init)
    */
   useEffect(() => {
+    store.dispatch(setAppLoaded(true));
+
     const calculateVisualViewport = () => {
       document.documentElement.style.setProperty('--visual100vh', `${visualViewport?.height}px`);
     };

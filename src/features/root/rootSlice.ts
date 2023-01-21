@@ -4,6 +4,7 @@ import * as T from './rootSlice.types';
 export const RootSlice = createSlice({
   name: 'root',
   initialState: {
+    appLoaded: false,
     routerPath: '',
     window: {
       width: 0,
@@ -21,6 +22,9 @@ export const RootSlice = createSlice({
     }
   } as T.RootState,
   reducers: {
+    setAppLoaded: (state, action: PayloadAction<boolean>) => {
+      state.appLoaded = action.payload;
+    },
     setRouterPath: (state, action: PayloadAction<string>) => {
       state.routerPath = action.payload;
     },
@@ -52,6 +56,7 @@ export const RootSlice = createSlice({
 });
 
 export const {
+  setAppLoaded,
   setRouterPath,
   setWindow,
   setIsMobile,

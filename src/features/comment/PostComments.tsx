@@ -4,10 +4,10 @@ import {useDispatch, useSelector } from 'react-redux';
 import s from 'styles/6_components/Posts.module.scss';
 import Avatar from '../../components/Avatar';
 import { PostComment } from '../post/postSlice.types';
-import Comment from './Comment';
 import {expandComments, isExpanded} from '../post/postSlice';
 import CommentsResults from './CommentsResults';
 import {useAddCommentMutation} from './commentSlice';
+import SingleComment from './SingleComment';
 
 const PostComments = ({postId, commentsCount, mostReacted}: {postId: number, commentsCount: number, mostReacted: PostComment | null}) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -52,7 +52,7 @@ const PostComments = ({postId, commentsCount, mostReacted}: {postId: number, com
         </div>
       }
       <div ref={commentsRef} className={s.posts__commentsContent}>
-        {commentsCount > 0 && <Comment {...mostReacted!} postId={postId} />}
+        {commentsCount > 0 && <SingleComment {...mostReacted!} postId={postId} />}
         {!isExpandedComments
           ? commentsCount > 1 && <div className="d-flex mt-3 mb-2"><p className="cp f--x-small mb-0" onClick={() => dispatch(expandComments(postId))}>View all {commentsCount} comments</p></div>
           : <CommentsResults commentsRef={commentsRef} postId={postId} />

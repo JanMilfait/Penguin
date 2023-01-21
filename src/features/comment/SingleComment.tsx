@@ -20,7 +20,7 @@ import {setOpenModal} from '../root/rootSlice';
 const roboto = Roboto({weight: ['400', '500', '700']});
 type CommentProps = (PostComment | PostReply) & {type?: 'comment' | 'reply', postId: number, replyToId?: number};
 
-const Comment = ({id: commentId, postId,  replyToId, body, user, replies, reactions, created_at, type = 'comment'}: CommentProps) => {
+const SingleComment = ({id: commentId, postId,  replyToId, body, user, replies, reactions, created_at, type = 'comment'}: CommentProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const inputRef = useRef<HTMLInputElement>(null);
   const inputAddRef = useRef<HTMLInputElement>(null);
@@ -194,7 +194,7 @@ const Comment = ({id: commentId, postId,  replyToId, body, user, replies, reacti
                     </div>
                   }
                   <div className={s.comment__replies}>
-                    {replies.map((reply: PostReply) => <Comment key={reply.id} {...reply} type={'reply'} postId={postId} replyToId={commentId} />)}
+                    {replies.map((reply: PostReply) => <SingleComment key={reply.id} {...reply} type={'reply'} postId={postId} replyToId={commentId} />)}
                   </div>
                 </div>
               </div>
@@ -206,4 +206,4 @@ const Comment = ({id: commentId, postId,  replyToId, body, user, replies, reacti
   );
 };
 
-export default React.memo(Comment);
+export default React.memo(SingleComment);

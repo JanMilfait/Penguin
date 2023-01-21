@@ -1,7 +1,7 @@
 import { Middleware } from '@reduxjs/toolkit';
-import {ChatApi, deactivateChat} from 'features/chat/chatSlice';
+import { ChatApi, deactivateChat } from 'features/chat/chatSlice';
 import { PostApi } from '../../features/post/postSlice';
-import {setOpenModal} from '../../features/root/rootSlice';
+import { setOpenModal } from '../../features/root/rootSlice';
 
 export const modalMiddleware: Middleware = (store) => (next) => (action) => {
   if (action.type !== 'root/setCloseModal') return next(action);

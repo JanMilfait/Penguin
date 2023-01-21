@@ -30,8 +30,11 @@ export const authenticate: InitialFunctions = async (store, {req, res}) => {
   const token = req?.cookies?.token;
 
   if (!token) {
-    res.writeHead(302, { Location: '/login' });
-    res.end();
+    if (!res.finished) {
+      res.writeHead(302, { Location: '/login' });
+      res.end();
+    }
+    return;
   }
 
   setCookie('token', token, {
@@ -50,9 +53,17 @@ export const authenticate: InitialFunctions = async (store, {req, res}) => {
     if ('message' in response.error) {
       console.error(`Error: ${response.error.message || 'Couldn\'t log in'}`);
     }
-
-    res.writeHead(302, { Location: '/login' });
-    res.end();
+    deleteCookie('token', {
+      req,
+      res,
+      httpOnly: true,
+      sameSite: 'strict',
+      secure: process.env.NEXT_PUBLIC_APP_ENV === 'production'
+    });
+    if (!res.finished) {
+      res.writeHead(302, { Location: '/login' });
+      res.end();
+    }
   }
 };
 
@@ -72,14 +83,35 @@ export const authenticateUnprotected: InitialFunctions = async (store, {req, res
     await store.dispatch(setToken(token));
     const response = await store.dispatch(AuthApi.endpoints.fetchClient.initiate());
 
+    if (response.isError) {
+      if ('message' in response.error) {
+        console.error(`Error: ${response.error.message || 'Couldn\'t log in'}`);
+      }
+      deleteCookie('token', {
+        req,
+        res,
+        httpOnly: true,
+        sameSite: 'strict',
+        secure: process.env.NEXT_PUBLIC_APP_ENV === 'production'
+      });
+      if (!res.finished) {
+        res.writeHead(302, { Location: '/login' });
+        res.end();
+      }
+      return;
+    }
+
     if (!redirect) {
       return response.data;
     } else {
-      res.writeHead(302, {Location: redirect as string});
-      res.end();
+      if (!res.finished) {
+        res.writeHead(302, {Location: redirect as string});
+        res.end();
+      }
     }
   }
 };
+
 
 export const getFriends = async (store: AppStore) => {
   const id = await store.getState().auth.data?.id;

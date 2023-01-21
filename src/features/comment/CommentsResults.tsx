@@ -2,7 +2,7 @@ import { PostComment } from 'features/post/postSlice.types';
 import React, { useEffect } from 'react';
 import useLazyInfiniteData from '../../app/hooks/useLazyInfiniteData';
 import {clearInfiniteScroll, CommentApi} from './commentSlice';
-import Comment from './Comment';
+import SingleComment from './SingleComment';
 import {AppDispatch, AppState} from '../../app/store';
 import {useDispatch, useSelector } from 'react-redux';
 import {apiSlice} from '../../app/api/apiSlice';
@@ -62,7 +62,7 @@ const CommentsResults = ({postId, commentsRef}: {postId: number, commentsRef: Re
 
   return (
     <>
-      {combinedData.map((comment: PostComment) => <Comment key={comment.id} {...comment} postId={postId} />)}
+      {combinedData.map((comment: PostComment) => <SingleComment key={comment.id} {...comment} postId={postId} />)}
     </>
   );
 };
