@@ -101,7 +101,7 @@ export const ChatApi = apiSlice.injectEndpoints({
  * (friend clicked -> api automatically create private chat if previous was changed to group)
  */
 export const activateChat = createAsyncThunk('chat/activateChat', async ({friendId, chatId}: {friendId?: number, chatId?: number}, {dispatch, rejectWithValue}): Promise<Chat|any> => {
-  const chatInit = dispatch(ChatApi.endpoints[friendId ? 'getChatFriend' : 'getChat'].initiate({id: friendId ?? chatId!}, {forceRefetch: true}));
+  const chatInit = dispatch(ChatApi.endpoints[friendId ? 'getChatFriend' : 'getChat'].initiate({id: friendId ?? chatId!}));
   const chat = await chatInit;
   await chatInit.unsubscribe();
   if (!chat.data || chat.isError) {

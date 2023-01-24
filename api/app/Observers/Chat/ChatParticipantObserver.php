@@ -22,19 +22,14 @@ class ChatParticipantObserver
 
         if ($participant->chat->participants->count() <= 2) return;
 
-        $ids = $participant->chat->participants->pluck('user_id')->except($participant->user_id)->toArray();
         $names = $participant->chat->participants->pluck('user.name')->except($participant->user_id)->toArray();
 
-        $participant->chat->participants->each(function ($item) use ($participant, $ids, $names) {
+        $participant->chat->participants->each(function ($item) use ($participant, $names) {
             broadcast(new SendNotification($item->user->id, 'chat', $participant->chat->id, [
-                'source' => 'chat',
-                'source_id' => $participant->chat->id,
-                'state' => 'added',
-                'ids' => $ids,
                 'names' => $names,
                 'id' => $participant->user->id,
                 'name' => $participant->user->name,
-                'avatar' => $participant->user->avatar_name ? $participant->user->avatar_url . '50_' . $participant->user->avatar_name : null
+                'avatar' => $participant->user->avatar_name ? ($participant->user->avatar_url . '50_' . $participant->user->avatar_name) : null
             ]));
         });
     }
@@ -70,14 +65,12 @@ class ChatParticipantObserver
 
         $participant->chat->participants->each(function ($item) use ($participant, $ids, $names) {
             broadcast(new SendNotification($item->user->id, 'chat', $participant->chat->id, [
-                'source' => 'chat',
-                'source_id' => $participant->chat->id,
                 'state' => 'removed',
                 'ids' => $ids,
                 'names' => $names,
                 'id' => $participant->user->id,
                 'name' => $participant->user->name,
-                'avatar' => $participant->user->avatar_name ? $participant->user->avatar_url . '50_' . $participant->user->avatar_name : null
+                'avatar' => $participant->user->avatar_name ? ($participant->user->avatar_url . '50_' . $participant->user->avatar_name) : null
             ]));
         });
     }

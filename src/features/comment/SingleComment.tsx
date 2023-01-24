@@ -27,7 +27,8 @@ const SingleComment = ({id: commentId, postId,  replyToId, body, user, replies, 
   const [showReplies, setShowReplies] = useState(false);
   const [edit, setEdit] = useState('');
 
-  const id = useSelector((state: AppState) => state.auth.data?.id);
+  const auth = useSelector((state: AppState) => state.auth.data);
+  const id = auth?.id;
   const isAuth = typeof id === 'number';
   const trendingComment = useSelector((state: AppState) => isTrending(state, (type === 'comment' ? commentId : replyToId)));
 
@@ -183,7 +184,7 @@ const SingleComment = ({id: commentId, postId,  replyToId, body, user, replies, 
                   {isAuth &&
                     <div className="row align-items-center mt-3 mb-3">
                       <div className="col-auto">
-                        <Avatar {...user} size={32} />
+                        {auth && <Link href={'/profile/' + auth.id}><Avatar {...auth} size={32} /></Link>}
                       </div>
                       <div className="col">
                         <input ref={inputAddRef} className={s.posts__addComment + ' f--x-small'} type="text" placeholder="Reply to a comment..." onKeyPress={(e) => e.key === 'Enter' && handleAddReply()} />

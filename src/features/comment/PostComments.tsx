@@ -8,6 +8,7 @@ import {expandComments, isExpanded} from '../post/postSlice';
 import CommentsResults from './CommentsResults';
 import {useAddCommentMutation} from './commentSlice';
 import SingleComment from './SingleComment';
+import Link from 'next/link';
 
 const PostComments = ({postId, commentsCount, mostReacted}: {postId: number, commentsCount: number, mostReacted: PostComment | null}) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -37,7 +38,7 @@ const PostComments = ({postId, commentsCount, mostReacted}: {postId: number, com
       {isAuth &&
         <div className="row align-items-center mt-3 mb-3">
           <div className="col-auto">
-            <Avatar {...user} size={32} />
+            <Link href={'/profile/' + user.id}><Avatar {...user} size={32} /></Link>
           </div>
           <div className="col">
             <input ref={inputAddRef} className={s.posts__addComment + ' f--x-small'} type="text" placeholder="Write a comment..." onKeyPress={(e) => {

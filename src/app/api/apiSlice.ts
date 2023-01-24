@@ -1,6 +1,7 @@
 import {BaseQueryFn, createApi, FetchArgs, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import { ErrorMessage } from 'app/helpers/errorHandling';
 import { AppState } from 'app/store';
+import { HYDRATE } from 'next-redux-wrapper';
 
 export const apiSlice = createApi({
   reducerPath: 'api',
@@ -25,6 +26,11 @@ export const apiSlice = createApi({
       return headers;
     }
   }) as BaseQueryFn<string | FetchArgs, unknown, {data: ErrorMessage}, Record<string, unknown>>,
+  extractRehydrationInfo(action, { reducerPath }) {
+    if (action.type === HYDRATE) {
+      return action.payload[reducerPath];
+    }
+  },
   // eslint-disable-next-line
   endpoints: (builder) => ({})
 });

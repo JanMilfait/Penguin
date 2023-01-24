@@ -23,6 +23,7 @@ class ChatController extends Controller
         $chats = ChatRoom::whereHas('participants', function ($query) use ($request) {
             $query->where('user_id', $request->user()->id);
         })
+            ->whereNotNull($request->get('all')? null : 'last_message')
             ->latest('updated_at')
             ->limit(100)
             ->with('users')

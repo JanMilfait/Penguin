@@ -24,12 +24,10 @@ class PostObserver
 
         $post->user->friends->each(function ($friend) use ($post) {
             broadcast(new SendNotification($friend->user->id, 'post', $post->id,[
-                'source' => 'post',
-                'source_id' => $post->id,
                 'preview' => Str::limit($post->body, 50),
                 'id' => $post->user->id,
                 'name' => $post->user->name,
-                'avatar' => $post->user->avatar_name ? $post->user->avatar_url . '50_' . $post->user->avatar_name : null
+                'avatar' => $post->user->avatar_name ? ($post->user->avatar_url . '50_' . $post->user->avatar_name) : null
             ]));
         });
     }

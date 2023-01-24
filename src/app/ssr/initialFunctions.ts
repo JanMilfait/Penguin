@@ -2,7 +2,7 @@ import { AuthApi, setToken } from '../../features/auth/authSlice';
 import { AppStore } from '../store';
 import { GetServerSidePropsContext } from 'next';
 import { deleteCookie, hasCookie, setCookie, getCookie } from 'cookies-next';
-import { setIsMobile, setRouterPath,  } from '../../features/root/rootSlice';
+import { setIsMobile, setRouterPath } from '../../features/root/rootSlice';
 import { PostApi } from '../../features/post/postSlice';
 import { FriendApi } from 'features/friend/friendSlice';
 
@@ -115,8 +115,7 @@ export const authenticateUnprotected: InitialFunctions = async (store, {req, res
 
 export const getFriends = async (store: AppStore) => {
   const id = await store.getState().auth.data?.id;
-  id && await store.dispatch(FriendApi.endpoints.getFriends.initiate({id: id, page: 1, limit: 10}));
-  id && await store.dispatch(FriendApi.endpoints.getFriends.initiate({id: id, page: 2, limit: 10}));
+  id && await store.dispatch(FriendApi.endpoints.getFriends.initiate({id: id, page: 1, limit: 20}));
 };
 
 export const getFriendsIds = async (store: AppStore, id: number) => {

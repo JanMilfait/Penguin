@@ -15,7 +15,7 @@ const FriendsHorizontal = () => {
 
   const id = useSelector((state: AppState) => state.auth.data?.id);
   const width = useSelector((state: AppState) => state.root.window.width);
-  const { combinedData, loadMore, isDone } = useLazyInfiniteData({api: FriendApi, apiEndpointName: 'getFriends', apiArgs: {id: id}, limit: 10});
+  const { combinedData, loadMore, isDone } = useLazyInfiniteData({api: FriendApi, apiEndpointName: 'getFriends', apiArgs: {id: id}, limit: 20});
 
   useEffect(() => {
     const container = containerRef.current;

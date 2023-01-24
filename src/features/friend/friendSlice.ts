@@ -6,10 +6,7 @@ export const FriendApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getFriends: builder.query<T.FriendsResult, T.FriendsArg>({
       query: ({id, page, limit}) => '/api/friends/' + id + '?page=' + page + '&limit=' + limit,
-      providesTags: (result): any =>
-        result
-          ? [...result.items.map(({id}) => ({type: 'Friend', id})), 'Friend']
-          : ['Friend']
+      providesTags: ['Friend'] // TODO ON ADDED/DELETED FETCH ALL PAGES FIX -> reset infinite scroll
     }),
     getFriendsIds: builder.query<T.FriendsIdsResult, T.FriendsIdsArg>({
       query: ({id}) => '/api/friends/' + id + '/ids',
@@ -33,7 +30,7 @@ export const FriendApi = apiSlice.injectEndpoints({
         url: '/api/pending/' + id,
         method: 'POST'
       }),
-      invalidatesTags: ['SendPending']
+      invalidatesTags: ['SendPending', 'Friend']
     }),
     getSendPendings: builder.query<T.SendPendingsResult, T.SendPendingsArg>({
       query: () => '/api/pendings',
@@ -48,14 +45,14 @@ export const FriendApi = apiSlice.injectEndpoints({
         url: '/api/pending-accept/' + pendingId,
         method: 'PATCH'
       }),
-      invalidatesTags: ['ReceivedPending']
+      invalidatesTags: ['ReceivedPending', 'Friend']
     }),
     declinePending: builder.mutation<T.DeclinePendingResult, T.DeclinePendingArg>({
       query: ({pendingId}) => ({
         url: '/api/pending-decline/' + pendingId,
         method: 'PATCH'
       }),
-      invalidatesTags: ['ReceivedPending']
+      invalidatesTags: ['ReceivedPending', 'Friend']
     })
   })
 });

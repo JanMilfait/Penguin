@@ -1,14 +1,16 @@
 import '../styles/styles.scss';
 import type { AppProps } from 'next/app';
-import { wrapper } from '../app/store';
+import { wrapper} from '../app/store';
 import { Provider } from 'react-redux';
 import Head from 'next/head';
 import { Roboto } from '@next/font/google';
 import { useEffect } from 'react';
-import { setAppLoaded, setIsMobile, setWindow } from '../features/root/rootSlice';
+import {setAppLoaded, setIsMobile, setWindow} from '../features/root/rootSlice';
 import debounce from 'lodash.debounce';
 import ComponentShared from 'features/root/ComponentShared';
-import {isSSR} from '../app/helpers/helpers';
+import { isSSR } from '../app/helpers/helpers';
+import Chats from 'features/chat/Chats';
+import Nav from 'components/Nav';
 
 const roboto = Roboto({weight: ['400', '500', '700']});
 
@@ -16,12 +18,12 @@ function MyApp({ Component, ...rest }: AppProps) {
   const {store, props} = wrapper.useWrappedStore(rest);
 
   /**
-   * 1. Dispatch appLoaded
+   * 1. Dispatch AppLoaded
    * 2. Calculate visual viewport for mobile devices
    * 3. Detect if the user is on a mobile device (first dispatch - ssr init)
    */
   useEffect(() => {
-    store.dispatch(setAppLoaded(true));
+    store.dispatch(setAppLoaded());
 
     const calculateVisualViewport = () => {
       document.documentElement.style.setProperty('--visual100vh', `${visualViewport?.height}px`);
@@ -35,14 +37,14 @@ function MyApp({ Component, ...rest }: AppProps) {
       }
     }, 500);
 
-    !isSSR() && visualViewport?.addEventListener('resize', calculateVisualViewport);
+    !isSSR && visualViewport?.addEventListener('resize', calculateVisualViewport);
     window.addEventListener('resize', handleResize);
 
-    !isSSR() && calculateVisualViewport();
+    !isSSR && calculateVisualViewport();
     handleResize(); // ssr already guessed the device type, but viewport width is not available on the server
 
     return () => {
-      !isSSR() && visualViewport?.removeEventListener('resize', calculateVisualViewport);
+      !isSSR && visualViewport?.removeEventListener('resize', calculateVisualViewport);
       window.removeEventListener('resize', handleResize);
     };
   }, []);
@@ -66,6 +68,8 @@ function MyApp({ Component, ...rest }: AppProps) {
       </Head>
       <div className={roboto.className}>
         <main className="pb-5">
+          <Nav />
+          <Chats />
           <Component {...props.pageProps} />
         </main>
         <ComponentShared />

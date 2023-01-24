@@ -31,6 +31,7 @@ export type SendPending = {
   state: 'waiting' | 'accepted' | 'declined';
   created_at: string;
   updated_at: string;
+  updated_at_original: string;
 }
 
 export type ReceivedPending = {
@@ -39,6 +40,7 @@ export type ReceivedPending = {
   state: 'waiting' | 'accepted' | 'declined';
   created_at: string;
   updated_at: string;
+  updated_at_original: string;
 }
 
 export type SendPendingsResult = SendPending[]

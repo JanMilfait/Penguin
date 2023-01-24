@@ -66,7 +66,7 @@ export const modalMiddleware: Middleware = (store) => (next) => (action) => {
               type: 'alert',
               icon: 'error',
               title: 'Couldn\'t delete chat',
-              message: res.error.data.message, //TODO: MAKE LIKE LOGIN VALIDATION
+              message: res.error.data.message,
               clickOutside: true
             }
           }));

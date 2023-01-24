@@ -5,10 +5,12 @@ import SearchBar from 'features/search/SearchBar';
 import NavIcons from './NavIcons';
 import {AppState} from '../app/store';
 import { useSelector } from 'react-redux';
+import {useGetNotificationsQuery} from '../features/notification/notificationSlice';
 
 function Navigation() {
   const id = useSelector((state: AppState) => state.auth.data?.id);
   const isAuth = typeof id === 'number';
+  useGetNotificationsQuery(undefined, {skip: !isAuth});
 
   return (
     <nav className={s.navigation}>
@@ -42,4 +44,4 @@ function Navigation() {
   );
 }
 
-export default Navigation;
+export default React.memo(Navigation);

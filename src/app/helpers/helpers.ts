@@ -155,9 +155,7 @@ export const dispatchSSR = (type: string, payload: any) => {
 /**
  * Determine if server side rendering or client side rendering
  */
-export const isSSR = () => {
-  return typeof window === 'undefined';
-};
+export const isSSR = typeof window === 'undefined';
 
 
 /**

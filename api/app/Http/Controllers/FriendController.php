@@ -202,6 +202,10 @@ class FriendController extends Controller
             ->limit(100)
             ->get();
 
+        foreach ($pendings as $pending) {
+            $pending->updated_at_original = $pending->getOriginalUpdatedAt();
+        }
+
         return response()->json($pendings);
     }
 
@@ -220,6 +224,10 @@ class FriendController extends Controller
             ->with('user')
             ->limit(100)
             ->get();
+
+        foreach ($received as $pending) {
+            $pending->updated_at_original = $pending->getOriginalUpdatedAt();
+        }
 
         return response()->json($received);
     }

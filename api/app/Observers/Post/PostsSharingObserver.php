@@ -19,12 +19,10 @@ class PostsSharingObserver
         $sharing->post->sharingScore('inc');
 
         broadcast(new SendNotification($sharing->post->user->id, 'sharing', $sharing->id, [
-            'source' => 'sharing',
-            'source_id' => $sharing->post->id,
             'preview' => Str::limit($sharing->post->body, 50),
             'id' => $sharing->user->id,
             'name' => $sharing->user->name,
-            'avatar' => $sharing->user->avatar_name ? $sharing->user->avatar_url . '50_' . $sharing->user->avatar_name : null
+            'avatar' => $sharing->user->avatar_name ? ($sharing->user->avatar_url . '50_' . $sharing->user->avatar_name) : null
         ]));
     }
 

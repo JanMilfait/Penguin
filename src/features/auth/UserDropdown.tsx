@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import Router from 'next/router';
 import s from 'styles/6_components/Dropdown.module.scss';
 import { setCookie } from 'cookies-next';
 import { useLogoutMutation } from './authSlice';
@@ -16,7 +15,7 @@ const UserDropdown = () => {
   const handleLogout = async () => {
     await logout();
     setCookie('httpTokenDelete', 'true');
-    Router.push('/login');
+    window.location.href = '/login';
   };
 
   return (

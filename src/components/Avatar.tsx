@@ -1,10 +1,25 @@
 import React from 'react';
 import Image from 'next/image';
-import { Friend } from '../features/chat/chatSlice.types';
 
-type AvatarT = {size: number, onClick?: (e: React.MouseEvent<HTMLImageElement, MouseEvent>) => unknown, className?: string};
+type AvatarProps = {
+  id: number;
+  avatar_name?: string|null;
+  avatar_url?: string|null;
+  is_active?: 1 | 0;
+  avatar?: string|null;
+  size: number,
+  onClick?: (e: React.MouseEvent<HTMLImageElement, MouseEvent>) => unknown,
+  className?: string
+};
 
-const Avatar = ({id, avatar_name, avatar_url, size, onClick, className}: Friend & AvatarT) => {
+const Avatar = ({id, avatar, avatar_name, avatar_url, size, onClick, className}: AvatarProps) => {
+
+  if (avatar) {
+    return (
+      <Image className={className ? 'avatar ' + className : 'avatar'} src={avatar} alt={'avatar_' + id} width={size} height={size} onClick={onClick} priority={size > 150} />
+    );
+  }
+
   return (
     <>
       {avatar_name

@@ -1,13 +1,12 @@
 import React, {useEffect, useRef } from 'react';
-import {useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import s from 'styles/6_components/FriendsSb.module.scss';
-import {AppDispatch, AppState } from '../../app/store';
+import { AppState } from '../../app/store';
 import usePerfectScrollbar from '../../app/hooks/usePerfectScrollbar';
 import { Friend } from '../chat/chatSlice.types';
 import dynamic from 'next/dynamic';
 import useLazyInfiniteData from '../../app/hooks/useLazyInfiniteData';
 import {FriendApi} from './friendSlice';
-import {activateChat} from '../chat/chatSlice';
 import FriendAvatar from './FriendAvatar';
 
 const FriendsSideBar = () => {
@@ -16,9 +15,8 @@ const FriendsSideBar = () => {
   const { updateScroll } = usePerfectScrollbar(containerRef, {wheelPropagation: false});
   const ReactTooltip = dynamic(() => import('react-tooltip'), { ssr: true });
 
-  const dispatch = useDispatch<AppDispatch>();
   const id = useSelector((state: AppState) => state.auth.data?.id);
-  const { combinedData, loadMore, isDone } = useLazyInfiniteData({api: FriendApi, apiEndpointName: 'getFriends', apiArgs: {id: id}, limit: 10});
+  const { combinedData, loadMore, isDone } = useLazyInfiniteData({api: FriendApi, apiEndpointName: 'getFriends', apiArgs: {id: id}, limit: 20});
   const contentRef = useRef<HTMLDivElement>(null);
   const height = useSelector((state: AppState) => state.root.window.height);
 
@@ -57,12 +55,10 @@ const FriendsSideBar = () => {
     <div ref={containerRef} className={s.friendsSideBar + (combinedData.length === 0 ? ' d-none' : '')}>
       <div ref={contentRef}>
         {combinedData.map((friend: Friend) => (
-          <div key={friend.id} onClick={()=>dispatch(activateChat({friendId: friend.id}))}>
-            <FriendAvatar className="mb-3" tooltip="friendSb" {...friend} />
-          </div>
+          <FriendAvatar key={friend.id} tooltip="friendSb" {...friend} />
         ))}
-        <ReactTooltip id="friendSb" place="left" type="light" />
       </div>
+      <ReactTooltip id="friendSb" place="left" type="light" />
     </div>
   );
 };

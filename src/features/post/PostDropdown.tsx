@@ -73,7 +73,7 @@ const PostDropdown = ({id, ownerId, sharings}: {id: number, ownerId: number, sha
     }));
   };
 
-
+// TODO: EDIT
   return (
     <ul className={s.dropdown + ' ' + roboto.className}>
       <li><a>Hide</a></li>

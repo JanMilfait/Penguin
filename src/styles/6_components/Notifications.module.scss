@@ -1,6 +1,6 @@
 @import "variables";
 
-.pendings {
+.notifications {
   width: 100%;
   height: 100%;
   padding-right: 8px;
@@ -8,7 +8,7 @@
   overflow-y: auto;
   overscroll-behavior-y: contain;
 
-  &__pending {
+  &__notification {
     position: relative;
     margin: 6px 0;
     padding: 8px;

@@ -48,4 +48,9 @@ class FriendsPending extends Model
     {
         return Carbon::parse($value)->diffForHumans();
     }
+
+    public function getOriginalUpdatedAt()
+    {
+        return $this->attributes['updated_at'];
+    }
 }

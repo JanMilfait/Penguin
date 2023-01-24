@@ -24,12 +24,11 @@ class PostsCommentObserver
         }
 
         broadcast(new SendNotification($comment->post->user_id, 'comment', $comment->id, [
-            'source' => 'comment',
-            'source_id' => $comment->id,
             'preview' => Str::limit($comment->body, 50),
+            'path' => '/post/' . $comment->post->id . '#comment-' . $comment->id,
             'id' => $comment->user->id,
             'name' => $comment->user->name,
-            'avatar' => $comment->user->avatar_name ? $comment->user->avatar_url . '50_' . $comment->user->avatar_name : null
+            'avatar' => $comment->user->avatar_name ? ($comment->user->avatar_url . '50_' . $comment->user->avatar_name) : null
         ]));
     }
 

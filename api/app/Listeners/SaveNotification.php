@@ -28,10 +28,11 @@ class SaveNotification
     public function handle(SendNotification $event)
     {
         Notification::create([
+            'id' => $event->id,
             'user_id' => $event->user_id,
             'source' => $event->source,
             'source_id' => $event->source_id,
-            'source_data' => json_encode($event->source_data)
+            'source_data' => $event->source_data
         ]);
     }
 }

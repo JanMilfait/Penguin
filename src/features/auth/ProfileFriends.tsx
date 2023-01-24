@@ -17,7 +17,7 @@ const ProfileFriends = () => {
 
   const userId = useSelector((state: AppState) => state.auth.profile.id);
   const { data: friendsIds, isSuccess, isFetching } = useGetFriendsIdsQuery({id: userId!}, {skip: typeof userId !== 'number'});
-  const { combinedData, loadMore, isDone } = useLazyInfiniteData({api: FriendApi, apiEndpointName: 'getFriends', apiArgs: {id: userId}, limit: 10});
+  const { combinedData, loadMore, isDone } = useLazyInfiniteData({api: FriendApi, apiEndpointName: 'getFriends', apiArgs: {id: userId}, limit: 20});
   const contentRef = useRef<HTMLDivElement>(null);
 
 

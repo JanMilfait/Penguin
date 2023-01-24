@@ -1,4 +1,4 @@
-import { createSlice } from '@reduxjs/toolkit';
+import {AnyAction, createSlice } from '@reduxjs/toolkit';
 import { apiSlice } from '../../app/api/apiSlice';
 import * as T from './skillSlice.types';
 import { Skill } from '../auth/authSlice.types';
@@ -7,6 +7,7 @@ import {MessageResponse} from '../root/rootSlice.types';
 import { store } from '../../app/store';
 import {SearchSkill} from './skillSlice.types';
 import {AuthApi} from '../auth/authSlice';
+import { HYDRATE } from 'next-redux-wrapper';
 
 
 export const SkillApi = apiSlice.injectEndpoints({
@@ -74,6 +75,12 @@ export const SkillSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(HYDRATE, (state, action: AnyAction) => {
+        return {
+          ...state,
+          ...action.payload.skill
+        };
+      })
       .addMatcher(AuthApi.endpoints.getUser.matchFulfilled, (state, action) => {
         if ('skills' in action.payload) {
           action.payload.skills.forEach((skill) => {

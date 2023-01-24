@@ -5,14 +5,19 @@ import Avatar from '../../components/Avatar';
 import {AppDispatch, AppState} from '../../app/store';
 import {useDispatch, useSelector } from 'react-redux';
 import { activateChat } from './chatSlice';
+import ss from '../../styles/6_components/Navigation.module.scss';
 
-const ActiveChat = ({id: chatId, users, last_message_by, last_message, updated_at}: Chat) => {
+const ActiveChat = ({id: chatId, users, last_message_by, last_message, updated_at, unreaded, onHover}: Chat & {unreaded: boolean, onHover?: () => void}) => {
   const dispatch = useDispatch<AppDispatch>();
   const id = useSelector((state: AppState) => state.auth.data!.id);
   const usersFiltered = useMemo(() => users.filter((user) => user.id !== id).slice(0, 4), [users.length]);
 
   return (
-    <div className={s.allChats__chat}>
+    <div
+      className={s.allChats__chat}
+      onMouseEnter={onHover}
+      onTouchStart={onHover}
+    >
       <div className="row cp" onClick={() => dispatch(activateChat({chatId}))}>
         <div className="col-auto">
           <div className="d-flex">
@@ -33,13 +38,14 @@ const ActiveChat = ({id: chatId, users, last_message_by, last_message, updated_a
             <div className="d-flex align-items-center">
               <h3 className="f--x-small text-truncate mb-0">
                 {last_message_by && last_message_by + ' '}
-                {last_message ? last_message : (<span className="opacity-25">No messages yet</span>)}
+                {last_message}
               </h3>
               <h3 className="f--x-small text-nowrap mb-0">{last_message && updated_at && <span className="f--xx-small opacity-50 ml-2">- {updated_at}</span>}</h3>
             </div>
           </div>
         </div>
       </div>
+      {unreaded && <div className={ss.navigation__unreaded}></div>}
     </div>
   );
 };

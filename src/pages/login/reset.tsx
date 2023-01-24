@@ -1,6 +1,6 @@
 import type { NextPage } from 'next';
 import { AppDispatch, wrapper } from '../../app/store';
-import { authenticateUnprotected } from '../../app/ssr/initialFunctions';
+import {authenticateUnprotected, init} from '../../app/ssr/initialFunctions';
 import s from '../../styles/6_components/SignForm.module.scss';
 import Logo from '../../components/Logo';
 import { hasErrMessage } from '../../app/helpers/errorHandling';
@@ -65,6 +65,7 @@ const Reset: NextPage = () => {
 export default Reset;
 
 export const getServerSideProps = wrapper.getServerSideProps(store => async (ctx) => {
+  await init(store, ctx);
   await authenticateUnprotected(store, ctx);
 
   return {props: {}};

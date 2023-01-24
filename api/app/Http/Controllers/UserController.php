@@ -146,6 +146,7 @@ class UserController extends Controller
     public function logged_notifications(Request $request)
     {
         $notifications = $request->user()->notifications()
+            ->where('created_at', '>', now()->subMonth())
             ->orderByRaw('readed_at IS NULL DESC, created_at DESC')
             ->limit(100)
             ->get();

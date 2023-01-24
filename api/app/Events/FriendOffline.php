@@ -34,7 +34,7 @@ class FriendOffline implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('private-user.' . $this->user_id);
+        return new PrivateChannel('user.' . $this->user_id);
     }
 
     public function broadcastAs()

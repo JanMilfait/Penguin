@@ -19,12 +19,10 @@ class FriendsPendingObserver
         $user = User::find($pending->user_id);
 
         broadcast(new SendNotification($pending->pending_user, 'pending', $pending->id, [
-            'source' => 'pending',
-            'source_id' => $pending->id,
             'state' => $pending->state,
             'id' => $user->id,
             'name' => $user->name,
-            'avatar' => $user->avatar_name ? $user->avatar_url . '50_' . $user->avatar_name : null
+            'avatar' => $user->avatar_name ? ($user->avatar_url . '50_' . $user->avatar_name) : null
         ]));
     }
 
@@ -41,12 +39,10 @@ class FriendsPendingObserver
             $user = User::find($pending->pending_user);
 
             broadcast(new SendNotification($pending->user_id, 'pending', $pending->id, [
-                'source' => 'pending',
-                'source_id' => $pending->id,
                 'state' => $pending->state,
                 'id' => $user->id,
                 'name' => $user->name,
-                'avatar' => $user->avatar_name ? $user->avatar_url . '50_' . $user->avatar_name : null
+                'avatar' => $user->avatar_name ? ($user->avatar_url . '50_' . $user->avatar_name) : null
             ]));
 
         } elseif ($pending->isDirty('state') && $pending->state === 'declined') {
@@ -54,12 +50,10 @@ class FriendsPendingObserver
             $user = User::find($pending->pending_user);
 
             broadcast(new SendNotification($pending->user_id, 'pending', $pending->id, [
-                'source' => 'pending',
-                'source_id' => $pending->id,
                 'state' => $pending->state,
                 'id' => $user->id,
                 'name' => $user->name,
-                'avatar' => $user->avatar_name ? $user->avatar_url . '50_' . $user->avatar_name : null
+                'avatar' => $user->avatar_name ? ($user->avatar_url . '50_' . $user->avatar_name) : null
             ]));
         }
     }

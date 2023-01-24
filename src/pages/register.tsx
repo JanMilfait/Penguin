@@ -1,6 +1,6 @@
 import type { NextPage } from 'next';
 import {wrapper} from '../app/store';
-import {authenticateUnprotected} from '../app/ssr/initialFunctions';
+import {authenticateUnprotected, init} from '../app/ssr/initialFunctions';
 import s from '../styles/6_components/SignForm.module.scss';
 import Logo from '../components/Logo';
 import RegisterForm from 'features/auth/RegisterForm';
@@ -24,6 +24,7 @@ const Register: NextPage = () => {
 export default Register;
 
 export const getServerSideProps = wrapper.getServerSideProps(store => async (ctx) => {
+  await init(store, ctx);
   await authenticateUnprotected(store, ctx);
 
   return {props: {}};

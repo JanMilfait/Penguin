@@ -3,6 +3,9 @@ import Pusher from 'pusher-js';
 import { Middleware } from 'redux';
 import * as CT from '../../features/chat/chatSlice.types';
 import { appendDatesToMessages } from '../helpers/helpers';
+import {Notification} from '../../features/notification/notificationSlice.types';
+import {addMessageNotification, addOtherNotification, addPendingNotification} from 'features/notification/notificationSlice';
+import { FriendApi } from 'features/friend/friendSlice';
 
 export const pusherMiddleware: Middleware = (store) => (next) => (action) => {
   const pusher = Pusher.instances[0];
@@ -25,7 +28,33 @@ export const pusherMiddleware: Middleware = (store) => (next) => (action) => {
 
     const channel = pusher.subscribe('private-user.' + auth.data.id);
     channel.bind('pusher:subscription_succeeded', () => {
-      console.log('bind events for private user channel');
+
+      /**
+       * Event: new_notification
+       * Channel: private-user
+       *
+       * Add new notification to client's store
+       */
+      channel.bind('new-notification', (data: Notification) => {
+        if (data.source === 'pending') {
+
+          store.dispatch(addPendingNotification(data));
+          const sourceData = JSON.parse(data.source_data);
+          sourceData.state === 'waiting'
+            ? store.dispatch(FriendApi.util.invalidateTags(['ReceivedPending']))
+            : store.dispatch(FriendApi.util.invalidateTags(['SendPending', 'Friend']));
+
+        } else if (data.source === 'message') {
+
+          store.dispatch(addMessageNotification(data));
+          store.dispatch(ChatApi.util.invalidateTags(['Chats']));
+
+        } else {
+
+          store.dispatch(addOtherNotification(data));
+
+        }
+      });
     });
   }
 

@@ -44,4 +44,51 @@
       }
     }
   }
+
+  &__notificationCounter {
+    display: flex;
+    position: absolute;
+    top: 0;
+    right: 2px;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    transform: scale(0);
+    animation: pop-up 0.5s ease-in-out forwards;
+    border-radius: 50%;
+    background: $primary;
+    color: $secondary;
+    font-size: 12px;
+    font-weight: 700;
+
+    @keyframes pop-up {
+      0% {
+        transform: scale(0);
+      }
+
+      50% {
+        transform: scale(1.2);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+  }
+
+  &__unreaded {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: $primary;
+
+    &Closer {
+      top: 4px;
+      left: 4px;
+    }
+  }
 }

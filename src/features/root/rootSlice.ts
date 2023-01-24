@@ -1,4 +1,5 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import {AnyAction, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { HYDRATE } from 'next-redux-wrapper';
 import * as T from './rootSlice.types';
 
 export const RootSlice = createSlice({
@@ -22,8 +23,8 @@ export const RootSlice = createSlice({
     }
   } as T.RootState,
   reducers: {
-    setAppLoaded: (state, action: PayloadAction<boolean>) => {
-      state.appLoaded = action.payload;
+    setAppLoaded: (state) => {
+      state.appLoaded = true;
     },
     setRouterPath: (state, action: PayloadAction<string>) => {
       state.routerPath = action.payload;
@@ -52,6 +53,13 @@ export const RootSlice = createSlice({
         }
       };
     }
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(HYDRATE, (state, action: AnyAction) => {
+        state.routerPath = action.payload.root.routerPath;
+        state.isMobile = action.payload.root.isMobile;
+      });
   }
 });
 

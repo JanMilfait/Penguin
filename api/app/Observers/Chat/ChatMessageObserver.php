@@ -6,6 +6,7 @@ use App\Events\SendMessage;
 use App\Models\Chat\ChatMessage;
 use App\Models\User\Notification;
 use Cache;
+use Broadcast;
 use Str;
 
 class ChatMessageObserver
@@ -24,29 +25,48 @@ class ChatMessageObserver
         });
         $cached->body = $message->body;
 
-        // Save notification for all non active chat participants
-        $cached->chat->participants->each(function ($participant) use ($cached) {
+        $pusher = Broadcast::driver('pusher')->getPusher();
+        $presenceUsers = $pusher->get('/channels/presence-chat-room.' . $message->room_id . '/users')->users ?? [];
+        $presenceUsersIds = collect($presenceUsers)->pluck('id');
 
-            // participant.user mustn't be cached
-            if ($participant->user->is_active === 1) return;
+        // If there are more than 1 user (SENDER) in the room, then broadcast the message
+        if ($presenceUsersIds->count() > 1) {
+            broadcast(new SendMessage($message));
+        }
 
-            Notification::updateOrCreate([
-                'user_id' => $participant->user_id,
-                'source' => 'message',
-                'source_id' => $cached->chat->id,
-            ], [
-                'source_data' => json_encode([
+        $cached->chat->participants->each(function ($participant) use ($cached, $pusher, $presenceUsersIds) {
+            if (!$participant->user->is_active || ($participant->user->is_active && !$presenceUsersIds->contains($participant->user_id))) {
+                $notification = Notification::updateOrCreate([
+                    'user_id' => $participant->user_id,
                     'source' => 'message',
                     'source_id' => $cached->chat->id,
-                    'preview' => Str::limit($cached->body, 50),
-                    'id' => $cached->user->id,
-                    'name' => $cached->user->name,
-                    'avatar' => $cached->user->avatar_name ? $cached->user->avatar_url . '50_' . $cached->user->avatar_name : null
-                ])
-            ]);
-        });
+                ], [
+                    'source_data' => json_encode([
+                        'preview' => Str::limit($cached->body, 50),
+                        'id' => $cached->user->id,
+                        'name' => $cached->user->name,
+                        'avatar' => $cached->user->avatar_name ? ($cached->user->avatar_url . '50_' . $cached->user->avatar_name) : null
+                    ])
+                ]);
 
-        broadcast(new SendMessage($message));
+                if ($participant->user->is_active && !$presenceUsersIds->contains($participant->user_id)) {
+                    $pusher->trigger('private-user.' . $participant->user_id, 'new-notification', [
+                        'id' =>  $notification->id,
+                        'user_id' => $participant->user_id,
+                        'source' => 'message',
+                        'source_id' => $cached->chat->id,
+                        'source_data' => json_encode([
+                            'preview' => Str::limit($cached->body, 50),
+                            'id' => $cached->user->id,
+                            'name' => $cached->user->name,
+                            'avatar' => $cached->user->avatar_name ? ($cached->user->avatar_url . '50_' . $cached->user->avatar_name) : null
+                        ]),
+                        'readed_at' => null,
+                        'created_at' => now()->diffForHumans()
+                    ]);
+                }
+            }
+        });
     }
 
     /**

@@ -24,12 +24,11 @@ class PostsCommentsReplyObserver
         }
 
         broadcast(new SendNotification($reply->comment->user->id, 'reply', $reply->id, [
-            'source' => 'reply',
-            'source_id' => $reply->id,
             'preview' => Str::limit($reply->body, 50),
+            'path' => '/post/' . $reply->comment->post->id . '#reply-' . $reply->id,
             'id' => $reply->user->id,
             'name' => $reply->user->name,
-            'avatar' => $reply->user->avatar_name ? $reply->user->avatar_url . '50_' . $reply->user->avatar_name : null
+            'avatar' => $reply->user->avatar_name ? ($reply->user->avatar_url . '50_' . $reply->user->avatar_name) : null
         ]));
     }
 

@@ -1,4 +1,4 @@
-import {createSelector, createSlice } from '@reduxjs/toolkit';
+import {AnyAction, createSelector, createSlice } from '@reduxjs/toolkit';
 import {apiSlice} from '../../app/api/apiSlice';
 import * as T from './postSlice.types';
 import {MessageResponse} from '../root/rootSlice.types';
@@ -8,6 +8,7 @@ import Router from 'next/router';
 import { setCookie } from 'cookies-next';
 import { Reaction } from './postSlice.types';
 import {saveTrendingComments} from '../../app/helpers/helpers';
+import { HYDRATE } from 'next-redux-wrapper';
 
 
 export const PostApi = apiSlice.injectEndpoints({
@@ -177,6 +178,11 @@ export const PostSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(HYDRATE, (state, action: AnyAction) => {
+        if (action.payload.post.trendingComments) {
+          state.trendingComments = action.payload.post.trendingComments;
+        }
+      })
       .addMatcher(PostApi.endpoints.getPosts.matchFulfilled, (state, action) => saveTrendingComments(state, action))
       .addMatcher(PostApi.endpoints.getUserPosts.matchFulfilled, (state, action) => saveTrendingComments(state, action));
   }

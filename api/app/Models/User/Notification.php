@@ -46,4 +46,14 @@ class Notification extends Model
 	{
 		return $this->belongsTo(User::class);
 	}
+
+    static function latestInsertedId()
+    {
+        return self::orderBy('id', 'desc')->first()->id ?? 0;
+    }
+
+    public function getCreatedAtAttribute($value)
+    {
+        return Carbon::parse($value)->diffForHumans();
+    }
 }

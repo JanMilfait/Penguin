@@ -1,13 +1,15 @@
-import { createSlice } from '@reduxjs/toolkit';
+import {AnyAction, createSlice } from '@reduxjs/toolkit';
 import { apiSlice } from '../../app/api/apiSlice';
 import * as T from './authSlice.types';
 import { MessageResponse } from '../root/rootSlice.types';
+import { HYDRATE } from 'next-redux-wrapper';
 
 
 export const AuthApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     fetchClient: builder.query<T.FetchClientResult, void>({
       query: () => '/api/user',
+      keepUnusedDataFor: 0,
       providesTags: (result) =>
         result
           ? [{type: 'User', id: result.id}, 'User']
@@ -83,6 +85,12 @@ export const AuthSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(HYDRATE, (state, action: AnyAction) => {
+        return {
+          ...state,
+          ...action.payload.auth
+        };
+      })
       .addMatcher(AuthApi.endpoints.fetchClient.matchFulfilled, (state, action) => {
         if ('id' in action.payload) {
           state.data = action.payload;

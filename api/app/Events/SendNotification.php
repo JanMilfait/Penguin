@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+use App\Models\User\Notification;
 use App\Models\User\User;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
@@ -13,6 +14,7 @@ class SendNotification implements ShouldBroadcastNow
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
+    public $id;
     public $user_id;
     public $source;
     public $source_id;
@@ -25,10 +27,11 @@ class SendNotification implements ShouldBroadcastNow
      */
     public function __construct($user_id, $source, $source_id, array $source_data)
     {
+        $this->id = Notification::latestInsertedId() + 1;
         $this->user_id = $user_id;
         $this->source = $source;
         $this->source_id = $source_id;
-        $this->source_data = $source_data;
+        $this->source_data = json_encode($source_data);
     }
 
     /**
@@ -38,7 +41,7 @@ class SendNotification implements ShouldBroadcastNow
      */
     public function broadcastOn()
     {
-        return new PrivateChannel('private-user.' . $this->user_id);
+        return new PrivateChannel('user.' . $this->user_id);
     }
 
     public function broadcastAs()
@@ -48,7 +51,15 @@ class SendNotification implements ShouldBroadcastNow
 
     public function broadcastWith()
     {
-        return $this->source_data;
+        return [
+            'id' => $this->id,
+            'user_id' => $this->user_id,
+            'source' => $this->source,
+            'source_id' => $this->source_id,
+            'source_data' => $this->source_data,
+            'readed_at' => null,
+            'created_at' => now()->diffForHumans()
+        ];
     }
 
     public function broadcastWhen()
