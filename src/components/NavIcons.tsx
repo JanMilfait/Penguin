@@ -23,7 +23,7 @@ const NavIcons = () => {
 
   return (
     <ul>
-      <li className={s.navigation__icon}><ToggleModal toggle={<PendingNotifications />} modal={<ModalPendings />} hidden={false} /></li>
+      <li className={s.navigation__icon}><ToggleModal toggle={<PendingNotifications />} modal={<ModalPendings />} hidden={false} clickClose={true} /></li>
       <li className={s.navigation__icon}><ToggleModal toggle={<ChatsNotifications />} modal={<ModalChats />} hidden={false} clickClose={true} /></li>
       <li className={s.navigation__icon}><ToggleModal toggle={<AllNotifications />} modal={<ModalNotifications />} hidden={false} clickClose={true} /></li>
       <li className={s.navigation__icon}><ToggleModal toggle={<Avatar {...user} size={50} />} modal={<UserDropdown />} clickClose={true} /></li>

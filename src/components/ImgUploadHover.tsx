@@ -89,10 +89,8 @@ const ImgUploadHover = ({element, name, mutation, args, className, style}: ImgUp
         className={className}
         style={style}
         onClick={() => imageInputRef.current?.click()}
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}
-        onTouchStart={() => setHover(true)}
-        onTouchEnd={() => setHover(false)}
+        onPointerEnter={() => setHover(true)}
+        onPointerLeave={() => setHover(false)}
         onDragOver={e => {
           e.preventDefault();
           e.stopPropagation();

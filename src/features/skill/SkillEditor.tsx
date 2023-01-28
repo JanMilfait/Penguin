@@ -42,11 +42,9 @@ const SkillEditor = () => {
         dispatch(setCreatingSkill(false));
       }
     };
-    document.addEventListener('mouseup', handleClickOutside);
-    document.addEventListener('touchend', handleClickOutside);
+    document.addEventListener('pointerup', handleClickOutside);
     return () => {
-      document.removeEventListener('mouseup', handleClickOutside);
-      document.removeEventListener('touchend', handleClickOutside);
+      document.removeEventListener('pointerup', handleClickOutside);
     };
   }, [creating]);
 

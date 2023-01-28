@@ -100,7 +100,15 @@ export const ChatApi = apiSlice.injectEndpoints({
  * Create action for pusher middleware and fetch on every dispatch
  * (friend clicked -> api automatically create private chat if previous was changed to group)
  */
-export const activateChat = createAsyncThunk('chat/activateChat', async ({friendId, chatId}: {friendId?: number, chatId?: number}, {dispatch, rejectWithValue}): Promise<Chat|any> => {
+export const activateChat = createAsyncThunk('chat/activateChat', async ({friendId, chatId}: {friendId?: number, chatId?: number}, {getState, dispatch, rejectWithValue}): Promise<Chat|any> => {
+  const store = getState() as AppState;
+
+  // Mobile Devices
+  if (store.root.isMobile) {
+    dispatch(deactivateChatAll());
+    dispatch(setExpandChats(true));
+  }
+
   const chatInit = dispatch(ChatApi.endpoints[friendId ? 'getChatFriend' : 'getChat'].initiate({id: friendId ?? chatId!}));
   const chat = await chatInit;
   await chatInit.unsubscribe();
@@ -160,6 +168,10 @@ export const ChatSlice = createSlice({
       state.openedChats = state.openedChats.filter((id) => id !== action.payload);
       state.activeChats = state.activeChats.filter(chat => chat.id !== action.payload);
     },
+    deactivateChatAll: (state) => {
+      state.openedChats = [];
+      state.activeChats = [];
+    },
     setFriendsSBSlideIn: (state) => {
       state.friendsSBSlideIn = true;
     },
@@ -195,6 +207,7 @@ export const {
   toggleGiphyPicker,
   minimizeChat,
   deactivateChat,
+  deactivateChatAll,
   setFriendsSBSlideIn,
   syncInfiniteScroll
 } = ChatSlice.actions;

@@ -87,7 +87,7 @@ const HoverModal = ({hover, modal, onHoverClick, attachToCursor = false, autoOri
   return (
     <div className="position-relative">
       <div ref={containerRef}>
-        <div ref={hoverRef} className="position-relative cp" style={{zIndex: 1}} onClick={onHoverClick}>{hover}</div>
+        <div ref={hoverRef} className={'position-relative cp' + (isOpenModal ? ' modal-open' : '')} style={{zIndex: 1}} onClick={onHoverClick}>{hover}</div>
         <div className={isOpenModal ? '' : 'd-none'}><div ref={modalRef}>{modal}</div></div>
       </div>
     </div>

@@ -53,8 +53,8 @@ const Tab = ({ chatId }: { chatId: number }) => {
         {users.map((user) => user.name).join(', ')}
       </p>
       <div className={s.activeChats__close}
-        onMouseOver={() => setCloseHover(true)}
-        onMouseOut={() => setCloseHover(false)}
+        onPointerOver={() => setCloseHover(true)}
+        onPointerOut={() => setCloseHover(false)}
         onClick={(e) => handleClose(e)}
       >
         {closeHover

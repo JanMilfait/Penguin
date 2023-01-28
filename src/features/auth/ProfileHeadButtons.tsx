@@ -37,8 +37,8 @@ const ProfileHeadButtons = () => {
           ? ( // isFriend
             <>
               <div
-                onMouseOver={() => setIsFriendHover(true)}
-                onMouseLeave={() => setIsFriendHover(false)}
+                onPointerOver={() => setIsFriendHover(true)}
+                onPointerLeave={() => setIsFriendHover(false)}
                 onClick={() => setIsFriendHover(true)}
               >
                 {isFriendHover

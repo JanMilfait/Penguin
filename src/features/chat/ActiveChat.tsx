@@ -13,11 +13,7 @@ const ActiveChat = ({id: chatId, users, last_message_by, last_message, updated_a
   const usersFiltered = useMemo(() => users.filter((user) => user.id !== id).slice(0, 4), [users.length]);
 
   return (
-    <div
-      className={s.allChats__chat}
-      onMouseEnter={onHover}
-      onTouchStart={onHover}
-    >
+    <div className={s.allChats__chat} onPointerEnter={onHover}>
       <div className="row cp" onClick={() => dispatch(activateChat({chatId}))}>
         <div className="col-auto">
           <div className="d-flex">

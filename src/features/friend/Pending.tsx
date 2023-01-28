@@ -5,13 +5,18 @@ import ss from 'styles/6_components/Navigation.module.scss';
 import Avatar from '../../components/Avatar';
 import Link from 'next/link';
 import { useAcceptPendingMutation, useDeclinePendingMutation } from './friendSlice';
+import {AppState} from '../../app/store';
+import { useSelector } from 'react-redux';
+import { useRouter } from 'next/router';
 
 type PendingProps = {id: number, type: 'received'|'send', user: User, state: 'waiting'|'accepted'|'declined', updated_at: string, unreaded: boolean, onHover?: () => void};
 
 const Pending = ({id, type, user, state, updated_at, unreaded, onHover}: PendingProps) => {
   const [hover, setHover] = useState(false);
   const isHoverable = type === 'received' && state === 'waiting';
+  const isMobile = useSelector((state: AppState) => state.root.isMobile);
 
+  const router = useRouter();
   const [acceptPending] = useAcceptPendingMutation();
   const [declinePending] = useDeclinePendingMutation();
 
@@ -28,18 +33,36 @@ const Pending = ({id, type, user, state, updated_at, unreaded, onHover}: Pending
     }
   };
 
+  const handleClick = (e: any) => {
+    if (isMobile) {
+      isHoverable && e.stopPropagation();
+      setHover(!hover);
+    }
+    !isHoverable && router.push('/profile/' + user.id);
+  };
+
+  const handleAccept = (e: any) => {
+    e.stopPropagation();
+    onHover && onHover();
+    acceptPending({pendingId: id});
+  };
+
+  const handleDecline = (e: any) => {
+    e.stopPropagation();
+    onHover && onHover();
+    declinePending({pendingId: id});
+  };
+
   return (
     <div
       className={s.pendings__pending}
-      onMouseEnter={onHover}
-      onTouchStart={onHover}
+      onPointerEnter={onHover}
     >
       <div
         className="row h-100"
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}
-        onTouchStart={() => setHover(true)}
-        onTouchEnd={() => setHover(false)}
+        onPointerEnter={() => !isMobile && setHover(true)}
+        onPointerLeave={() => !isMobile && setHover(false)}
+        onClick={handleClick}
       >
         <div className="col-auto">
           <Link href={'/profile/' + user.id}>
@@ -52,14 +75,8 @@ const Pending = ({id, type, user, state, updated_at, unreaded, onHover}: Pending
         </div>
         {isHoverable && hover &&
           <div className="d-flex justify-content-end mt-1">
-            <button className="button--x-small mr-1" onClick={() => {
-              onHover && onHover();
-              acceptPending({pendingId: id});
-            }}>Accept</button>
-            <button className="button--x-small" onClick={() => {
-              onHover && onHover();
-              declinePending({pendingId: id});
-            }}>Decline</button>
+            <button className="button--x-small mr-1" onClick={handleAccept}>Accept</button>
+            <button className="button--x-small" onClick={handleDecline}>Decline</button>
           </div>
         }
       </div>

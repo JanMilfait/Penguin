@@ -16,8 +16,7 @@ const RangeSlider = ({width, min, max, starting, onRelease}: {width: number, min
         type="range"
         min={min}
         max={max}
-        onMouseUp={() => onRelease(Number(inputRef.current?.value))}
-        onTouchEnd={() => onRelease(Number(inputRef.current?.value))}
+        onPointerUp={() => onRelease(Number(inputRef.current?.value))}
         style={{width: width}}
       />
     </div>

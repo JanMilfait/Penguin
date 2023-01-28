@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import s from '../../styles/6_components/Chats.module.scss';
 import { Chat } from './chatSlice.types';
 import { AppDispatch, AppState } from '../../app/store';
@@ -11,8 +11,8 @@ import FriendAvatar from 'features/friend/FriendAvatar';
 
 const ChatHead = ({chat}: {chat: Chat}) => {
   const dispatch = useDispatch<AppDispatch>();
-  const [minimizeHover, setMinimizeHover] = React.useState(false);
-  const [closeHover, setCloseHover] = React.useState(false);
+  const [minimizeHover, setMinimizeHover] = useState(false);
+  const [closeHover, setCloseHover] = useState(false);
   const id = useSelector((state: AppState) => state.auth.data!.id);
   const closeTimeout = useSelector((state: AppState) => state.chat.animation.closeTimeout);
   const isMobile = useSelector((state: AppState) => state.root.isMobile);
@@ -20,7 +20,7 @@ const ChatHead = ({chat}: {chat: Chat}) => {
   const usersFiltered = useMemo(() => chat.users.filter((user) => user.id !== id), [chat.users.length]);
 
 
-  const handleMinimizeChat = (e: React.MouseEvent) => {
+  const handleMinimizeChat = (e: any) => {
     const chatEl = (e.target as Element).closest('.' + s.activeChats__chat);
     chatEl?.classList.add(s.activeChats__chatClose);
 
@@ -29,7 +29,7 @@ const ChatHead = ({chat}: {chat: Chat}) => {
     }, closeTimeout);
   };
 
-  const handleCloseChat = (e: React.MouseEvent) => {
+  const handleCloseChat = (e: any) => {
     const chatEl = (e.target as Element).closest('.' + s.activeChats__chat);
     chatEl?.classList.add(s.activeChats__chatClose);
 
@@ -65,11 +65,11 @@ const ChatHead = ({chat}: {chat: Chat}) => {
       </div>
       <div className={s.activeChats__chatHeadButtons}>
         {!isMobile &&
-          <div className="cp" onMouseOver={() => setMinimizeHover(true)} onMouseOut={() => setMinimizeHover(false)} onClick={(e) => handleMinimizeChat(e)}>
+          <div className="cp" onPointerOver={() => setMinimizeHover(true)} onPointerOut={() => setMinimizeHover(false)} onClick={handleMinimizeChat}>
             {minimizeHover ? <DashCircleFill size={23} /> : <DashCircle size={23} />}
           </div>
         }
-        <div className="cp" onMouseOver={() => setCloseHover(true)} onMouseOut={() => setCloseHover(false)} onClick={(e) => handleCloseChat(e)}>
+        <div className="cp" onPointerOver={() => setCloseHover(true)} onPointerOut={() => setCloseHover(false)} onClick={handleCloseChat}>
           {closeHover ? <XCircleFill size={23} /> : <XCircle size={23} />}
         </div>
       </div>

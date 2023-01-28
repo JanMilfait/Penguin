@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { PointerEventHandler } from 'react';
 import s from 'styles/6_components/Posts.module.scss';
 import { Post as PostType } from './postSlice.types';
 import { ThreeDotsVertical } from 'react-bootstrap-icons';
@@ -26,19 +26,21 @@ const Post = ({id, body, user, updated_at, image, video, reactions, sharings, co
   const isMobile = useSelector((state: AppState) => state.root.isMobile);
 
 
-  const openReactionsModal = () => {
+  const openReactionsModal = (e: any): PointerEventHandler<HTMLLIElement>|void => {
     if (!reactions.length) return;
 
-    dispatch(setOpenModal({
-      request: {
-        tag: 'reactionsModal',
-        data: {reactions}
-      },
-      props: {
-        type: 'reactions',
-        clickOutside: true
-      }
-    }));
+    if (e.target?.closest('.modal-open')) {
+      dispatch(setOpenModal({
+        request: {
+          tag: 'reactionsModal',
+          data: {reactions}
+        },
+        props: {
+          type: 'reactions',
+          clickOutside: true
+        }
+      }));
+    }
   };
 
   const openSharingModal = () => {
@@ -102,7 +104,7 @@ const Post = ({id, body, user, updated_at, image, video, reactions, sharings, co
         <div className="row pt-2 pb-2">
           <div className="col-auto">
             <HoverModal
-              hover={<div className={s.posts__iconLeft} onClick={openReactionsModal}>{reactions.length > 0
+              hover={<div className={s.posts__iconLeft} onPointerDown={openReactionsModal}>{reactions.length > 0
                 ? <div className="d-flex h-100"><Emoji id={getMostUsedReaction(reactions)} size={18} /><p className="f--x-small">{roundCount(reactions.length)}</p></div>
                 : <div className="d-flex h-100"><Emoji id={1} size={18} /><p className="f--x-small">Hover</p></div>}
               </div>}

@@ -62,7 +62,7 @@ const Modal = () => {
     <div className={s.modal}>
       <div className="container">
         <div ref={modalContent} className={s.modal__content}>
-          <div className={s.modal__close} onClick={() => dispatch(setCloseModal(null))} onMouseOver={() => setCloseHover(true)} onMouseOut={() => setCloseHover(false)}>
+          <div className={s.modal__close} onClick={() => dispatch(setCloseModal(null))} onPointerOver={() => setCloseHover(true)} onPointerOut={() => setCloseHover(false)}>
             {closeHover ? <XCircleFill /> : <XCircle />}
           </div>
           {icon ? <div className={s.modal__icon}>{iconMap[icon]}</div> : <div className="mb-5"></div>}

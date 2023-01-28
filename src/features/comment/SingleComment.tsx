@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import React, { useRef, useState } from 'react';
+import React, {PointerEventHandler, useRef, useState } from 'react';
 import s from 'styles/6_components/Comment.module.scss';
 import sd from '../../styles/6_components/Dropdown.module.scss';
 import { PostComment, PostReply } from '../post/postSlice.types';
@@ -91,19 +91,21 @@ const SingleComment = ({id: commentId, postId,  replyToId, body, user, replies, 
     }
   };
 
-  const openReactionsModal = () => {
+  const openReactionsModal = (e: any): PointerEventHandler<HTMLLIElement>|void => {
     if (!reactions.length) return;
 
-    dispatch(setOpenModal({
-      request: {
-        tag: 'reactionsModal',
-        data: {reactions}
-      },
-      props: {
-        type: 'reactions',
-        clickOutside: true
-      }
-    }));
+    if (e.target?.closest('.modal-open')) {
+      dispatch(setOpenModal({
+        request: {
+          tag: 'reactionsModal',
+          data: {reactions}
+        },
+        props: {
+          type: 'reactions',
+          clickOutside: true
+        }
+      }));
+    }
   };
 
 
@@ -152,7 +154,7 @@ const SingleComment = ({id: commentId, postId,  replyToId, body, user, replies, 
           <div className="col-auto">
             <ul className={s.comment__reactions}>
               <HoverModal
-                hover={<li className={s.posts__iconLeft} onClick={openReactionsModal}>{reactions.length > 0
+                hover={<li className={s.posts__iconLeft} onPointerDown={openReactionsModal}>{reactions.length > 0
                   ? <div className="d-flex h-100"><Emoji id={getMostUsedReaction(reactions)} size={14} /><p className="f--xx-small">{roundCount(reactions.length)}</p></div>
                   : <div className="d-flex h-100"><Emoji id={1} size={14} /><p className="f--xx-small">Hover</p></div>}
                 </li>}

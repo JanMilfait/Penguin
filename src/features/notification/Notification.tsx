@@ -51,8 +51,7 @@ const Notification = ({source, source_id, source_data, created_at, unreaded, onH
   return (
     <div
       className={s.notifications__notification}
-      onMouseEnter={onHover}
-      onTouchStart={onHover}
+      onPointerEnter={onHover}
     >
       <div className="row h-100" onClick={handleClick}>
         <div className="col-auto">

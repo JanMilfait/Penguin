@@ -18,16 +18,14 @@ export const useHoverModal = (containerRef: RefObject<HTMLDivElement>, hoverRef:
 
 
   useEffect(() => {
-    const handleHoverOutside = (event: MouseEvent|TouchEvent) => {
+    const handleHoverOutside = (event: PointerEvent) => {
       if (containerRef.current && !containerRef.current.contains(event.target as Node)) {
         isOpenModal && setIsOpenModal(false);
       }
     };
-    document.addEventListener('mouseover', handleHoverOutside);
-    document.addEventListener('touchstart', handleHoverOutside);
+    document.addEventListener('pointerover', handleHoverOutside);
     return () => {
-      document.removeEventListener('mouseover', handleHoverOutside);
-      document.removeEventListener('touchstart', handleHoverOutside);
+      document.removeEventListener('pointerover', handleHoverOutside);
     };
   }, [containerRef, isOpenModal]);
 
@@ -39,11 +37,9 @@ export const useHoverModal = (containerRef: RefObject<HTMLDivElement>, hoverRef:
     const handleHoverClick = () => {
       !isOpenModal && setIsOpenModal(true);
     };
-    hover.addEventListener('mouseover', handleHoverClick);
-    hover.addEventListener('touchstart', handleHoverClick);
+    hover.addEventListener('pointerenter', handleHoverClick);
     return () => {
-      hover.removeEventListener('mouseover', handleHoverClick);
-      hover.removeEventListener('touchstart', handleHoverClick);
+      hover.removeEventListener('pointerenter', handleHoverClick);
     };
   }, [hoverRef, isOpenModal]);
 
