@@ -49,6 +49,8 @@
 
   &__user {
     margin: 5px 40px;
+    cursor: pointer;
+    user-select: none;
 
     p {
       margin-top: 2px;
@@ -59,6 +61,8 @@
 
   &__post {
     margin: 8px 20px;
+    cursor: pointer;
+    user-select: none;
 
     p {
       margin-bottom: 0;

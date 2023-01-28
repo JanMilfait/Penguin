@@ -1,11 +1,11 @@
 import React, { useMemo } from 'react';
 import {Chat} from './chatSlice.types';
 import s from 'styles/6_components/AllChats.module.scss';
-import Avatar from '../../components/Avatar';
 import {AppDispatch, AppState} from '../../app/store';
 import {useDispatch, useSelector } from 'react-redux';
 import { activateChat } from './chatSlice';
 import ss from '../../styles/6_components/Navigation.module.scss';
+import FriendAvatar from 'features/friend/FriendAvatar';
 
 const ActiveChat = ({id: chatId, users, last_message_by, last_message, updated_at, unreaded, onHover}: Chat & {unreaded: boolean, onHover?: () => void}) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -22,13 +22,13 @@ const ActiveChat = ({id: chatId, users, last_message_by, last_message, updated_a
         <div className="col-auto">
           <div className="d-flex">
             {usersFiltered.map((user) => (
-              <div key={user.id} className={s.allChats__avatars} >
-                {user.is_active
-                  ? <div className={s.allChats__avatarsOnline} ></div>
-                  : <div className={s.allChats__avatarsOffline} ></div>
-                }
-                <Avatar {...user} size={50} />
-              </div>
+              <FriendAvatar
+                key={user.id}
+                className={s.allChats__avatars}
+                classNameOnline={s.allChats__avatarsOnline}
+                classNameOffline={s.allChats__avatarsOffline}
+                {...user}
+              />
             ))}
           </div>
         </div>

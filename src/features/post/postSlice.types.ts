@@ -113,9 +113,9 @@ export type PostState = {
     category: 'latest' | 'trending' | 'shared';
     trendingDays: number;
     media: 'all' | 'photo' | 'video';
-    reset: number;
   },
   expandedComments: number[];
   trendingComments: [number, number][];
   infiniteScrollSync: number;
+  resetInfiniteScroll: number;
 }

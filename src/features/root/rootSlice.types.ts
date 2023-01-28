@@ -1,5 +1,5 @@
 export type RootState = {
-  appLoaded: boolean;
+  appLoaded: number;
   routerPath: string;
   window: {
     width: number;

@@ -5,7 +5,18 @@ import * as CT from '../../features/chat/chatSlice.types';
 import { appendDatesToMessages } from '../helpers/helpers';
 import {Notification} from '../../features/notification/notificationSlice.types';
 import {addMessageNotification, addOtherNotification, addPendingNotification} from 'features/notification/notificationSlice';
-import { FriendApi } from 'features/friend/friendSlice';
+import {FriendApi, resetInfiniteScroll, setActivityStatus} from 'features/friend/friendSlice';
+
+type EventFriendStatus = {
+  friend_id: number;
+}
+
+type EventNewMessage = {
+  id: number;
+  user_id: number;
+  body: string|null;
+  image_url: string|null;
+}
 
 export const pusherMiddleware: Middleware = (store) => (next) => (action) => {
   const pusher = Pusher.instances[0];
@@ -30,29 +41,49 @@ export const pusherMiddleware: Middleware = (store) => (next) => (action) => {
     channel.bind('pusher:subscription_succeeded', () => {
 
       /**
-       * Event: new_notification
+       * Event: friend-online
+       * Channel: private-user
+       *
+       * Save friend's online status to client's store
+       */
+      channel.bind('friend-online', (data: EventFriendStatus) => {
+        store.dispatch(setActivityStatus({id: data.friend_id, status: 1}));
+      });
+
+
+      /**
+       * Event: friend-offline
+       * Channel: private-user
+       *
+       * Save friend's offline status to client's store
+       */
+      channel.bind('friend-offline', (data: EventFriendStatus) => {
+        store.dispatch(setActivityStatus({id: data.friend_id, status: 0}));
+      });
+
+
+      /**
+       * Event: new-notification
        * Channel: private-user
        *
        * Add new notification to client's store
        */
       channel.bind('new-notification', (data: Notification) => {
         if (data.source === 'pending') {
-
           store.dispatch(addPendingNotification(data));
           const sourceData = JSON.parse(data.source_data);
-          sourceData.state === 'waiting'
-            ? store.dispatch(FriendApi.util.invalidateTags(['ReceivedPending']))
-            : store.dispatch(FriendApi.util.invalidateTags(['SendPending', 'Friend']));
 
+          if (sourceData.state === 'waiting') {
+            store.dispatch(FriendApi.util.invalidateTags(['ReceivedPending']));
+          } else {
+            sourceData.state === 'accepted' && store.dispatch(resetInfiniteScroll());
+            store.dispatch(FriendApi.util.invalidateTags(['SendPending']));
+          }
         } else if (data.source === 'message') {
-
           store.dispatch(addMessageNotification(data));
           store.dispatch(ChatApi.util.invalidateTags(['Chats']));
-
         } else {
-
           store.dispatch(addOtherNotification(data));
-
         }
       });
     });
@@ -65,7 +96,7 @@ export const pusherMiddleware: Middleware = (store) => (next) => (action) => {
     channel.bind('pusher:subscription_succeeded', () => {
 
       /**
-       * Event: new_message
+       * Event: new-message
        * Channel: presence-chat-room
        *
        * Add new message to all clients rtk-query cache
@@ -97,11 +128,3 @@ export const pusherMiddleware: Middleware = (store) => (next) => (action) => {
 
   return next(action);
 };
-
-
-export type EventNewMessage = {
-  id: number;
-  user_id: number;
-  body: string|null;
-  image_url: string|null;
-}

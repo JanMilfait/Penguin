@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react';
 import s from '../../styles/6_components/Chats.module.scss';
-import Avatar from '../../components/Avatar';
 import { Chat } from './chatSlice.types';
 import { AppDispatch, AppState } from '../../app/store';
 import { useDispatch, useSelector } from 'react-redux';
@@ -8,6 +7,7 @@ import { DashCircle, DashCircleFill, XCircle, XCircleFill, ThreeDots } from 'rea
 import {deactivateChat, minimizeChat} from './chatSlice';
 import ToggleModal from '../../components/ToggleModal';
 import ChatHeadDropdown from './ChatHeadDropdown';
+import FriendAvatar from 'features/friend/FriendAvatar';
 
 const ChatHead = ({chat}: {chat: Chat}) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -44,13 +44,14 @@ const ChatHead = ({chat}: {chat: Chat}) => {
       <div className="d-flex align-items-center mw-0">
         <div className="d-flex">
           {usersFiltered.map((user) => (
-            <div key={user.id} className={s.activeChats__chatAvatar} >
-              {user.is_active
-                ? <div className={s.activeChats__online + ' ' + s.activeChats__chatOnline} ></div>
-                : <div className={s.activeChats__offline + ' ' + s.activeChats__chatOffline} ></div>
-              }
-              <Avatar {...user} size={40} />
-            </div>
+            <FriendAvatar
+              key={user.id}
+              className={s.activeChats__chatAvatar}
+              classNameOnline={s.activeChats__online + ' ' + s.activeChats__chatOnline}
+              classNameOffline={s.activeChats__offline + ' ' + s.activeChats__chatOffline}
+              {...user}
+              size={40}
+            />
           ))}
         </div>
         <div className="d-flex flex-column mt-1 mw-0">

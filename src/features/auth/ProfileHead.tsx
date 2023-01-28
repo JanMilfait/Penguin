@@ -13,10 +13,11 @@ const ProfileHead = () => {
   const id = useSelector((state: AppState) => state.auth.data?.id);
   const userId = useSelector((state: AppState) => state.auth.profile.id);
 
-  const { data: user, isSuccess, isFetching } = useGetUserQuery({id: userId!}, {skip: typeof userId !== 'number'});
-  const { data: friendsIds, isSuccess: isSuccessF, isFetching: isFetchingF } = useGetFriendsIdsQuery({id: userId!}, {skip: typeof userId !== 'number'});
+  const { data: user, isLoading, isSuccess } = useGetUserQuery({id: userId!}, {skip: typeof userId !== 'number'});
+  const { data: friendsIds, isLoading: isLoadingF, isSuccess: isSuccessF } = useGetFriendsIdsQuery({id: userId!}, {skip: typeof userId !== 'number'});
+  const activityStatus = useSelector((state: AppState) => state.friend.activityStatus[user?.id || 0]);
 
-  if (!isSuccess || isFetching) return null;
+  if (isLoading || !isSuccess) return null;
 
   return (
     <div className={s.profile__head}>
@@ -41,17 +42,17 @@ const ProfileHead = () => {
               <div className="col-12">
                 <h2 className="fw-bold text-truncate mb-0">
                   {user.name}
-                  {user.is_active !== undefined && user.is_active === 1 && <span className={s.profile__active + ' f--x-small'}>is online</span>}
-                  {user.is_active !== undefined && user.is_active === 0 && <span className={s.profile__offline + ' f--x-small'}>is offline</span>}
+                  {activityStatus === 1 && <span className={s.profile__active + ' f--x-small'}>is online</span>}
+                  {activityStatus === 0 && <span className={s.profile__offline + ' f--x-small'}>is offline</span>}
                 </h2>
               </div>
             </div>
             <div className="row">
               <div className="col-12">
-                {isSuccessF && !isFetchingF
+                {!isLoadingF && (isSuccessF
                   ? <p className="text-truncate mb-0">friends (<span className="f--medium">{friendsIds.count}</span>)</p>
                   : <p className="text-truncate mb-0">profile is set to private</p>
-                }
+                )}
               </div>
             </div>
             <ProfileHeadButtons />

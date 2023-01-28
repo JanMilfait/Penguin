@@ -160,6 +160,9 @@ export const ChatSlice = createSlice({
       state.openedChats = state.openedChats.filter((id) => id !== action.payload);
       state.activeChats = state.activeChats.filter(chat => chat.id !== action.payload);
     },
+    setFriendsSBSlideIn: (state) => {
+      state.friendsSBSlideIn = true;
+    },
     syncInfiniteScroll: (state) => {
       state.infiniteScrollSync++;
     }
@@ -192,6 +195,7 @@ export const {
   toggleGiphyPicker,
   minimizeChat,
   deactivateChat,
+  setFriendsSBSlideIn,
   syncInfiniteScroll
 } = ChatSlice.actions;
 

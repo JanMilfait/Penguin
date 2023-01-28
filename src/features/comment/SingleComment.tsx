@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import React, {useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import s from 'styles/6_components/Comment.module.scss';
 import sd from '../../styles/6_components/Dropdown.module.scss';
 import { PostComment, PostReply } from '../post/postSlice.types';
@@ -9,20 +9,21 @@ import { getMostUsedReaction, roundCount } from '../../app/helpers/helpers';
 import EmojiModal from '../post/EmojiModal';
 import HoverModal from '../../components/HoverModal';
 import { ThreeDots } from 'react-bootstrap-icons';
-import ToggleModal from '../../components/ToggleModal';
 import { Roboto } from '@next/font/google';
 import {AppDispatch, AppState } from 'app/store';
 import {useDispatch, useSelector } from 'react-redux';
 import {useAddReplyMutation, useDeleteCommentMutation, useDeleteReplyMutation, useEditCommentMutation, useEditReplyMutation} from './commentSlice';
 import {isTrending, PostApi} from '../post/postSlice';
 import {setOpenModal} from '../root/rootSlice';
+import ToggleModalFixed from '../../components/ToggleModalFixed';
+import TextareaAutosize from 'react-textarea-autosize';
 
 const roboto = Roboto({weight: ['400', '500', '700']});
 type CommentProps = (PostComment | PostReply) & {type?: 'comment' | 'reply', postId: number, replyToId?: number};
 
 const SingleComment = ({id: commentId, postId,  replyToId, body, user, replies, reactions, created_at, type = 'comment'}: CommentProps) => {
   const dispatch = useDispatch<AppDispatch>();
-  const inputRef = useRef<HTMLInputElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement|null>(null);
   const inputAddRef = useRef<HTMLInputElement>(null);
   const [showReplies, setShowReplies] = useState(false);
   const [edit, setEdit] = useState('');
@@ -40,7 +41,7 @@ const SingleComment = ({id: commentId, postId,  replyToId, body, user, replies, 
 
 
   const handleEdit = () => {
-    const el = inputRef.current;
+    const el = textareaRef.current;
     const oldText = edit;
     setEdit('');
     if (!el) return;
@@ -114,19 +115,19 @@ const SingleComment = ({id: commentId, postId,  replyToId, body, user, replies, 
         </Link>
       </div>
       <div className="col">
-        <div className="row">
-          <div className="col-auto flex-shrink-1">
+        <div className="row flex-nowrap">
+          <div className={'col-auto' + (edit === '' ? ' flex-shrink-1' : ' flex-grow-1')}>
             <div className={s.comment}>
               <Link href={'/profile/' + user.id}><h3 className="f--xx-small fw-bold text-truncate">{user.name}</h3></Link>
               {edit === ''
                 ? <p className="f--x-small">{body}</p>
-                : <input
-                  ref={inputRef}
+                : <TextareaAutosize
+                  ref={(el) => textareaRef.current = el}
                   className="f--x-small"
-                  type="text"
                   defaultValue={body}
                   autoFocus
                   onBlur={handleEdit}
+                  onFocus={e => e.target.selectionStart = e.target.selectionEnd = e.target.value.length}
                   onKeyDown={e => e.key === 'Enter' && handleEdit()}
                 />
               }
@@ -134,7 +135,7 @@ const SingleComment = ({id: commentId, postId,  replyToId, body, user, replies, 
           </div>
           {id === user.id &&
             <div className="col-auto d-flex align-items-center">
-              <ToggleModal
+              <ToggleModalFixed
                 toggle={<ThreeDots className="cp" size={16} />}
                 modal={
                   <ul className={roboto.className + ' ' + sd.dropdown}>

@@ -3,12 +3,21 @@ import { apiSlice } from '../../app/api/apiSlice';
 import * as T from './authSlice.types';
 import { MessageResponse } from '../root/rootSlice.types';
 import { HYDRATE } from 'next-redux-wrapper';
+import { setActivityStatus } from 'features/friend/friendSlice';
 
 
 export const AuthApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     fetchClient: builder.query<T.FetchClientResult, void>({
       query: () => '/api/user',
+      onQueryStarted: (arg, {dispatch, queryFulfilled}) => {
+        queryFulfilled.then((result) => {
+          const user = result.data;
+          if (user && user.is_active !== undefined) {
+            dispatch(setActivityStatus({id: user.id, status: user.is_active}));
+          }
+        });
+      },
       keepUnusedDataFor: 0,
       providesTags: (result) =>
         result
@@ -44,6 +53,14 @@ export const AuthApi = apiSlice.injectEndpoints({
     }),
     getUser: builder.query<T.GetUserResult, T.GetUserArg>({
       query: ({id}) => '/api/user/' + id,
+      onQueryStarted: (arg, {dispatch, queryFulfilled}) => {
+        queryFulfilled.then((result) => {
+          const user = result.data;
+          if (user && user.is_active !== undefined) {
+            dispatch(setActivityStatus({id: user.id, status: user.is_active}));
+          }
+        });
+      },
       providesTags: (result, error, arg) =>
         result
           ? [{type: 'User', id: arg.id}, 'User']

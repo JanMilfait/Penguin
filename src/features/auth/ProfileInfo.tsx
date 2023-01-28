@@ -10,10 +10,10 @@ import { sanitize } from 'dompurify';
 
 const ProfileInfo = () => {
   const userId = useSelector((state: AppState) => state.auth.profile?.id);
-  const { data: user, isSuccess, isFetching } = useGetUserQuery({id: userId!}, {skip: typeof userId !== 'number'});
+  const { data: user, isSuccess, isLoading } = useGetUserQuery({id: userId!}, {skip: typeof userId !== 'number'});
   const skills = useMemo(() => skillsByTag(user?.skills ?? []), [user?.skills]);
 
-  if (!isSuccess || isFetching) return null;
+  if (isLoading || !isSuccess) return null;
 
   const profile = user.profile;
   const notSet = <span className="opacity-50">- not set -</span>;

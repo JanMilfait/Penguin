@@ -1,7 +1,7 @@
 import React, {useEffect, useRef } from 'react';
 import s from '../../styles/6_components/Profile.module.scss';
-import {AppState} from '../../app/store';
-import { useSelector } from 'react-redux';
+import {AppDispatch, AppState} from '../../app/store';
+import {useDispatch, useSelector } from 'react-redux';
 import {FriendApi, useGetFriendsIdsQuery} from '../friend/friendSlice';
 import usePerfectScrollbar from '../../app/hooks/usePerfectScrollbar';
 import useLazyInfiniteData from '../../app/hooks/useLazyInfiniteData';
@@ -15,12 +15,40 @@ const ProfileFriends = () => {
   const { updateScroll } = usePerfectScrollbar(containerRef, {wheelPropagation: false, suppressScrollX: true});
   const ReactTooltip = dynamic(() => import('react-tooltip'), { ssr: true });
 
+  const dispatch = useDispatch<AppDispatch>();
   const userId = useSelector((state: AppState) => state.auth.profile.id);
-  const { data: friendsIds, isSuccess, isFetching } = useGetFriendsIdsQuery({id: userId!}, {skip: typeof userId !== 'number'});
-  const { combinedData, loadMore, isDone } = useLazyInfiniteData({api: FriendApi, apiEndpointName: 'getFriends', apiArgs: {id: userId}, limit: 20});
+  const resetInfiniteScroll = useSelector((state: AppState) => state.friend.resetInfiniteScroll);
+  const infiniteScrollSync = useSelector((state: AppState) => state.friend.infiniteScrollSync);
+  const { data: friendsIds, isSuccess, isLoading } = useGetFriendsIdsQuery({id: userId!}, {skip: typeof userId !== 'number'});
+  const { combinedData, loadMore, isDone, hardReset, syncDataAndCache } = useLazyInfiniteData({api: FriendApi, apiEndpointName: 'getFriends', apiArgs: {id: userId}, limit: 20});
   const contentRef = useRef<HTMLDivElement>(null);
 
 
+  /**
+   * After adding friend, we need to remove subs and refetch only first page
+   */
+  useEffect(() => {
+    if (resetInfiniteScroll) {
+      hardReset().then(() => {
+        dispatch(FriendApi.util.invalidateTags(['Friend']));
+      });
+    }
+  }, [resetInfiniteScroll]);
+
+
+  /**
+   * This need to be run every time cache changes, for combinedData to be updated
+   */
+  useEffect(() => {
+    if (infiniteScrollSync) {
+      syncDataAndCache();
+    }
+  }, [infiniteScrollSync]);
+
+
+  /**
+   *  Load more when scroll is close to bottom
+   */
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -37,6 +65,10 @@ const ProfileFriends = () => {
     };
   }, []);
 
+
+  /**
+   * Fill remaining space
+   */
   useEffect(() => {
     const container = containerRef.current;
     const content = contentRef.current;
@@ -49,7 +81,8 @@ const ProfileFriends = () => {
     }
   }, [combinedData]);
 
-  if (!isSuccess || isFetching) return null;
+
+  if (isLoading || !isSuccess) return null;
 
   return (
     <div className={s.profile__friends + ' mb-4'}>

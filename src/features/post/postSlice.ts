@@ -49,7 +49,7 @@ export const PostApi = apiSlice.injectEndpoints({
       onQueryStarted: (arg, {dispatch, queryFulfilled}) => {
         queryFulfilled.then(() => {
           if (arg.category === 'latest') {
-            dispatch(resetFilter());
+            dispatch(resetInfiniteScroll());
           } else {
             dispatch(setOpenModal({
               props: {
@@ -143,27 +143,19 @@ export const PostSlice = createSlice({
     filter: {
       category: 'latest',
       trendingDays: 7,
-      media: 'all',
-      reset: 0
+      media: 'all'
     },
     expandedComments: [],
     trendingComments: [],
-    infiniteScrollSync: 0
+    infiniteScrollSync: 0,
+    resetInfiniteScroll: 0
   } as T.PostState,
   reducers: {
     setFilter: (state, action) => {
       state.filter = {...state.filter, ...action.payload};
     },
-    resetFilter: (state) => {
-      state.filter.reset++;
-    },
     expandComments: (state, action) => {
       state.expandedComments.push(action.payload);
-    },
-    expandCommentsIfNotExpanded: (state, action) => {
-      if (!state.expandedComments.includes(action.payload)) {
-        state.expandedComments.push(action.payload);
-      }
     },
     toggleComments: (state, action) => {
       if (state.expandedComments.includes(action.payload)) {
@@ -174,6 +166,9 @@ export const PostSlice = createSlice({
     },
     syncInfiniteScroll: (state) => {
       state.infiniteScrollSync++;
+    },
+    resetInfiniteScroll: (state) => {
+      state.resetInfiniteScroll++;
     }
   },
   extraReducers: (builder) => {
@@ -198,11 +193,10 @@ export const {
 
 export const {
   setFilter,
-  resetFilter,
   expandComments,
-  expandCommentsIfNotExpanded,
   toggleComments,
-  syncInfiniteScroll
+  syncInfiniteScroll,
+  resetInfiniteScroll
 } = PostSlice.actions;
 
 export const isExpanded = createSelector(

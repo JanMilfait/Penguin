@@ -16,7 +16,7 @@ const PostsResults = () => {
   const category = useSelector((state: AppState) => state.post.filter.category);
   const trendingDays = useSelector((state: AppState) => state.post.filter.trendingDays);
   const media = useSelector((state: AppState) => state.post.filter.media);
-  const reset = useSelector((state: AppState) => state.post.filter.reset);
+  const resetInfiniteScroll = useSelector((state: AppState) => state.post.resetInfiniteScroll);
   const infiniteScrollSync = useSelector((state: AppState) => state.post.infiniteScrollSync);
   const { combinedData, loadMore, isFetching, syncDataAndCache, hardReset, isDone } = useLazyInfiniteData({api: PostApi, apiEndpointName: 'getPosts',
     apiArgs: {category: category, media: media, trendingDays: category === 'trending' ? trendingDays : undefined}, limit: 3});
@@ -27,12 +27,12 @@ const PostsResults = () => {
    * After adding post, we need to remove subs and refetch only first page
    */
   useEffect(() => {
-    if (reset) {
+    if (resetInfiniteScroll) {
       hardReset().then(() => {
         dispatch(PostApi.util.invalidateTags(['Post']));
       });
     }
-  }, [reset]);
+  }, [resetInfiniteScroll]);
 
   /**
    * This need to be run every time cache changes, for combinedData to be updated
@@ -42,7 +42,6 @@ const PostsResults = () => {
       syncDataAndCache();
     }
   }, [infiniteScrollSync]);
-
 
   /**
    * LoadMore Posts when scroll reaches bottom of page

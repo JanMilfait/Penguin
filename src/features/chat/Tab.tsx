@@ -1,14 +1,13 @@
 import React, { useMemo } from 'react';
 import s from 'styles/6_components/Chats.module.scss';
-import Avatar from '../../components/Avatar';
 import { XCircle, XCircleFill } from 'react-bootstrap-icons';
 import { AppDispatch, AppState } from 'app/store';
 import { useDispatch, useSelector } from 'react-redux';
 import {deactivateChat, getActiveChat, isOpenedChat, toggleChat} from './chatSlice';
 import {sleep} from '../../app/helpers/helpers';
+import FriendAvatar from 'features/friend/FriendAvatar';
 
 const Tab = ({ chatId }: { chatId: number }) => {
-
   const dispatch = useDispatch<AppDispatch>();
   const [closeHover, setCloseHover] = React.useState(false);
 
@@ -37,17 +36,17 @@ const Tab = ({ chatId }: { chatId: number }) => {
 
 
   return (
-    <div className={s.activeChats__tab + (isExpanded ? '' : ' ' + s.activeChats__tabShrink) + (isOpened ? ' ' + s.activeChats__tabActive : '')}
-      onClick={handleToggleChat}>
+    <div className={s.activeChats__tab + (isExpanded ? '' : ' ' + s.activeChats__tabShrink) + (isOpened ? ' ' + s.activeChats__tabActive : '')} onClick={handleToggleChat}>
       <div className="d-flex">
         {users.map((user) => (
-          <div key={user.id} className={s.activeChats__avatar} >
-            {user.is_active
-              ? <div className={s.activeChats__online + ' ' + s.activeChats__onlineS} ></div>
-              : <div className={s.activeChats__offline + ' ' + s.activeChats__offlineS} ></div>
-            }
-            <Avatar {...user} size={40} />
-          </div>
+          <FriendAvatar
+            key={user.id}
+            className={s.activeChats__avatar}
+            classNameOnline={s.activeChats__online + ' ' + s.activeChats__onlineS}
+            classNameOffline={s.activeChats__offline + ' ' + s.activeChats__offlineS}
+            {...user}
+            size={25}
+          />
         ))}
       </div>
       <p className={s.activeChats__names + ' text-truncate'}>

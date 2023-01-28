@@ -1,16 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import s from 'styles/6_components/Navigation.module.scss';
 import Logo from './Logo';
 import SearchBar from 'features/search/SearchBar';
 import NavIcons from './NavIcons';
-import {AppState} from '../app/store';
-import { useSelector } from 'react-redux';
-import {useGetNotificationsQuery} from '../features/notification/notificationSlice';
+import {AppDispatch, AppState} from '../app/store';
+import {useDispatch, useSelector } from 'react-redux';
+import {setFriendsSBSlideIn} from '../features/chat/chatSlice';
 
 function Navigation() {
+  const dispatch = useDispatch<AppDispatch>();
   const id = useSelector((state: AppState) => state.auth.data?.id);
   const isAuth = typeof id === 'number';
-  useGetNotificationsQuery(undefined, {skip: !isAuth});
+
+  useEffect(() => {
+    dispatch(setFriendsSBSlideIn());
+  }, []);
 
   return (
     <nav className={s.navigation}>
@@ -44,4 +48,4 @@ function Navigation() {
   );
 }
 
-export default React.memo(Navigation);
+export default Navigation;

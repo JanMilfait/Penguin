@@ -1,11 +1,13 @@
-import {AnyAction, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import {AnyAction, createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { HYDRATE } from 'next-redux-wrapper';
 import * as T from './rootSlice.types';
+import {AppState} from '../../app/store';
 
 export const RootSlice = createSlice({
   name: 'root',
   initialState: {
-    appLoaded: false,
+    appVersion: '1.0.0',
+    appLoaded: 0,
     routerPath: '',
     window: {
       width: 0,
@@ -24,7 +26,7 @@ export const RootSlice = createSlice({
   } as T.RootState,
   reducers: {
     setAppLoaded: (state) => {
-      state.appLoaded = true;
+      state.appLoaded = (Date.now());
     },
     setRouterPath: (state, action: PayloadAction<string>) => {
       state.routerPath = action.payload;
@@ -71,5 +73,12 @@ export const {
   setOpenModal,
   setCloseModal
 } = RootSlice.actions;
+
+
+export const onHiddenNavRoute = createSelector(
+  (state: AppState) => state.root.routerPath,
+  (routerPath) => ['/login', '/register', '/login/reset'].includes(routerPath)
+);
+
 
 export default RootSlice.reducer;

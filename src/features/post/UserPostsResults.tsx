@@ -14,7 +14,7 @@ const UserPostsResults = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const userId = useSelector((state: AppState) => state.auth.profile.id);
-  const reset = useSelector((state: AppState) => state.post.filter.reset);
+  const resetInfiniteScroll = useSelector((state: AppState) => state.post.resetInfiniteScroll);
   const infiniteScrollSync = useSelector((state: AppState) => state.post.infiniteScrollSync);
   const { combinedData, loadMore, isFetching, syncDataAndCache, hardReset, isDone } = useLazyInfiniteData({api: PostApi, apiEndpointName: 'getUserPosts',
     apiArgs: {id: userId}, limit: 3});
@@ -25,12 +25,12 @@ const UserPostsResults = () => {
    * After adding post, we need to remove subs and refetch only first page
    */
   useEffect(() => {
-    if (reset) {
+    if (resetInfiniteScroll) {
       hardReset().then(() => {
         dispatch(PostApi.util.invalidateTags(['Post']));
       });
     }
-  }, [reset]);
+  }, [resetInfiniteScroll]);
 
   /**
    * This need to be run every time cache changes, for combinedData to be updated

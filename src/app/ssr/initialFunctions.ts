@@ -4,7 +4,7 @@ import { GetServerSidePropsContext } from 'next';
 import { deleteCookie, hasCookie, setCookie, getCookie } from 'cookies-next';
 import { setIsMobile, setRouterPath } from '../../features/root/rootSlice';
 import { PostApi } from '../../features/post/postSlice';
-import { FriendApi } from 'features/friend/friendSlice';
+import {FriendApi, setActivityStatus} from 'features/friend/friendSlice';
 
 interface InitialFunctions {
   (store: AppStore, context: GetServerSidePropsContext, redirect?: string|boolean): unknown;

@@ -42,7 +42,9 @@ const Reset: NextPage = () => {
       <div className="container">
         <div className="row">
           <div className="col-12 col-lg-6 offset-lg-3">
-            <Logo width={100} height={100} />
+            <div className="pe-none">
+              <Logo width={100} height={100} hardRefresh={true} />
+            </div>
             <form onSubmit={handleSubmit}>
               <div>
                 <input type="text" name="email" placeholder="Email" className={hasErrMessage(error, 'email') ? 'isInvalid' : ''} />

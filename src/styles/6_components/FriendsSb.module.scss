@@ -8,26 +8,25 @@
   height: calc(100vh - 80px);
   padding: 20px;
   overflow: hidden;
-  animation: slide-in 1.3s ease-in-out forwards;
   background: $back-darker;
-
-  @keyframes slide-in {
-      0% {
-      right: -90px;
-      }
-
-      40% {
-        right: -90px;
-      }
-
-      100% {
-      right: 0;
-      }
-  }
 
   @media (max-width: $lg) {
     top: 138px;
     height: calc(100vh - 138px);
+  }
+
+  @keyframes slide-in {
+    0% {
+      right: -90px;
+    }
+
+    100% {
+      right: 0;
+    }
+  }
+
+  &__slideIn {
+    animation: slide-in 1s ease-in-out forwards;
   }
 
   &__avatar {

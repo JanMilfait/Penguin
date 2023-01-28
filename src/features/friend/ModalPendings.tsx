@@ -9,6 +9,7 @@ import {useInfiniteScroll} from '../../app/hooks/useInfiniteScroll';
 import Pending from './Pending';
 import {markPendingAsReaded, unreadedPendingNotifications, useMarkNotificationsAsReadedMutation} from '../notification/notificationSlice';
 import debounce from 'lodash/debounce';
+import DotLoaderSpin from '../../components/DotLoaderSpin';
 
 const ModalPendings = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -21,8 +22,8 @@ const ModalPendings = () => {
   /**
    * It's better to sort data on client, because same queries are used in other components (cache)
    */
-  const {data: sendPendings} = useGetSendPendingsQuery(undefined, {skip: typeof id !== 'number'});
-  const {data: receivedPendings} = useGetReceivedPendingsQuery(undefined, {skip: typeof id !== 'number'});
+  const {data: sendPendings, isLoading: isLoadingSend} = useGetSendPendingsQuery(undefined, {skip: typeof id !== 'number'});
+  const {data: receivedPendings, isLoading: isLoadingReceived} = useGetReceivedPendingsQuery(undefined, {skip: typeof id !== 'number'});
 
   useEffect(() => {
     sendPendings && setData1(sendPendings);
@@ -63,6 +64,18 @@ const ModalPendings = () => {
     markReaded.length > 0 && debouncedRef.current(markReaded);
   }, [markReaded]);
 
+
+  if (isLoadingSend || isLoadingReceived) {
+    return (
+      <div className={s.navModal}>
+        <div ref={containerRef} className={ss.pendings}>
+          <div className="d-flex justify-content-center align-items-center h-100">
+            <DotLoaderSpin />
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className={s.navModal}>

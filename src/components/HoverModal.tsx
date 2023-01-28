@@ -1,14 +1,14 @@
 import { useHoverModal } from 'app/hooks/useHoverModal';
-import React, { useEffect } from 'react';
+import React, {ReactNode, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import {AppState} from '../app/store';
 
-type HoverModalProps = {hover: React.ReactNode, modal: React.ReactNode, onHoverClick?: () => void, attachToCursor?: boolean};
+type HoverModalProps = {hover: ReactNode, modal: ReactNode, onHoverClick?: () => void, attachToCursor?: boolean, autoOrientation?: boolean};
 
-const HoverModal = ({hover, modal, onHoverClick, attachToCursor = false}: HoverModalProps) => {
-  const containerRef = React.useRef<HTMLDivElement>(null);
-  const hoverRef = React.useRef<HTMLDivElement>(null);
-  const modalRef = React.useRef<HTMLDivElement>(null);
+const HoverModal = ({hover, modal, onHoverClick, attachToCursor = false, autoOrientation = false}: HoverModalProps) => {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const hoverRef = useRef<HTMLDivElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
   const isMobile = useSelector((state: AppState) => state.root.isMobile);
 
   const {isOpenModal} = useHoverModal(containerRef, hoverRef);
@@ -19,20 +19,28 @@ const HoverModal = ({hover, modal, onHoverClick, attachToCursor = false}: HoverM
   useEffect(() => {
     if (!attachToCursor) return;
     const container = containerRef.current;
-    const modal = modalRef.current;
-    if (!container || !modal) return;
+    const modalParent = modalRef.current;
+    if (!container || !modalParent) return;
 
-    modal.style.position = 'fixed';
-    modal.style.zIndex = '11';
+    modalParent.style.position = 'fixed';
+    modalParent.style.zIndex = '11';
 
     const handleMouseMove = (e: MouseEvent) => {
       if (!isMobile) {
-        modal.style.left = `${e.clientX + 10}px`;
-        modal.style.top = `${e.clientY - 10}px`;
+        modalParent.style.left = `${e.clientX + 10}px`;
+        modalParent.style.top = `${e.clientY - 10}px`;
+
+        if (autoOrientation) {
+          let height;
+          let width;
+          (e.clientY + 120) < window.innerHeight / 2 ? height = {top: '30px', bottom: 'auto'} : height = {top: 'auto', bottom: '5px'};
+          (e.clientX - 120) < window.innerWidth / 2 ? width = {left: '5px', right: 'auto'} : width = {left: 'auto', right: '20px'};
+          modalParent.children[0].setAttribute('style', `position: absolute; top: ${height.top}; bottom: ${height.bottom}; left: ${width.left}; right: ${width.right};`);
+        }
       } else {
-        modal.style.left = '12px';
-        modal.style.width = 'calc(100% - 24px)';
-        modal.style.top = `${e.clientY - 50}px`;
+        modalParent.style.left = '12px';
+        modalParent.style.width = 'calc(100% - 24px)';
+        modalParent.style.top = `${e.clientY - 50}px`;
       }
     };
 

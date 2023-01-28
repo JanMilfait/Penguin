@@ -22,13 +22,13 @@ const SearchResults = () => {
   const isMobile = useSelector((state: AppState) => state.root.isMobile);
 
   const dispatch = useDispatch<AppDispatch>();
+  const [clicked, setClicked] = React.useState(false);
   const text = useSelector((state: AppState) => state.search.text);
   const debounced = useSelector((state: AppState) => state.search.debounced);
   const page = useSelector((state: AppState) => state.search.page);
-  const [trigger, { data, isError, isFetching, isSuccess }] = useLazyFetchSearchQuery();
+  const [trigger, { data, isError }] = useLazyFetchSearchQuery();
 
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const debouncedSearch = useCallback(debounce(async (text, page) => {
     await trigger({text: text, page: page}, true);
     dispatch(setDebounced(true));
@@ -44,12 +44,14 @@ const SearchResults = () => {
         : await trigger({text: text, page: page}, true);
 
       updateScroll(true);
+      setClicked(false);
     })();
   }, [text, page]);
 
 
   const handleSetPage = (e: React.MouseEvent<Element, MouseEvent>, page: number) => {
-    if (!isSuccess || isFetching) return;
+    if (clicked) return;
+    setClicked(true);
     e.stopPropagation();
     dispatch(setPage(page));
   };

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {Skill} from '../auth/authSlice.types';
 import Image from 'next/image';
 import s from 'styles/6_components/Profile.module.scss';
@@ -10,6 +10,7 @@ const SkillIcon = ({name, icon_url, description, tag, created_by}: Skill) => {
   return (
     <HoverModal
       attachToCursor={true}
+      autoOrientation={true}
       hover={
         <div className={s.profile__skillIcon}>
           {icon_url

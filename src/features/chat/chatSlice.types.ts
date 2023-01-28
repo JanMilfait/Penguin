@@ -63,5 +63,6 @@ export type ChatState = {
     time: number,
     closeTimeout: number
   };
+  friendsSBSlideIn?: true|undefined;
   infiniteScrollSync: number;
 };

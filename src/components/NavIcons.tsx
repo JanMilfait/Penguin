@@ -9,9 +9,13 @@ import Avatar from './Avatar';
 import UserDropdown from 'features/auth/UserDropdown';
 import ToggleModal from './ToggleModal';
 import dynamic from 'next/dynamic';
+import {useGetNotificationsQuery} from '../features/notification/notificationSlice';
 
 const NavIcons = () => {
   const user = useSelector((state: AppState) => state.auth.data!);
+  const isAuth = typeof user.id === 'number';
+
+  useGetNotificationsQuery(undefined, {skip: !isAuth});
 
   const ModalPendings = dynamic(() => import('features/friend/ModalPendings'), {ssr: false});
   const ModalChats = dynamic(() => import('features/chat/ModalChats'), {ssr: false});

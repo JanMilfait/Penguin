@@ -7,9 +7,9 @@ import {useGetUserQuery} from './authSlice';
 
 const ProfileInfoShowcase = () => {
   const userId = useSelector((state: AppState) => state.auth.profile.id);
-  const { data: user, isSuccess, isFetching } = useGetUserQuery({id: userId!}, {skip: typeof userId !== 'number'});
+  const { data: user, isSuccess, isLoading } = useGetUserQuery({id: userId!}, {skip: typeof userId !== 'number'});
 
-  if (!isSuccess || isFetching) return null;
+  if (isLoading || !isSuccess) return null;
 
   const profile = user.profile;
   const hasSkills = user.skills?.length > 0;

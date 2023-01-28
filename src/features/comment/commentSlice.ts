@@ -122,19 +122,13 @@ export const CommentApi = apiSlice.injectEndpoints({
 export const CommentSlice = createSlice({
   name: 'comment',
   initialState: {
+    infiniteScrollSync: 0,
     resetInfiniteScroll: {
       restarted: 0,
       value: 0
-    },
-    infiniteScrollSync: 0
+    }
   } as T.ChatState,
   reducers: {
-    resetInfiniteScroll: (state, action) => {
-      state.resetInfiniteScroll = {
-        restarted: action.payload,
-        value: state.resetInfiniteScroll.value + 1
-      };
-    },
     clearInfiniteScroll: (state) => {
       state.resetInfiniteScroll = {
         restarted: 0,
@@ -143,6 +137,12 @@ export const CommentSlice = createSlice({
     },
     syncInfiniteScroll: (state) => {
       state.infiniteScrollSync++;
+    },
+    resetInfiniteScroll: (state, action) => {
+      state.resetInfiniteScroll = {
+        restarted: action.payload,
+        value: state.resetInfiniteScroll.value + 1
+      };
     }
   }
 });

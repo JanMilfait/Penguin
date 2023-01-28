@@ -1,11 +1,11 @@
 import { useToggleModal } from 'app/hooks/useToggleModal';
-import React from 'react';
+import React, { ReactNode, useRef } from 'react';
 
-type ToggleModalProps = {toggle: React.ReactNode, modal?: React.ReactNode, clickClose?: boolean, disabled?: boolean, hidden?: boolean};
+type ToggleModalProps = {toggle: ReactNode, modal?: ReactNode, clickClose?: boolean, disabled?: boolean, hidden?: boolean};
 
 const ToggleModal = ({toggle, modal, clickClose, disabled, hidden = true}: ToggleModalProps) => {
-  const containerRef = React.useRef<HTMLDivElement>(null);
-  const toggleRef = React.useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const toggleRef = useRef<HTMLDivElement>(null);
 
   const {isOpenModal} = useToggleModal(containerRef, toggleRef, clickClose, disabled);
 

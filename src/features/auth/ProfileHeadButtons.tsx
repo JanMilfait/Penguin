@@ -22,13 +22,13 @@ const ProfileHeadButtons = () => {
   const isEditing = editId === id;
 
   const [isFriendHover, setIsFriendHover] = useState(false);
-  const { data: user, isSuccess } = useGetUserQuery({id: userId!}, {skip: typeof userId !== 'number'});
+  const { data: user, isSuccess, isLoading } = useGetUserQuery({id: userId!}, {skip: typeof userId !== 'number'});
   const { data: friendsIds, isSuccess: isSuccessF } = useGetFriendsIdsQuery({id: userId!}, {skip: typeof userId !== 'number'});
   const { data: friendsPending } = useGetSendPendingsQuery(undefined, {skip: !isAuth});
   const [addFriend] = useAddFriendMutation();
   const [deleteFriend] = useDeleteFriendMutation();
 
-  if (!isSuccess) return null;
+  if (isLoading || !isSuccess) return null;
 
   return (
     <div className="row justify-content-start justify-content-md-end">

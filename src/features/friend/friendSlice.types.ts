@@ -60,5 +60,9 @@ export type DeclinePendingResult = { message: string };
 export type DeclinePendingArg = { pendingId: number; }
 
 export type FriendState = {
-  // ...
+  activityStatus: {
+    [key: number]: 0 | 1 | undefined;
+  };
+  infiniteScrollSync: number;
+  resetInfiniteScroll: number;
 };

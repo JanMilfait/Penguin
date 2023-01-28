@@ -8,13 +8,15 @@ import {AppDispatch, AppState} from '../../app/store';
 import {useDispatch, useSelector } from 'react-redux';
 import {markMessageAsReaded, unreadedMessageNotifications, useMarkNotificationsAsReadedMutation} from '../notification/notificationSlice';
 import debounce from 'lodash.debounce';
+import ss from '../../styles/6_components/Pendings.module.scss';
+import DotLoaderSpin from '../../components/DotLoaderSpin';
 
 const AllChats = ({style}: {style?: CSSProperties}) => {
   const dispatch = useDispatch<AppDispatch>();
   const unreadedMessages = useSelector((state: AppState) => unreadedMessageNotifications(state, false)) as Map<string, number|undefined>;
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const {data} = useGetChatsQuery();
+  const {data, isLoading} = useGetChatsQuery();
   const [chats] = useInfiniteScroll(data, containerRef, 50);
 
   //****************************
@@ -40,6 +42,16 @@ const AllChats = ({style}: {style?: CSSProperties}) => {
     markReaded.length > 0 && debouncedRef.current(markReaded);
   }, [markReaded]);
 
+
+  if (isLoading) {
+    return (
+      <div ref={containerRef} className={s.allChats} style={style}>
+        <div className="d-flex justify-content-center align-items-center h-100">
+          <DotLoaderSpin />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div ref={containerRef} className={s.allChats} style={style}>
