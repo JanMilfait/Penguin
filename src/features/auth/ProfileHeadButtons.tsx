@@ -23,7 +23,7 @@ const ProfileHeadButtons = () => {
 
   const [isFriendHover, setIsFriendHover] = useState(false);
   const { data: user, isSuccess, isLoading } = useGetUserQuery({id: userId!}, {skip: typeof userId !== 'number'});
-  const { data: friendsIds, isSuccess: isSuccessF } = useGetFriendsIdsQuery({id: userId!}, {skip: typeof userId !== 'number'});
+  const { data: friends, isSuccess: isSuccessF } = useGetFriendsIdsQuery({id: id!}, {skip: !isAuth});
   const { data: friendsPending } = useGetSendPendingsQuery(undefined, {skip: !isAuth});
   const [addFriend] = useAddFriendMutation();
   const [deleteFriend] = useDeleteFriendMutation();
@@ -33,7 +33,7 @@ const ProfileHeadButtons = () => {
   return (
     <div className="row justify-content-start justify-content-md-end">
       <div className="col-auto d-flex flex-wrap" style={{marginRight: '-0.5rem'}}>
-        {isAuth && id !== userId && (isSuccessF && friendsIds?.ids.includes(id)
+        {isAuth && id !== userId && (isSuccessF && friends?.ids.includes(user.id)
           ? ( // isFriend
             <>
               <div

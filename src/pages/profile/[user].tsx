@@ -1,5 +1,5 @@
 import {AppState, wrapper} from '../../app/store';
-import {authenticateUnprotected, getFriendsIds, getSendPendings, getFriends, getUser, getUserPosts, init} from '../../app/ssr/initialFunctions';
+import {authenticateUnprotected, getFriendsIds, getSendPendings, getFriends, getUser, getUserPosts, init, getUserFriends} from '../../app/ssr/initialFunctions';
 import type { NextPage } from 'next';
 import PostAdd from '../../features/post/PostAdd';
 import {useSelector } from 'react-redux';
@@ -7,6 +7,7 @@ import UserPosts from 'features/post/UserPosts';
 import {setProfile} from '../../features/auth/authSlice';
 import ProfileHead from '../../features/auth/ProfileHead';
 import ProfileSidebar from '../../features/auth/ProfileSidebar';
+import {UserData} from '../../features/auth/authSlice.types';
 
 const Profile: NextPage = () => {
   const id = useSelector((state: AppState) => state.auth.data?.id);
@@ -41,13 +42,15 @@ export const getServerSideProps = wrapper.getServerSideProps(store => async (ctx
   await store.dispatch(setProfile({id: userId}));
 
   await init(store, ctx);
-  const auth = await authenticateUnprotected(store, ctx, false);
+  const auth = await authenticateUnprotected(store, ctx, false) as UserData|undefined;
 
   await Promise.all([
     auth && getFriends(store),
     auth && getSendPendings(store),
+    auth && getFriendsIds(store, auth.id),
     getFriendsIds(store, userId),
     getUser(store, userId),
+    getUserFriends(store, userId),
     getUserPosts(store, userId)
   ]);
 

@@ -4,7 +4,7 @@ import { GetServerSidePropsContext } from 'next';
 import { deleteCookie, hasCookie, setCookie, getCookie } from 'cookies-next';
 import { setIsMobile, setRouterPath } from '../../features/root/rootSlice';
 import { PostApi } from '../../features/post/postSlice';
-import {FriendApi, setActivityStatus} from 'features/friend/friendSlice';
+import { FriendApi } from 'features/friend/friendSlice';
 
 interface InitialFunctions {
   (store: AppStore, context: GetServerSidePropsContext, redirect?: string|boolean): unknown;
@@ -119,7 +119,7 @@ export const getFriends = async (store: AppStore) => {
 };
 
 export const getFriendsIds = async (store: AppStore, id: number) => {
-  await store.dispatch(FriendApi.endpoints.getFriendsIds.initiate({id: id}));
+  await store.dispatch(FriendApi.endpoints.getFriendsIds.initiate({id}));
 };
 
 export const getSendPendings = async (store: AppStore) => {
@@ -132,6 +132,10 @@ export const getPosts = async (store: AppStore) => {
 
 export const getUser = async (store: AppStore, id: number) => {
   await store.dispatch(AuthApi.endpoints.getUser.initiate({id}));
+};
+
+export const getUserFriends = async (store: AppStore, id: number) => {
+  await store.dispatch(FriendApi.endpoints.getFriends.initiate({id, page: 1, limit: 20}));
 };
 
 export const getUserPosts = async (store: AppStore, id: number) => {

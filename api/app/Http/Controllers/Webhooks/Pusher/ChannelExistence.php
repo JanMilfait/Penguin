@@ -9,7 +9,7 @@ use App\Models\User\User;
 
 class ChannelExistence extends Controller
 {
-    public function private_user()
+    public function __invoke()
     {
         if (str_contains(request()->json('events')[0]['channel'], 'private-user.')) {
 
