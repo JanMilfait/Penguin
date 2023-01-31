@@ -1,14 +1,3 @@
-export type RootState = {
-  appLoaded: number;
-  routerPath: string;
-  window: {
-    width: number;
-    height: number;
-  }
-  isMobile: boolean;
-  modal: Modal;
-}
-
 export type MessageResponse = {
   message: string;
 }
@@ -46,4 +35,18 @@ export type ModalProps = {
     }[]
   }
   clickOutside?: boolean;
+}
+
+export type RootState = {
+  appLoaded: number;
+  routerPath: string;
+  window: {
+    width: number;
+    height: number;
+  }
+  isMobile: boolean;
+  modal: Modal;
+  loader: {
+    isOpen: boolean;
+  }
 }

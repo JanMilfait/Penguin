@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import {Skill} from '../auth/authSlice.types';
 import Image from 'next/image';
 import s from 'styles/6_components/Profile.module.scss';

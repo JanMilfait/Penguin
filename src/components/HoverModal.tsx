@@ -26,27 +26,32 @@ const HoverModal = ({hover, modal, onHoverClick, attachToCursor = false, autoOri
     modalParent.style.zIndex = '11';
 
     const handleMouseMove = (e: MouseEvent) => {
-      if (!isMobile) {
-        modalParent.style.left = `${e.clientX + 10}px`;
-        modalParent.style.top = `${e.clientY - 10}px`;
+      modalParent.style.left = `${e.clientX + 10}px`;
+      modalParent.style.top = `${e.clientY - 10}px`;
 
-        if (autoOrientation) {
-          let height;
-          let width;
-          (e.clientY + 120) < window.innerHeight / 2 ? height = {top: '30px', bottom: 'auto'} : height = {top: 'auto', bottom: '5px'};
-          (e.clientX - 120) < window.innerWidth / 2 ? width = {left: '5px', right: 'auto'} : width = {left: 'auto', right: '20px'};
-          modalParent.children[0].setAttribute('style', `position: absolute; top: ${height.top}; bottom: ${height.bottom}; left: ${width.left}; right: ${width.right};`);
-        }
-      } else {
-        modalParent.style.left = '12px';
-        modalParent.style.width = 'calc(100% - 24px)';
-        modalParent.style.top = `${e.clientY - 50}px`;
+      if (autoOrientation) {
+        let height;
+        let width;
+        (e.clientY + 120) < window.innerHeight / 2 ? height = {top: '30px', bottom: 'auto'} : height = {top: 'auto', bottom: '5px'};
+        (e.clientX - 120) < window.innerWidth / 2 ? width = {left: '5px', right: 'auto'} : width = {left: 'auto', right: '20px'};
+        modalParent.children[0].setAttribute('style', `position: absolute; top: ${height.top}; bottom: ${height.bottom}; left: ${width.left}; right: ${width.right};`);
       }
     };
 
-    container.addEventListener('mousemove', handleMouseMove);
+    const handleClick = (e: MouseEvent) => {
+      modalParent.style.left = '12px';
+      modalParent.style.width = 'calc(100% - 24px)';
+      modalParent.style.top = `${e.clientY}px`;
+      modalParent.children[0].setAttribute('style', 'position: absolute; top: auto; bottom: 30px;');
+    };
+
+    isMobile
+      ? container.addEventListener('click', handleClick)
+      : container.addEventListener('mousemove', handleMouseMove);
     return () => {
-      container.removeEventListener('mousemove', handleMouseMove);
+      isMobile
+        ? container.removeEventListener('click', handleClick)
+        : container.removeEventListener('mousemove', handleMouseMove);
     };
   }, [attachToCursor, isMobile]);
 

@@ -22,6 +22,9 @@ export const RootSlice = createSlice({
         type: null,
         clickOutside: false
       }
+    },
+    loader: {
+      isOpen: false
     }
   } as T.RootState,
   reducers: {
@@ -54,6 +57,16 @@ export const RootSlice = createSlice({
           clickOutside: false
         }
       };
+    },
+    setOpenLoader: (state) => {
+      state.loader = {
+        isOpen: true
+      };
+    },
+    setCloseLoader: (state) => {
+      state.loader = {
+        isOpen: false
+      };
     }
   },
   extraReducers: (builder) => {
@@ -71,7 +84,9 @@ export const {
   setWindow,
   setIsMobile,
   setOpenModal,
-  setCloseModal
+  setCloseModal,
+  setOpenLoader,
+  setCloseLoader
 } = RootSlice.actions;
 
 

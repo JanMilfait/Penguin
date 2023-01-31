@@ -6,13 +6,16 @@ import {AppState} from '../../app/store';
 const ComponentShared = () => {
 
   const isModalOpen = useSelector((state: AppState) => state.root.modal.isOpen);
+  const isLoaderOpen = useSelector((state: AppState) => state.root.loader.isOpen);
   const Modal = dynamic(() => import('./Modal'), { ssr: false });
+  const Loader = dynamic(() => import('./Loader'), { ssr: false });
 
   return (
     <>
       {isModalOpen && <Modal />}
+      {isLoaderOpen && <Loader />}
     </>
   );
 };
 
-export default ComponentShared;
+export default React.memo(ComponentShared);

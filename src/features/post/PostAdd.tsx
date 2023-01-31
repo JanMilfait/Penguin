@@ -1,12 +1,13 @@
-import React, { useRef, useState } from 'react';
+import React, {useEffect, useRef, useState } from 'react';
 import s from 'styles/6_components/PostAdd.module.scss';
 import Avatar from '../../components/Avatar';
-import { AppState} from '../../app/store';
+import { AppState } from '../../app/store';
 import { useSelector } from 'react-redux';
-import {GeoAlt, Image as Img, CameraVideo, ThreeDots, SendFill} from 'react-bootstrap-icons';
-import {useAddPostMutation} from './postSlice';
-import {hasErrMessage} from '../../app/helpers/errorHandling';
+import { GeoAlt, Image as Img, CameraVideo, ThreeDots, SendFill } from 'react-bootstrap-icons';
+import { useAddPostMutation } from './postSlice';
+import { hasErrMessage } from '../../app/helpers/errorHandling';
 import Link from 'next/link';
+import { useLoader } from '../../app/hooks/useLoader';
 
 const PostAdd = () => {
   const user = useSelector((state: AppState) => state.auth.data!);
@@ -18,8 +19,8 @@ const PostAdd = () => {
 
   const [hasFile, setHasFile] = useState('');
   const [clicked, setClicked] = useState(false);
-  const [addPost, { error}] = useAddPostMutation();
-
+  const [addPost, {error, isLoading}] = useAddPostMutation();
+  useLoader(isLoading);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -40,6 +41,23 @@ const PostAdd = () => {
         }
         setClicked(false);
       });
+  };
+
+  const handleLocation = () => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const lat = position.coords.latitude;
+        const long = position.coords.longitude;
+        const url = `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${lat}&longitude=${long}&localityLanguage=en`;
+        fetch(url)
+          .then((res) => res.json())
+          .then((data) => {
+            if (textareaRef.current) {
+              textareaRef.current.value += `„${data.locality}, ${data.principalSubdivision}, ${data.countryName}“`;
+            }
+          });
+      });
+    }
   };
 
   const saveImage = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -76,7 +94,7 @@ const PostAdd = () => {
       <div className="row align-items-center pt-3">
         <div className="col">
           <ul className={s.postAdd__icons + ' justify-content-center justify-content-md-start'}>
-            <li><GeoAlt /><p className="f--small">Location</p></li>
+            <li onClick={handleLocation}><GeoAlt /><p className="f--small">Location</p></li>
             <li className={hasFile === 'image' ? s.active : ''} onClick={() => imageInputRef.current?.click()}><Img /><p className="f--small">Photo</p></li>
             <li className={hasFile === 'video' ? s.active : ''} onClick={() => videoInputRef.current?.click()}><CameraVideo /><p className="f--small">Video</p></li>
             <li><ThreeDots /><p className="f--small">More</p></li>
