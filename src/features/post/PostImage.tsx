@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
+import React, {CSSProperties, useEffect } from 'react';
 import { PostImage } from './postSlice.types';
 
-const PostImage = ({ name, url, small = false, className }:  PostImage & { small?: boolean } & { className?: string }) => {
+const PostImage = ({ name, url, small = false, className, style }:  PostImage & { small?: boolean, className?: string, style?: CSSProperties }) => {
 
   const isGif = name?.endsWith('.gif');
   const imgPlaceholder = url?.replace(/\/storage\/posts\/images\//, '/storage/posts/images/placeholder/') + '700_' + name || '';
@@ -22,15 +22,15 @@ const PostImage = ({ name, url, small = false, className }:  PostImage & { small
   if (!name) return null;
 
   return (
-    <div>
+    <>
       {
         !isGif
           ? imgLoaded
-            ? <img {...{ className }} src={url + (small ? '700_' : '') + name} loading="lazy" />
-            : <img {...{ className }} src={imgPlaceholder}  loading="lazy" />
-          : <img {...{ className }} src={url + name} loading="lazy" />
+            ? <img {...{ className, style }} src={url + (small ? '700_' : '') + name} loading="lazy" />
+            : <img {...{ className, style }} src={imgPlaceholder}  loading="lazy" />
+          : <img {...{ className, style }} src={url + name} loading="lazy" />
       }
-    </div>
+    </>
   );
 };
 

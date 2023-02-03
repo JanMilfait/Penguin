@@ -1,4 +1,4 @@
-import {AnyAction, createSelector, createSlice } from '@reduxjs/toolkit';
+import {AnyAction, createSelector, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import {apiSlice} from '../../app/api/apiSlice';
 import * as T from './postSlice.types';
 import {MessageResponse} from '../root/rootSlice.types';
@@ -6,7 +6,7 @@ import {AppState} from '../../app/store';
 import {setOpenModal} from '../root/rootSlice';
 import Router from 'next/router';
 import { setCookie } from 'cookies-next';
-import { Reaction } from './postSlice.types';
+import {Reaction} from './postSlice.types';
 import {saveTrendingComments} from '../../app/helpers/helpers';
 import { HYDRATE } from 'next-redux-wrapper';
 
@@ -26,6 +26,13 @@ export const PostApi = apiSlice.injectEndpoints({
       providesTags: (result): any =>
         result
           ? [...result.items.map(({id}) => ({type: 'Post', id})), 'Post']
+          : ['Post']
+    }),
+    getPost: builder.query<T.Post, T.PostArg>({
+      query: ({id}) => '/api/post/' + id,
+      providesTags: (result): any =>
+        result
+          ? [{type: 'Post', id: result.id}, 'Post']
           : ['Post']
     }),
     getUserPosts: builder.query<T.PostsResult, T.UserPostsArg>({
@@ -145,8 +152,13 @@ export const PostSlice = createSlice({
       trendingDays: 7,
       media: 'all'
     },
+    post: {
+      id: null
+    },
+    hiddenPosts: {},
+    editedPosts: {},
+    trendingComments: {},
     expandedComments: [],
-    trendingComments: [],
     infiniteScrollSync: 0,
     resetInfiniteScroll: 0
   } as T.PostState,
@@ -164,28 +176,55 @@ export const PostSlice = createSlice({
         state.expandedComments.push(action.payload);
       }
     },
+    removeTrendingComments: (state, action) => {
+      const filteredEntries = Object.entries(state.trendingComments)
+        .filter(([, postId]) => postId !== action.payload);
+
+      state.trendingComments = Object.fromEntries(filteredEntries);
+    },
     syncInfiniteScroll: (state) => {
       state.infiniteScrollSync++;
     },
     resetInfiniteScroll: (state) => {
       state.resetInfiniteScroll++;
+    },
+    setPost: (state, action) => {
+      state.post = {...state.post, ...action.payload};
+    },
+    setPostAsHidden: (state, action) => {
+      state.hiddenPosts[action.payload] = true;
+    },
+    setPostAsNotHidden: (state, action) => {
+      delete state.hiddenPosts[action.payload];
+    },
+    setHiddenPosts: (state, action) => {
+      state.hiddenPosts = action.payload;
+    },
+    setEditedPost: (state, action) => {
+      state.editedPosts[action.payload.id] = action.payload.body;
+    },
+    setStopEditingPosts: (state) => {
+      state.editedPosts = {};
     }
   },
   extraReducers: (builder) => {
     builder
       .addCase(HYDRATE, (state, action: AnyAction) => {
-        if (action.payload.post.trendingComments) {
-          state.trendingComments = action.payload.post.trendingComments;
-        }
+        state.post = {...state.post, ...action.payload.post.post};
+        state.trendingComments = action.payload.post.trendingComments;
+        state.expandedComments = action.payload.post.expandedComments;
+        state.hiddenPosts = action.payload.post.hiddenPosts;
       })
       .addMatcher(PostApi.endpoints.getPosts.matchFulfilled, (state, action) => saveTrendingComments(state, action))
-      .addMatcher(PostApi.endpoints.getUserPosts.matchFulfilled, (state, action) => saveTrendingComments(state, action));
+      .addMatcher(PostApi.endpoints.getUserPosts.matchFulfilled, (state, action) => saveTrendingComments(state, action))
+      .addMatcher(PostApi.endpoints.getPost.matchFulfilled, (state, action) => saveTrendingComments(state,
+        {payload: {items: [action.payload], page: 0, limit: 0}} as PayloadAction<T.PostsResult>));
   }
 });
 
 export const {
+  useGetPostQuery,
   useAddPostMutation,
-  useDeletePostMutation,
   useReactPostMutation,
   useUnreactPostMutation,
   useUpdatePostMutation
@@ -195,8 +234,15 @@ export const {
   setFilter,
   expandComments,
   toggleComments,
+  removeTrendingComments,
   syncInfiniteScroll,
-  resetInfiniteScroll
+  resetInfiniteScroll,
+  setPost,
+  setPostAsHidden,
+  setPostAsNotHidden,
+  setHiddenPosts,
+  setEditedPost,
+  setStopEditingPosts
 } = PostSlice.actions;
 
 export const isExpanded = createSelector(
@@ -238,8 +284,20 @@ export const isTrending = createSelector(
   (state: AppState, id: number | undefined) => id,
   (trendingComments, id) => {
     if (id === undefined) return false;
-    return trendingComments.find((mostReacted) => mostReacted[0] === id)?.[1] ?? false;
+    return trendingComments[id] ?? false;
   }
+);
+
+export const isHidden = createSelector(
+  (state: AppState) => state.post.hiddenPosts,
+  (state: AppState, id: number) => id,
+  (hiddenPosts, id) => hiddenPosts[id] ?? false
+);
+
+export const isEdited = createSelector(
+  (state: AppState) => state.post.editedPosts,
+  (state: AppState, id: number) => id,
+  (editedPosts, id) => editedPosts[id] ?? false
 );
 
 export default PostSlice.reducer;

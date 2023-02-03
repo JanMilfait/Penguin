@@ -105,6 +105,23 @@
     }
   }
 
+  &__body {
+    max-height: 150px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    word-break: break-word;
+  }
+
+  &__editBody {
+    max-height: 150px;
+    margin-bottom: 9px !important;
+    overflow-x: hidden;
+    overflow-y: auto;
+    border-radius: 0;
+    background: $secondary;
+    word-break: break-word;
+  }
+
   &__updated {
     p {
       margin-bottom: 0;
@@ -183,7 +200,7 @@
     background: $back-dark;
 
     @media (max-width: $md) {
-      padding: 5px 10px;
+      padding: 5px 10px !important;
     }
 
     svg {

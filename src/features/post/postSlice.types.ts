@@ -74,6 +74,10 @@ export type PostsArg = {
   trendingDays?: number;
 }
 
+export type PostArg = {
+  id: number;
+}
+
 export type UserPostsArg = {
   page: number;
   limit: number;
@@ -114,8 +118,13 @@ export type PostState = {
     trendingDays: number;
     media: 'all' | 'photo' | 'video';
   },
+  post: {
+    id: number | null;
+  },
+  hiddenPosts: {[key: number]: boolean};
+  editedPosts: {[key: number]: string};
+  trendingComments: {[key: number]: number}
   expandedComments: number[];
-  trendingComments: [number, number][];
   infiniteScrollSync: number;
   resetInfiniteScroll: number;
 }

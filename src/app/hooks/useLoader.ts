@@ -3,7 +3,7 @@ import {AppDispatch, AppState} from '../store';
 import {setCloseLoader, setOpenLoader} from '../../features/root/rootSlice';
 import {useDispatch, useSelector } from 'react-redux';
 
-export const useLoader = (isLoading: boolean) => {
+export const useLoader = (isLoading: boolean): [isOpenLoader: boolean] => {
   const dispatch = useDispatch<AppDispatch>();
   const isOpenLoader = useSelector((state: AppState) => state.root.loader.isOpen);
 

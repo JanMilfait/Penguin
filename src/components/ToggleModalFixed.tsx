@@ -1,5 +1,5 @@
 import { useToggleModal } from 'app/hooks/useToggleModal';
-import React, {ReactNode, useLayoutEffect, useRef, useState } from 'react';
+import React, {ReactNode, useEffect, useRef, useState } from 'react';
 
 type ToggleModalProps = {toggle: ReactNode, modal?: ReactNode, clickClose?: boolean, disabled?: boolean, hidden?: boolean};
 
@@ -10,7 +10,7 @@ const ToggleModalFixed = ({toggle, modal, clickClose, disabled, hidden = true}: 
   const toggleRef = useRef<HTMLDivElement>(null);
   const {isOpenModal} = useToggleModal(containerRef, toggleRef, clickClose, disabled);
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (!isOpenModal) return;
 
     const handleScroll = () => {

@@ -125,16 +125,7 @@ export const sleep = (ms: number) => {
 export const saveTrendingComments = (state: PostState, action: PayloadAction<PostsResult>) => {
   action.payload.items.forEach((post) => {
     if (post.most_reacted_comment?.id) {
-      state.trendingComments = state.trendingComments.map((mostReacted) => {
-        if (mostReacted[1] === post.id) {
-          return [post.most_reacted_comment!.id, post.id];
-        }
-        return mostReacted;
-      });
-
-      if (!state.trendingComments.some((mostReacted) => mostReacted[1] === post.id)) {
-        state.trendingComments.push([post.most_reacted_comment!.id, post.id]);
-      }
+      state.trendingComments[post.most_reacted_comment.id] = post.id;
     }
   });
 };

@@ -10,7 +10,7 @@ import {useAddCommentMutation} from './commentSlice';
 import SingleComment from './SingleComment';
 import Link from 'next/link';
 
-const PostComments = ({postId, commentsCount, mostReacted}: {postId: number, commentsCount: number, mostReacted: PostComment | null}) => {
+const PostComments = ({postId, commentsCount, mostReacted, className}: {postId: number, commentsCount: number, mostReacted: PostComment | null, className?: string}) => {
   const dispatch = useDispatch<AppDispatch>();
   const commentsRef = React.useRef<HTMLDivElement>(null);
   const user = useSelector((state: AppState) => state.auth.data!);
@@ -34,7 +34,7 @@ const PostComments = ({postId, commentsCount, mostReacted}: {postId: number, com
 
 
   return (
-    <div className={s.posts__comments}>
+    <div className={s.posts__comments + (className ? ' ' + className : '')}>
       {isAuth &&
         <div className="row align-items-center mt-3 mb-3">
           <div className="col-auto">

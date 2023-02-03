@@ -8,6 +8,7 @@ import {setProfile} from '../../features/auth/authSlice';
 import ProfileHead from '../../features/auth/ProfileHead';
 import ProfileSidebar from '../../features/auth/ProfileSidebar';
 import {UserData} from '../../features/auth/authSlice.types';
+import { SerializedError } from '@reduxjs/toolkit';
 
 const Profile: NextPage = () => {
   const id = useSelector((state: AppState) => state.auth.data?.id);
@@ -53,6 +54,12 @@ export const getServerSideProps = wrapper.getServerSideProps(store => async (ctx
     getUserFriends(store, userId),
     getUserPosts(store, userId)
   ]);
+
+  const state = store.getState();
+  const error = state.api.queries[`getUser({"id":${userId}})`]?.error as SerializedError & {status?: number};
+  const error404 = error?.status === 404;
+  if (error404) return { notFound: true };
+  if (error) return { redirect: { destination: '/error', permanent: false } };
 
   return {props: {}};
 });

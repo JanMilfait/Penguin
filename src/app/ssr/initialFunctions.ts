@@ -3,8 +3,9 @@ import { AppStore } from '../store';
 import { GetServerSidePropsContext } from 'next';
 import { deleteCookie, hasCookie, setCookie, getCookie } from 'cookies-next';
 import { setIsMobile, setRouterPath } from '../../features/root/rootSlice';
-import { PostApi } from '../../features/post/postSlice';
+import { PostApi, setHiddenPosts } from '../../features/post/postSlice';
 import { FriendApi } from 'features/friend/friendSlice';
+import {CommentApi} from '../../features/comment/commentSlice';
 
 interface InitialFunctions {
   (store: AppStore, context: GetServerSidePropsContext, redirect?: string|boolean): unknown;
@@ -16,13 +17,23 @@ export const init: InitialFunctions = async (store, {req, res, resolvedUrl} ) =>
   if (req.headers['user-agent'] && req.headers['user-agent'].includes('Mobile')) {
     store.dispatch(setIsMobile(true));
   }
+
+  ////////////////////////////
+  // Cookies
+  ////////////////////////////
+  if (hasCookie('httpTokenDelete', {req, res})) {
+    deleteCookie('httpTokenDelete', {req, res});
+    deleteCookie('token', {req, res});
+  }
+
   if (hasCookie('dispatch', {req, res})) {
     store.dispatch(JSON.parse(getCookie('dispatch', {req, res}) as string));
     deleteCookie('dispatch', {req, res});
   }
-  if (hasCookie('httpTokenDelete', {req, res})) {
-    deleteCookie('httpTokenDelete', {req, res});
-    deleteCookie('token', {req, res});
+
+  if (hasCookie('hiddenPosts', {req, res})) {
+    const hiddenPost = JSON.parse(getCookie('hiddenPosts', {req, res}) as string || '{}') ?? {};
+    store.dispatch(setHiddenPosts(hiddenPost));
   }
 };
 
@@ -128,6 +139,14 @@ export const getSendPendings = async (store: AppStore) => {
 
 export const getPosts = async (store: AppStore) => {
   await store.dispatch(PostApi.endpoints.getPosts.initiate({page: 1, limit: 3, media: 'all', category: 'latest'}));
+};
+
+export const getPost = async (store: AppStore, id: number) => {
+  await store.dispatch(PostApi.endpoints.getPost.initiate({id}));
+};
+
+export const getComments = async (store: AppStore, id: number) => {
+  await store.dispatch(CommentApi.endpoints.getComments.initiate({id, page: 1, limit: 8}));
 };
 
 export const getUser = async (store: AppStore, id: number) => {

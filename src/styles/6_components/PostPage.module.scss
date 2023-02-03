@@ -1,0 +1,100 @@
+@import "variables";
+
+.postPage {
+  @media (min-width: $xl) {
+    height: calc(100vh - 152px);
+    min-height: 600px;
+  }
+
+  &__post {
+    padding: 15px 25px;
+    background: $secondary;
+
+    @media (max-width: $xl) {
+      padding: 10px 30px;
+      border-top-left-radius: 10px;
+      border-top-right-radius: 10px;
+    }
+
+    @media (max-width: $md) {
+      padding: 10px;
+    }
+
+    svg {
+      fill: $text-gray;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    h4 {
+      margin-bottom: 0;
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 20px;
+      white-space: nowrap;
+
+      @media (max-width: $md) {
+        font-size: 14px;
+        line-height: 18px;
+      }
+    }
+
+    p {
+      margin-bottom: 0;
+      font-size: 13px;
+      line-height: 16px;
+
+      @media (max-width: $md) {
+        font-size: 10px;
+        line-height: 12px;
+      }
+    }
+
+    h3 {
+      max-height: 150px;
+      overflow-x: hidden;
+      overflow-y: auto;
+      word-break: break-word;
+    }
+  }
+
+  &__iconLeft {
+    p {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0;
+      margin-left: 6px;
+    }
+  }
+
+  &__iconRight {
+    margin-left: 18px;
+
+    p {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0;
+      margin-left: 6px;
+    }
+  }
+
+  &__comments {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    padding: 5px 25px;
+    border-radius: 0;
+
+    @media (max-width: $xl) {
+      border-bottom-right-radius: 10px;
+      border-bottom-left-radius: 10px;
+    }
+
+    & > div:last-child {
+      @media (min-width: $xl) {
+        min-height: 0;
+      }
+    }
+  }
+}

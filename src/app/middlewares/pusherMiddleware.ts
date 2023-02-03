@@ -105,7 +105,7 @@ export const pusherMiddleware: Middleware = (store) => (next) => (action) => {
         if (data.user_id === auth.data.id) return;
 
         const message: CT.Message = {
-          id: -Math.floor(Math.random() * 100000000), // temporary id
+          id: -Math.floor(Math.random() * 100000000), // temporary id / optimistic update
           user_id: data.user_id,
           body: data.body ? data.body.trim() : null,
           image_url: data.image_url ?? null,

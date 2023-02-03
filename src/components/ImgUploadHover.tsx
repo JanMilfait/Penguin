@@ -6,6 +6,7 @@ import { useDispatch } from 'react-redux';
 import s from 'styles/6_components/ImgUploadHover.module.scss';
 import {useDragEnterLeave} from '../app/hooks/useDragEnterLeave';
 import {setOpenModal} from '../features/root/rootSlice';
+import {useLoader} from '../app/hooks/useLoader';
 
 type ImgUploadHoverProps = {element: JSX.Element, name: string, mutation: UseMutation<any>, args?: Record<string, any>, className?: string, style?: React.CSSProperties};
 
@@ -15,7 +16,8 @@ const ImgUploadHover = ({element, name, mutation, args, className, style}: ImgUp
   const imageInputRef = useRef<HTMLInputElement>(null);
 
   const [hover, setHover] = useState(false);
-  const [upload] = mutation();
+  const [upload, {isLoading}] = mutation();
+  useLoader(isLoading);
 
   const [clear] = useDragEnterLeave(containerRef, () => setHover(true), () => setHover(false));
 

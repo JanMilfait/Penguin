@@ -7,25 +7,19 @@ const PostVideo = ({ name, url, poster, className }: PostVideo & { className?: s
 
   const ReactPlayer = dynamic(() => import('react-player/lazy'), { ssr: true });
 
-  const preventJump = (e: MouseEvent) => {
-    const target = e.target as HTMLElement;
-    if (target.parentElement) {
-      target.parentElement.style.height = target.parentElement.offsetHeight + 'px';
-    }
-  };
-
   return (
-    <ReactPlayer
-      {...{className}}
-      url={url + name}
-      light={poster}
-      controls={true}
-      playing={true}
-      width='100%'
-      height='100%'
-      onClickPreview={(e) => preventJump(e)}
-      playIcon={<PlayCircle size={64} className="svg-fill-primary" style={{ opacity: 0.8 }} />}
-    />
+    <div {...{className}} style={{ position: 'relative', paddingTop: '56.25%' }}>
+      <ReactPlayer
+        style={{ position: 'absolute', top: 0, left: 0 }}
+        url={url + name}
+        light={poster}
+        controls={true}
+        playing={true}
+        width='100%'
+        height='100%'
+        playIcon={<PlayCircle size={64} className="svg-fill-primary" style={{ opacity: 0.8 }} />}
+      />
+    </div>
   );
 };
 

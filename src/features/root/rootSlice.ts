@@ -92,7 +92,7 @@ export const {
 
 export const onHiddenNavRoute = createSelector(
   (state: AppState) => state.root.routerPath,
-  (routerPath) => ['/login', '/register', '/login/reset'].includes(routerPath)
+  (routerPath) => ['/login', '/register', '/login/reset'].some((path) => routerPath.includes(path))
 );
 
 

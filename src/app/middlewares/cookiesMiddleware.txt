@@ -1,7 +1,0 @@
-import { Middleware } from '@reduxjs/toolkit';
-import { setCookie, getCookie, deleteCookie } from 'cookies-next';
-
-export const cookiesMiddleware: Middleware = (store) => (next) => (action) => {
-
-  return next(action);
-};

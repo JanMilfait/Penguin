@@ -45,7 +45,7 @@ const SingleComment = ({id: commentId, postId,  replyToId, body, user, replies, 
     const oldText = edit;
     setEdit('');
     if (!el) return;
-    if (el.value === oldText) return;
+    if (el.value === oldText || el.value === '') return;
 
     type === 'comment'
       ? editComment({id: commentId, body: el.value})

@@ -5,13 +5,17 @@ import { useDispatch, useSelector } from 'react-redux';
 import s from 'styles/6_components/Dropdown.module.scss';
 import { setOpenModal } from '../root/rootSlice';
 import { PostSharing } from './postSlice.types';
+import {isEdited, isHidden, setEditedPost, setPostAsHidden, setPostAsNotHidden} from './postSlice';
 
 const roboto = Roboto({weight: ['400', '500', '700']});
 
-const PostDropdown = ({id, ownerId, sharings}: {id: number, ownerId: number, sharings: PostSharing[]}) => {
+const PostDropdown = ({id, body, ownerId, sharings}: {id: number, body: string|null, ownerId: number, sharings: PostSharing[]}) => {
   const dispatch = useDispatch<AppDispatch>();
   const user = useSelector((state: AppState) => state.auth.data);
+  const isPostHidden = useSelector((state: AppState) => isHidden(state, id));
+  const isPostEditing = useSelector((state: AppState) => isEdited(state, id)) as string|false;
   const isShared = sharings.some(sharing => sharing.user.id === user?.id);
+
 
   const handleDelete = () => {
     dispatch(setOpenModal({
@@ -27,6 +31,11 @@ const PostDropdown = ({id, ownerId, sharings}: {id: number, ownerId: number, sha
         button: 'Delete post'
       }
     }));
+  };
+
+  const handleEdit = () => {
+    isPostHidden && dispatch(setPostAsNotHidden(id));
+    dispatch(setEditedPost({id, body}));
   };
 
   const handleShare = () => {
@@ -73,13 +82,19 @@ const PostDropdown = ({id, ownerId, sharings}: {id: number, ownerId: number, sha
     }));
   };
 
-// TODO: EDIT
+
   return (
     <ul className={s.dropdown + ' ' + roboto.className}>
-      <li><a>Hide</a></li>
+      {isPostHidden
+        ? <li onClick={() => dispatch(setPostAsNotHidden(id))}><a>Unhide</a></li>
+        : <li onClick={() => dispatch(setPostAsHidden(id))}><a>Hide</a></li>
+      }
       {user?.id === ownerId ? (
         <>
-          <li><a>Edit</a></li>
+          {isPostEditing === false
+            ? <li onClick={handleEdit}><a>Edit</a></li>
+            : <li><a>Cancel</a></li>
+          }
           <li onClick={handleDelete}><a className="text-danger" >Delete</a></li>
         </>
       ) : (

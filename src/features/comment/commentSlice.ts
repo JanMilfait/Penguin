@@ -4,7 +4,7 @@ import * as T from './commentSlice.types';
 import { MessageResponse } from '../root/rootSlice.types';
 // @ts-ignore
 import { store } from '../../app/store';
-import { isTrending } from 'features/post/postSlice';
+import { isTrending, removeTrendingComments } from 'features/post/postSlice';
 
 
 export const CommentApi = apiSlice.injectEndpoints({
@@ -38,6 +38,7 @@ export const CommentApi = apiSlice.injectEndpoints({
       }),
       onQueryStarted: (arg, {dispatch, queryFulfilled}) => {
         queryFulfilled.then(() => {
+          dispatch(removeTrendingComments(arg.id));
           dispatch(resetInfiniteScroll(arg.id));
         });
       },

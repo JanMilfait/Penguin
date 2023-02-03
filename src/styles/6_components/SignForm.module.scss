@@ -46,4 +46,51 @@
       }
     }
   }
+
+  &__demo {
+    position: fixed;
+    top: 5%;
+    left: 5%;
+    animation: shake 0.8s ease-in-out infinite;
+
+    &:hover {
+        animation: none;
+    }
+
+    @keyframes shake {
+        0% {
+            transform: translate(0, 0);
+        }
+        10% {
+            transform: translate(-1px, -1px);
+        }
+        20% {
+            transform: translate(1px, 1px);
+        }
+        30% {
+            transform: translate(-1px, 1px);
+        }
+        40% {
+            transform: translate(1px, -1px);
+        }
+        50% {
+            transform: translate(0, 0);
+        }
+        60% {
+            transform: translate(1px, 1px);
+        }
+        70% {
+            transform: translate(-1px, -1px);
+        }
+        80% {
+            transform: translate(1px, -1px);
+        }
+        90% {
+            transform: translate(-1px, 1px);
+        }
+        100% {
+            transform: translate(0, 0);
+        }
+    }
+  }
 }
