@@ -15,6 +15,8 @@ export type FriendsIdsResult = {
   count: number;
 }
 
+export type FriendsIdsNamesResult = [number, string][]
+
 export type FriendsIdsArg = {id: number};
 
 export type DeleteFriendResult = { message: string };

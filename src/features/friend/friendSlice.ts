@@ -30,6 +30,10 @@ export const FriendApi = apiSlice.injectEndpoints({
       },
       providesTags: ['Friend']
     }),
+    getFriendsIdsNames: builder.query<T.FriendsIdsNamesResult, T.FriendsIdsArg>({
+      query: ({id}) => '/api/friends/' + id + '/ids-names',
+      providesTags: ['Friend']
+    }),
     deleteFriend: builder.mutation<T.DeleteFriendResult, T.DeleteFriendArg>({
       query: ({id}) => ({
         url: '/api/friend/' + id,
@@ -115,6 +119,7 @@ export const FriendSlice = createSlice({
 
 export const {
   useGetFriendsIdsQuery,
+  useGetFriendsIdsNamesQuery,
   useDeleteFriendMutation,
   useAddFriendMutation,
   useGetSendPendingsQuery,

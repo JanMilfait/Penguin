@@ -6,8 +6,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { DashCircle, DashCircleFill, XCircle, XCircleFill, ThreeDots } from 'react-bootstrap-icons';
 import {deactivateChat, minimizeChat} from './chatSlice';
 import ToggleModal from '../../components/ToggleModal';
-import ChatHeadDropdown from './ChatHeadDropdown';
 import FriendAvatar from 'features/friend/FriendAvatar';
+import dynamic from 'next/dynamic';
 
 const ChatHead = ({chat}: {chat: Chat}) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -16,6 +16,8 @@ const ChatHead = ({chat}: {chat: Chat}) => {
   const id = useSelector((state: AppState) => state.auth.data!.id);
   const closeTimeout = useSelector((state: AppState) => state.chat.animation.closeTimeout);
   const isMobile = useSelector((state: AppState) => state.root.isMobile);
+
+  const ChatHeadDropdown = dynamic(() => import('./ChatHeadDropdown'), {ssr: false});
 
   const usersFiltered = useMemo(() => chat.users.filter((user) => user.id !== id), [chat.users.length]);
 
@@ -74,7 +76,7 @@ const ChatHead = ({chat}: {chat: Chat}) => {
         </div>
       </div>
       <div className={s.activeChats__settings}>
-        <ToggleModal toggle={<ThreeDots size={18} />} modal={<ChatHeadDropdown id={chat.id} />} clickClose={true} />
+        <ToggleModal toggle={<ThreeDots size={18} />} modal={<ChatHeadDropdown id={chat.id} />} clickClose={true} hidden={false} />
       </div>
     </div>
   );

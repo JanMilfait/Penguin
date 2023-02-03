@@ -29,10 +29,7 @@ export type ModalProps = {
   }[];
   select?: {
     name: string;
-    options: {
-      value: string;
-      text: string;
-    }[]
+    options: [string|number, string|number][]
   }
   clickOutside?: boolean;
 }

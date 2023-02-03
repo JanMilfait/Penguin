@@ -9,7 +9,10 @@ export const ChatApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getChats: builder.query<T.ChatsResult, void>({
       query: () => '/api/chats',
-      providesTags: ['Chats']
+      providesTags: (result): any =>
+        result
+          ? [...result.map(({id}) => ({type: 'Chats', id})), 'Chats']
+          : ['Chats']
     }),
     getChat: builder.query<T.ChatResult, T.ChatArg>({
       query: ({id}) => '/api/chat/' + id,
@@ -17,7 +20,8 @@ export const ChatApi = apiSlice.injectEndpoints({
       transformResponse: (response: T.ChatResult) => {
         response.scrollToBottom = 1;
         return response;
-      }
+      },
+      providesTags: (result, error, arg): any => [{type: 'Chats', id: arg.id}]
     }),
     getChatFriend: builder.query<T.ChatResult, T.ChatArg>({
       query: ({id}) => '/api/chat/friend/' + id,
@@ -84,13 +88,15 @@ export const ChatApi = apiSlice.injectEndpoints({
         url: '/api/chat/' + id + '/participant',
         method: 'POST',
         body: {user_id: userId}
-      })
+      }),
+      invalidatesTags: (result, error, arg): any => [{type: 'Chats', id: arg.id}] // TODO: check
     }),
     removeParticipant: builder.mutation<T.RemoveParticipantResult, T.RemoveParticipantArg>({
       query: ({id, userId}) => ({
         url: '/api/chat/' + id + '/participant/' + userId,
         method: 'DELETE'
-      })
+      }),
+      invalidatesTags: (result, error, arg): any => [{type: 'Chats', id: arg.id}]
     })
   })
 });

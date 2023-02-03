@@ -74,5 +74,29 @@ export const modalMiddleware: Middleware = (store) => (next) => (action) => {
       });
   }
 
+  if (tag === 'formAddToChat') {
+    let isError = false;
+
+    data.selected.forEach(({value: userId}: {value: number}) => {
+      if (isError) return;
+
+      store.dispatch(ChatApi.endpoints.addParticipant.initiate({id: data.id, userId }))
+        .then((res: any) => {
+          if (res.error) {
+            isError = true;
+            store.dispatch(setOpenModal({
+              props: {
+                type: 'alert',
+                icon: 'error',
+                title: 'Couldn\'t add user to chat',
+                message: res.error.data.message,
+                clickOutside: true
+              }
+            }));
+          }
+        });
+    });
+  }
+
   return next(action);
 };

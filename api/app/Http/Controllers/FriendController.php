@@ -74,6 +74,30 @@ class FriendController extends Controller
 
 
     /**
+     * Display user's friends ids and names.
+     *
+     * @param User    $user
+     * @return JsonResponse
+     */
+    public function show_ids_names(User $user)
+    {
+        if (UserPrivacy::isPrivate($user)) {
+            return $this->jsonError('User profile is private', 403);
+        }
+
+        $friendsIds = Friend::join('users', 'friends.user_b', '=', 'users.id')
+            ->where('friends.user_a', $user->id)
+            ->selectRaw('users.id as id, users.name')
+            ->get()
+            ->map(function ($item) {
+                return [$item->id, $item->name];
+            });
+
+        return response()->json($friendsIds);
+    }
+
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param Request $request

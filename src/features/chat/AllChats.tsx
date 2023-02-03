@@ -8,7 +8,6 @@ import {AppDispatch, AppState} from '../../app/store';
 import {useDispatch, useSelector } from 'react-redux';
 import {markMessageAsReaded, unreadedMessageNotifications, useMarkNotificationsAsReadedMutation} from '../notification/notificationSlice';
 import debounce from 'lodash.debounce';
-import ss from '../../styles/6_components/Pendings.module.scss';
 import DotLoaderSpin from '../../components/DotLoaderSpin';
 
 const AllChats = ({style}: {style?: CSSProperties}) => {
