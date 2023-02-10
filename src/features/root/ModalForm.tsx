@@ -3,7 +3,7 @@ import s from '../../styles/6_components/Modal.module.scss';
 import { AppDispatch, AppState} from '../../app/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCloseModal } from './rootSlice';
-import { sanitize } from 'dompurify';
+import DOMPurify from 'isomorphic-dompurify';
 import dynamic from 'next/dynamic';
 import { StylesConfig } from 'react-select';
 
@@ -76,7 +76,7 @@ const ModalForm = () => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <h2 className={s.modal__title} dangerouslySetInnerHTML={{__html: sanitize(title ?? '')}}></h2>
+      <h2 className={s.modal__title} dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(title ?? '')}}></h2>
       {select &&
         <div className="py-3">
           <label className="f--x-small text-capitalize fw-bold ml-2">{select.name}</label>
@@ -86,6 +86,7 @@ const ModalForm = () => {
             className="basic-multi-select"
             classNamePrefix="select"
             styles={selectStyles}
+            menuShouldScrollIntoView ={false}
             options={select.options.map((option) => ({value: option[0], label: `${option[1]} - #${option[0]}`}))}
             onChange={handleChangeSelect}
             value={selectedOptions}

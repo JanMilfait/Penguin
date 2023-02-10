@@ -46,7 +46,7 @@ const ProfileInfo = () => {
                   <p className="f--small mb-0 text-break">
                     {profile?.telephone
                       ? <a href={'tel:' + profile?.telephone}>{profile?.telephone}</a>
-                      : <p className="f--small mb-0 text-break">{notSet}</p>
+                      : <span className="f--small mb-0 text-break">{notSet}</span>
                     }
                   </p>
                 </div>

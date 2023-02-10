@@ -17,8 +17,8 @@
     "abortcontroller-polyfill": "^1.7.5",
     "bootstrap": "^5.2.2",
     "cookies-next": "^2.1.1",
-    "dompurify": "^2.4.3",
     "emoji-picker-react": "^4.4.6",
+    "isomorphic-dompurify": "^0.26.0",
     "lodash.debounce": "^4.0.8",
     "lodash.throttle": "^4.1.1",
     "next": "13.0.2",
@@ -43,7 +43,6 @@
     "sharp": "^0.31.3"
   },
   "devDependencies": {
-    "@types/dompurify": "^2.4.0",
     "@types/lodash.debounce": "^4.0.7",
     "@types/lodash.throttle": "^4.1.7",
     "@types/node": "18.11.9",

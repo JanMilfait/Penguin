@@ -6,9 +6,6 @@ const nextConfig = {
   },
   images: {
     domains: [process.env.NEXT_PUBLIC_API_DOMAIN]
-  },
-  compiler: {
-    styledComponents: true
   }
 };
 
