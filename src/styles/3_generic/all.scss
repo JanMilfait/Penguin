@@ -1,3 +1,8 @@
+body {
+  font-family: Roboto, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
 :root {
   --visual100vh: 100%; // calculated in _app.js
 }

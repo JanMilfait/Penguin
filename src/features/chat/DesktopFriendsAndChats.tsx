@@ -5,7 +5,7 @@ import { AppState } from '../../app/store';
 import { useSelector } from 'react-redux';
 import { isSomeChatActive } from './chatSlice';
 
-const DesktopFriendsAndChats = () => {
+function DesktopFriendsAndChats() {
   const isActive = useSelector((state: AppState) => isSomeChatActive(state));
   const ChatsTabs = dynamic(() => import('./ChatsTabs'), { ssr: false });
 
@@ -15,6 +15,6 @@ const DesktopFriendsAndChats = () => {
       {isActive && <ChatsTabs />}
     </div>
   );
-};
+}
 
 export default DesktopFriendsAndChats;

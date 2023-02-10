@@ -1,6 +1,8 @@
 @import "variables";
 
 .postPage {
+  font-family: Montserrat, sans-serif;
+
   @media (min-width: $xl) {
     height: calc(100vh - 152px);
     min-height: 600px;

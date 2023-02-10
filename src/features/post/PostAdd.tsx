@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import s from 'styles/6_components/PostAdd.module.scss';
 import Avatar from '../../components/Avatar';
 import { AppState } from '../../app/store';

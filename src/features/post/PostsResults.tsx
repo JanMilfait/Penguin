@@ -6,9 +6,7 @@ import {AppDispatch, AppState} from '../../app/store';
 import useLazyInfiniteData from '../../app/hooks/useLazyInfiniteData';
 import {PostApi} from './postSlice';
 import {useDispatch, useSelector } from 'react-redux';
-import { Montserrat } from '@next/font/google';
-
-const montserrat = Montserrat();
+import s from '../../styles/6_components/Posts.module.scss';
 
 const PostsResults = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -69,7 +67,7 @@ const PostsResults = () => {
 
 
   return (
-    <div className={montserrat.className}>
+    <div className={s.posts}>
       {combinedData.map((post: PostType) => (
         <Post key={post.id} {...post} />
       ))}

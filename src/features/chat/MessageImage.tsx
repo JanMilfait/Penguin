@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {Message} from './chatSlice.types';
 import s from 'styles/6_components/Chats.module.scss';
 import Zoom from 'react-medium-image-zoom';
@@ -7,7 +7,7 @@ import 'react-medium-image-zoom/dist/styles.css';
 const MessageImage = ({img}: {img: Message['image_url']}) => {
   const isGif = img?.endsWith('.gif');
   const imgPlaceholder = img?.replace(/\/chat\/images\//, '/chat/images/placeholder/') || '';
-  const [imgLoaded, setImgLoaded] = React.useState(false);
+  const [imgLoaded, setImgLoaded] = useState(false);
 
   /**
    * Show placeholder image until full image is loaded
@@ -17,7 +17,9 @@ const MessageImage = ({img}: {img: Message['image_url']}) => {
     if (!isGif) {
       const img = new Image();
       img.src = imgPlaceholder;
-      img.onload = () => setImgLoaded(true);
+      img.onload = () => {
+        setImgLoaded(true);
+      };
     }
   }, []);
 
@@ -25,12 +27,11 @@ const MessageImage = ({img}: {img: Message['image_url']}) => {
 
   return (
     <Zoom>
-      {
-        !isGif
-          ? imgLoaded
-            ? <img className={s.activeChats__messageImg} src={img} loading="lazy" />
-            : <img className={s.activeChats__messageImg + ' imgScrollDown'} src={imgPlaceholder}  loading="lazy" />
-          : <img className={s.activeChats__messageImg + ' imgScrollDown'} src={img} loading="lazy" />
+      {!isGif
+        ? imgLoaded
+          ? <img className={s.activeChats__messageImg} src={img} loading="lazy" />
+          : <img className={s.activeChats__messageImg + ' imgScrollDown'} src={imgPlaceholder}  loading="lazy" />
+        : <img className={s.activeChats__messageImg + ' imgScrollDown'} src={img} loading="lazy" />
       }
     </Zoom>
   );

@@ -9,7 +9,6 @@ import { getMostUsedReaction, roundCount } from '../../app/helpers/helpers';
 import EmojiModal from '../post/EmojiModal';
 import HoverModal from '../../components/HoverModal';
 import { ThreeDots } from 'react-bootstrap-icons';
-import { Roboto } from '@next/font/google';
 import {AppDispatch, AppState } from 'app/store';
 import {useDispatch, useSelector } from 'react-redux';
 import {useAddReplyMutation, useDeleteCommentMutation, useDeleteReplyMutation, useEditCommentMutation, useEditReplyMutation} from './commentSlice';
@@ -18,7 +17,6 @@ import {setOpenModal} from '../root/rootSlice';
 import ToggleModalFixed from '../../components/ToggleModalFixed';
 import TextareaAutosize from 'react-textarea-autosize';
 
-const roboto = Roboto({weight: ['400', '500', '700']});
 type CommentProps = (PostComment | PostReply) & {type?: 'comment' | 'reply', postId: number, replyToId?: number};
 
 const SingleComment = ({id: commentId, postId,  replyToId, body, user, replies, reactions, created_at, type = 'comment'}: CommentProps) => {
@@ -140,7 +138,7 @@ const SingleComment = ({id: commentId, postId,  replyToId, body, user, replies, 
               <ToggleModalFixed
                 toggle={<ThreeDots className="cp" size={16} />}
                 modal={
-                  <ul className={roboto.className + ' ' + sd.dropdown}>
+                  <ul className={sd.dropdown}>
                     <li onClick={()=>setEdit(body)}><a>Edit</a></li>
                     <li><a className="text-danger" onClick={handleDelete}>Delete</a></li>
                   </ul>

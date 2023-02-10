@@ -1,4 +1,3 @@
-import { Roboto } from '@next/font/google';
 import { AppDispatch, AppState } from 'app/store';
 import React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -6,8 +5,6 @@ import s from 'styles/6_components/Dropdown.module.scss';
 import { setOpenModal } from '../root/rootSlice';
 import { PostSharing } from './postSlice.types';
 import {isEdited, isHidden, setEditedPost, setPostAsHidden, setPostAsNotHidden} from './postSlice';
-
-const roboto = Roboto({weight: ['400', '500', '700']});
 
 const PostDropdown = ({id, body, ownerId, sharings}: {id: number, body: string|null, ownerId: number, sharings: PostSharing[]}) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -84,7 +81,7 @@ const PostDropdown = ({id, body, ownerId, sharings}: {id: number, body: string|n
 
 
   return (
-    <ul className={s.dropdown + ' ' + roboto.className}>
+    <ul className={s.dropdown}>
       {isPostHidden
         ? <li onClick={() => dispatch(setPostAsNotHidden(id))}><a>Unhide</a></li>
         : <li onClick={() => dispatch(setPostAsHidden(id))}><a>Hide</a></li>

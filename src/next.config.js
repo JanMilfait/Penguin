@@ -7,13 +7,8 @@ const nextConfig = {
   images: {
     domains: [process.env.NEXT_PUBLIC_API_DOMAIN]
   },
-  // The @next/font/google font Roboto has no selected subsets.
-  experimental: {
-    fontLoaders: [
-      {
-        loader: '@next/font/google'
-      }
-    ]
+  compiler: {
+    styledComponents: true
   }
 };
 

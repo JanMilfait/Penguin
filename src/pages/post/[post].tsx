@@ -4,13 +4,10 @@ import type { NextPage } from 'next';
 import {UserData} from '../../features/auth/authSlice.types';
 import {expandComments, setPost, useGetPostQuery} from 'features/post/postSlice';
 import { SerializedError } from '@reduxjs/toolkit';
-import { Montserrat } from '@next/font/google';
 import { useSelector } from 'react-redux';
 import PostForPageText from '../../features/post/PostForPageText';
 import PostForPageContent from 'features/post/PostForPageContent';
 import s from 'styles/6_components/PostPage.module.scss';
-
-const montserrat = Montserrat();
 
 const Post: NextPage = () => {
   const postId = useSelector((state: AppState) => state.post.post.id);
@@ -21,12 +18,10 @@ const Post: NextPage = () => {
   const onlyText = post.image === null && post.video === null;
 
   return (
-    <div className={montserrat.className}>
-      <div className={'container container-sidebar' + (onlyText ? ' container-1140' : '')}>
-        <div className={s.postPage}>
-          <div className="row mt-4 h-100">
-            {onlyText ? <PostForPageText /> : <PostForPageContent />}
-          </div>
+    <div className={'container container-sidebar' + (onlyText ? ' container-1140' : '')}>
+      <div className={s.postPage}>
+        <div className="row mt-4 h-100">
+          {onlyText ? <PostForPageText /> : <PostForPageContent />}
         </div>
       </div>
     </div>

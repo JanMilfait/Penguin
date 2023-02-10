@@ -6,7 +6,7 @@ import s from 'styles/6_components/Profile.module.scss';
 import Link from 'next/link';
 import {skillsByTag} from '../../app/helpers/helpers';
 import SkillBar from '../skill/SkillBar';
-import { sanitize } from 'dompurify';
+import DOMPurify from 'isomorphic-dompurify';
 
 const ProfileInfo = () => {
   const userId = useSelector((state: AppState) => state.auth.profile?.id);
@@ -76,7 +76,7 @@ const ProfileInfo = () => {
           <div className={s.profile__description}>
             <h3 className="f--medium fw-bold mt-2 mb-4">Description:</h3>
             {profile?.description
-              ? <div className="d-flex h-100 flex-grow-1 mb-2" dangerouslySetInnerHTML={{__html: sanitize(profile.description)}} />
+              ? <div className="d-flex h-100 flex-grow-1 mb-2" dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(profile.description)}} />
               : <div className="d-flex justify-content-center align-items-center h-100 flex-grow-1 mb-2"><p>{notSet}</p></div>
             }
           </div>

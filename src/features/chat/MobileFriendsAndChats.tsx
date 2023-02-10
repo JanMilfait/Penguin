@@ -5,7 +5,7 @@ import ChatMobileButton from './ChatMobileButton';
 import { AppState} from '../../app/store';
 import dynamic from 'next/dynamic';
 
-const MobileFriendsAndChats = () => {
+function MobileFriendsAndChats() {
   const isExpanded = useSelector((state: AppState) => state.chat.expandChats);
   const ChatMobileWindow = dynamic(() => import('./ChatMobileWindow'), { ssr: false });
 

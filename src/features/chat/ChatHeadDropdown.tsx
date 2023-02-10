@@ -1,12 +1,9 @@
-import { Roboto } from '@next/font/google';
 import React from 'react';
 import { setOpenModal } from '../root/rootSlice';
 import s from '../../styles/6_components/Dropdown.module.scss';
 import { AppDispatch, AppState } from '../../app/store';
 import { useDispatch, useSelector } from 'react-redux';
 import { useGetFriendsIdsNamesQuery } from 'features/friend/friendSlice';
-
-const roboto = Roboto({weight: ['400', '500', '700']});
 
 const ChatHeadDropdown = ({id}: {id: number}) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -52,7 +49,7 @@ const ChatHeadDropdown = ({id}: {id: number}) => {
 
 
   return (
-    <ul className={s.dropdown + ' ' + roboto.className}>
+    <ul className={s.dropdown}>
       <li><a onClick={handleAddToChat}>Add to chat</a></li>
       <li className="text-danger"><a onClick={handleDeleteChat}>Delete chat</a></li>
     </ul>
