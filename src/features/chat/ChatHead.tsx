@@ -8,6 +8,7 @@ import {deactivateChat, minimizeChat} from './chatSlice';
 import ToggleModal from '../../components/ToggleModal';
 import FriendAvatar from 'features/friend/FriendAvatar';
 import dynamic from 'next/dynamic';
+import HoverModal from '../../components/HoverModal';
 
 const ChatHead = ({chat}: {chat: Chat}) => {
   const dispatch = useDispatch<AppDispatch>();
@@ -43,28 +44,54 @@ const ChatHead = ({chat}: {chat: Chat}) => {
 
   return (
     <div className={s.activeChats__chatHead}>
-      <div className="d-flex align-items-center mw-0">
-        <div className="d-flex">
-          {usersFiltered.map((user) => (
-            <FriendAvatar
-              key={user.id}
-              className={s.activeChats__chatAvatar}
-              classNameOnline={s.activeChats__online + ' ' + s.activeChats__chatOnline}
-              classNameOffline={s.activeChats__offline + ' ' + s.activeChats__chatOffline}
-              {...user}
-              size={40}
-            />
-          ))}
-        </div>
-        <div className="d-flex flex-column mt-1 mw-0">
-          <h3 className={s.activeChats__chatNames + ' text-truncate'}>
-            {usersFiltered.map((user) => user.name).join(', ')}
-          </h3>
-          <p className={s.activeChats__chatType}>
-            {chat.type === 'group' ? 'Group' : 'Private'}
-          </p>
-        </div>
-      </div>
+      <HoverModal
+        hover={
+          <div className="d-flex align-items-center mw-0">
+            <div className="d-flex">
+              {usersFiltered.map((user) => (
+                <FriendAvatar
+                  key={user.id}
+                  className={s.activeChats__chatAvatar}
+                  classNameOnline={s.activeChats__online + ' ' + s.activeChats__chatOnline}
+                  classNameOffline={s.activeChats__offline + ' ' + s.activeChats__chatOffline}
+                  {...user}
+                  size={40}
+                  href={chat.type === 'group' ? '' : '/profile/' + user.slug}
+                />
+              ))}
+            </div>
+            <div className="d-flex flex-column mt-1 mw-0">
+              <h3 className={s.activeChats__chatNames + ' text-truncate'}>
+                {usersFiltered.map((user) => user.name).join(', ')}
+              </h3>
+              <p className={s.activeChats__chatType}>
+                {chat.type === 'group' ? 'Group' : 'Private'}
+              </p>
+            </div>
+          </div>
+        }
+        modal={
+          <ul className={s.activeChats__groupModal}>
+            {usersFiltered.map((user) => (
+              <li key={user.id} className="d-flex align-items-center">
+                <FriendAvatar
+                  className={s.activeChats__chatAvatar}
+                  classNameOnline={s.activeChats__online + ' ' + s.activeChats__chatOnline}
+                  classNameOffline={s.activeChats__offline + ' ' + s.activeChats__chatOffline}
+                  {...user}
+                  size={30}
+                />
+                <h3 className={s.activeChats__chatNames + ' text-truncate f--x-small'}>
+                  {user.name}
+                </h3>
+              </li>
+            ))}
+          </ul>
+        }
+        attachToCursor
+        autoOrientation
+        disabled={chat.type !== 'group'}
+      />
       <div className={s.activeChats__chatHeadButtons}>
         {!isMobile &&
           <div className="cp" onPointerOver={() => setMinimizeHover(true)} onPointerOut={() => setMinimizeHover(false)} onClick={handleMinimizeChat}>
@@ -76,7 +103,7 @@ const ChatHead = ({chat}: {chat: Chat}) => {
         </div>
       </div>
       <div className={s.activeChats__settings}>
-        <ToggleModal toggle={<ThreeDots size={18} />} modal={<ChatHeadDropdown id={chat.id} />} clickClose={true} hidden={false} />
+        <ToggleModal toggle={<ThreeDots size={18} />} modal={<ChatHeadDropdown id={chat.id} type={chat.type} users={usersFiltered} />} clickClose={true} hidden={false} />
       </div>
     </div>
   );

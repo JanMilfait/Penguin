@@ -3,12 +3,12 @@ import {RefObject, useEffect, useState } from 'react';
 /**
  * Hook to handle hover modal state and events
  */
-export const useHoverModal = (containerRef: RefObject<HTMLDivElement>, hoverRef: RefObject<HTMLDivElement>) => {
+export const useHoverModal = (containerRef: RefObject<HTMLDivElement>, hoverRef: RefObject<HTMLDivElement>, disabled: boolean) => {
   const [isOpenModal, setIsOpenModal] = useState(false);
 
   useEffect(() => {
     const hover = hoverRef.current;
-    if (!hover) return;
+    if (!hover || disabled) return;
 
     hover.classList.add('modal__hover');
     return () => {
@@ -32,7 +32,7 @@ export const useHoverModal = (containerRef: RefObject<HTMLDivElement>, hoverRef:
 
   useEffect(() => {
     const hover = hoverRef.current;
-    if (!hover) return;
+    if (!hover || disabled) return;
 
     const handleHoverClick = () => {
       !isOpenModal && setIsOpenModal(true);

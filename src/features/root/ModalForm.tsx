@@ -37,7 +37,6 @@ const ModalForm = () => {
         borderRadius: '10px',
         outline: 'none',
         background: '#f3f3f3',
-        boxShadow: '0 2px 2px rgb(0 0 0 / 15%)',
         fontSize: '18px',
         lineHeight: '21px'
       };
@@ -79,18 +78,20 @@ const ModalForm = () => {
       <h2 className={s.modal__title} dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(title ?? '')}}></h2>
       {select &&
         <div className="py-3">
-          <label className="f--x-small text-capitalize fw-bold ml-2">{select.name}</label>
-          <Select
-            isMulti
-            name={select.name}
-            className="basic-multi-select"
-            classNamePrefix="select"
-            styles={selectStyles}
-            menuShouldScrollIntoView ={false}
-            options={select.options.map((option) => ({value: option[0], label: `${option[1]} - #${option[0]}`}))}
-            onChange={handleChangeSelect}
-            value={selectedOptions}
-          />
+          <label className="f--x-small text-capitalize fw-bold ml-2 mb-2">{select.name}</label>
+          <div style={{minHeight: '56px'}}>
+            <Select
+              isMulti
+              name={select.name}
+              className="basic-multi-select"
+              classNamePrefix="select"
+              styles={selectStyles}
+              menuShouldScrollIntoView ={false}
+              options={select.options.map((option) => ({value: option[0], label: `${option[1]} - #${option[0]}`}))}
+              onChange={handleChangeSelect}
+              value={selectedOptions}
+            />
+          </div>
         </div>}
       <div className="row mt-4">
         <div className="col">

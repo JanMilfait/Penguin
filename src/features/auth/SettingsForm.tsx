@@ -12,18 +12,27 @@ const SettingsForm = () => {
 
   const [update, {error}] = useUpdateUserMutation();
   const [clicked, setClicked] = useState(false);
+  const [lastName, setLastName] = useState(user?.name);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     setClicked(true);
 
     const formData = new FormData();
-    e.target.profile_visibility.value && formData.append('profile_visibility', e.target.profile_visibility.value);
+    e.target.name.value !== lastName && formData.append('name', e.target.name.value);
+    e.target.profile_visibility.value !== user?.profile_visibility && formData.append('profile_visibility', e.target.profile_visibility.value);
     e.target.password.value && formData.append('password', e.target.password.value);
     e.target.password_confirmation.value && formData.append('password_confirmation', e.target.password_confirmation.value);
+
+    if (formData.entries().next().done) {
+      setClicked(false);
+      return;
+    }
+
     const response = await update({formData});
 
     if (!('error' in response)) {
+      setLastName(e.target.name.value);
       e.target.password.value = '';
       e.target.password_confirmation.value = '';
 
@@ -42,7 +51,12 @@ const SettingsForm = () => {
 
   return (
     <form className={s.settings__form} onSubmit={handleSubmit}>
-      <h3 className="f--medium">Profile visibility</h3>
+      <h3 className="f--medium">Name</h3>
+      <div>
+        <input type="text" name="name" placeholder="Name" defaultValue={user?.name} className={hasErrMessage(error, 'name') ? 'isInvalid' : ''} />
+        {hasErrMessage(error, 'name') && <p className="isInvalidText">{error.data?.validationErrors?.name.join('\n')}</p>}
+      </div>
+      <h3 className="mt-4 f--medium">Profile visibility</h3>
       <div>
         <select name="profile_visibility" defaultValue={user?.profile_visibility}>
           <option value="public">Public</option>

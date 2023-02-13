@@ -21,7 +21,7 @@ const PostDropdown = ({id, body, ownerId, sharings}: {id: number, body: string|n
         data: {id}
       },
       props: {
-        icon: 'warning',
+        icon: 'error',
         type: 'confirm',
         title: 'Delete post',
         message: 'Are you sure you want to delete this post? This action cannot be undone.',

@@ -73,13 +73,14 @@ Route::middleware('auth:sanctum')->group(function () {
 
 });
 
-    Route::get('/user/{user}', [UserController::class, 'show']);
+    Route::get('/user/{user:slug}', [UserController::class, 'show'])->name('user.show');
+    Route::get('/post/{post:slug}', [PostController::class, 'show'])->name('post.show');
+
     Route::get('/friends/{user}', [FriendController::class, 'show']);
     Route::get('/friends/{user}/ids', [FriendController::class, 'show_ids']);
     Route::get('/friends/{user}/ids-names', [FriendController::class, 'show_ids_names']);
 
     Route::get('/posts/{user}', [PostController::class, 'index']);
-    Route::get('/post/{post}', [PostController::class, 'show']);
     Route::get('/post/{post}/comments', [PostCommentController::class, 'show']);
 
     Route::get('/search', SearchController::class);

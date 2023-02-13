@@ -14,7 +14,7 @@ const ProfileProgress = () => {
 
   return (
     <div className={s.profileProgress}>
-      <div className={s.profileProgress__image}><Link href={'/profile/' + user.id}><Avatar {...user} size={130} /></Link></div>
+      <div className={s.profileProgress__image}><Link href={'/profile/' + user.slug}><Avatar {...user} size={130} /></Link></div>
       <div className={s.profileProgress__content}>
         <div className={s.profileProgress__text}>
           <h3 className="text-truncate mb-0">{user?.name}</h3>
@@ -25,7 +25,7 @@ const ProfileProgress = () => {
           <p>{percent}%</p>
         </div>
         <ProgressBar percent={percent} />
-        <LinkCallback href={'/profile/' + user.id + '/info'} onClick={() => dispatchSSR('auth/setProfile', {edit: user.id})}>
+        <LinkCallback href={'/profile/' + user.slug + '/info'} onClick={() => dispatchSSR('auth/setProfile', {edit: user.id})}>
           <button className="button--fluid">Complete Profile</button>
         </LinkCallback>
       </div>

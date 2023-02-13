@@ -2,6 +2,7 @@ import { User } from 'features/auth/authSlice.types';
 
 export type Post = {
   id: number;
+  slug: string;
   body: string | null;
   created_at: string;
   updated_at: string;
@@ -17,6 +18,7 @@ export type Post = {
 
 export type PostComment = {
   id: number;
+  slug: string;
   body: string;
   created_at: string;
   updated_at: string;
@@ -75,7 +77,7 @@ export type PostsArg = {
 }
 
 export type PostArg = {
-  id: number;
+  slug: string;
 }
 
 export type UserPostsArg = {
@@ -120,6 +122,7 @@ export type PostState = {
   },
   post: {
     id: number | null;
+    slug: string | null;
   },
   hiddenPosts: {[key: number]: boolean};
   editedPosts: {[key: number]: string};

@@ -3,15 +3,15 @@ import React, {ReactNode, useEffect, useRef } from 'react';
 import { useSelector } from 'react-redux';
 import {AppState} from '../app/store';
 
-type HoverModalProps = {hover: ReactNode, modal: ReactNode, onHoverClick?: () => void, attachToCursor?: boolean, autoOrientation?: boolean};
+type HoverModalProps = {hover: ReactNode, modal: ReactNode, onHoverClick?: () => void, attachToCursor?: boolean, autoOrientation?: boolean, disabled?: boolean};
 
-const HoverModal = ({hover, modal, onHoverClick, attachToCursor = false, autoOrientation = false}: HoverModalProps) => {
+const HoverModal = ({hover, modal, onHoverClick, attachToCursor = false, autoOrientation = false, disabled = false}: HoverModalProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const hoverRef = useRef<HTMLDivElement>(null);
   const modalRef = useRef<HTMLDivElement>(null);
   const isMobile = useSelector((state: AppState) => state.root.isMobile);
 
-  const {isOpenModal} = useHoverModal(containerRef, hoverRef);
+  const {isOpenModal} = useHoverModal(containerRef, hoverRef, disabled);
 
   /**
    * Attach modal to cursor, if attachToCursor is true
@@ -41,8 +41,14 @@ const HoverModal = ({hover, modal, onHoverClick, attachToCursor = false, autoOri
     const handleClick = (e: MouseEvent) => {
       modalParent.style.left = '12px';
       modalParent.style.width = 'calc(100% - 24px)';
-      modalParent.style.top = `${e.clientY}px`;
-      modalParent.children[0].setAttribute('style', 'position: absolute; top: auto; bottom: 30px;');
+
+      if (e.clientY < window.innerHeight / 2) {
+        modalParent.style.top = `${e.clientY - modalParent.clientHeight}px`;
+        modalParent.children[0].setAttribute('style', 'position: absolute; top: 30px; bottom: auto;');
+      } else {
+        modalParent.style.top = `${e.clientY}px`;
+        modalParent.children[0].setAttribute('style', 'position: absolute; top: auto; bottom: 30px;');
+      }
     };
 
     isMobile
@@ -90,9 +96,9 @@ const HoverModal = ({hover, modal, onHoverClick, attachToCursor = false, autoOri
 
 
   return (
-    <div className="position-relative">
+    <div className="position-relative mw-0">
       <div ref={containerRef}>
-        <div ref={hoverRef} className={'position-relative cp' + (isOpenModal ? ' modal-open' : '')} style={{zIndex: 1}} onClick={onHoverClick}>{hover}</div>
+        <div ref={hoverRef} className={'position-relative ' + (isOpenModal ? ' modal-open' : '') + (disabled ? '' : ' cp')} style={{zIndex: 1}} onClick={onHoverClick}>{hover}</div>
         <div className={isOpenModal ? '' : 'd-none'}><div ref={modalRef}>{modal}</div></div>
       </div>
     </div>

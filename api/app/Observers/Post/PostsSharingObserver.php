@@ -20,6 +20,7 @@ class PostsSharingObserver
 
         broadcast(new SendNotification($sharing->post->user->id, 'sharing', $sharing->id, [
             'preview' => Str::limit($sharing->post->body, 50),
+            'path' => '/post/' . $sharing->post->slug,
             'id' => $sharing->user->id,
             'name' => $sharing->user->name,
             'avatar' => $sharing->user->avatar_name ? ($sharing->user->avatar_url . '50_' . $sharing->user->avatar_name) : null

@@ -16,9 +16,9 @@ import PostHead from './PostHead';
 
 const PostForPageText = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const postId = useSelector((state: AppState) => state.post.post.id);
+  const slug = useSelector((state: AppState) => state.post.post.slug);
 
-  const {data, isSuccess, isLoading} = useGetPostQuery({id: postId!}, {skip: !postId});
+  const {data, isSuccess, isLoading} = useGetPostQuery({slug: slug!}, {skip: typeof slug !== 'string'});
   const {id, body, comments_count, most_reacted_comment, reactions, sharings, user, updated_at} = data as Post;
 
   if (isLoading || !isSuccess) return null;
@@ -59,7 +59,7 @@ const PostForPageText = () => {
     <div className="col-12 col-xl-8 offset-0 offset-xl-2 p-xl-0 h-100 d-flex flex-column">
       <div className={s.postPage__post} style={{borderRadius: '10px'}}>
         <PostHead {...{id, body, user, updated_at, sharings}} />
-        <PostBody {...{id, body}} />
+        <PostBody {...{id, body, slug}} />
         <div className="row pt-2 pb-2">
           <div className="col-auto">
             <HoverModal

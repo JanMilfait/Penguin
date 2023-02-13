@@ -110,7 +110,7 @@ const SingleComment = ({id: commentId, postId,  replyToId, body, user, replies, 
   return (
     <div className={'row mt-3 mb-3'}>
       <div className="col-auto">
-        <Link href={'/profile/' + user.id}>
+        <Link href={'/profile/' + user.slug}>
           <Avatar {...user} size={32} />
         </Link>
       </div>
@@ -118,7 +118,7 @@ const SingleComment = ({id: commentId, postId,  replyToId, body, user, replies, 
         <div className="row flex-nowrap">
           <div className={'col-auto' + (edit === '' ? ' flex-shrink-1' : ' flex-grow-1')}>
             <div className={s.comment}>
-              <Link href={'/profile/' + user.id}><h3 className="f--xx-small fw-bold text-truncate">{user.name}</h3></Link>
+              <Link href={'/profile/' + user.slug}><h3 className="f--xx-small fw-bold text-truncate">{user.name}</h3></Link>
               {edit === ''
                 ? <p className="f--x-small">{body}</p>
                 : <TextareaAutosize
@@ -185,7 +185,7 @@ const SingleComment = ({id: commentId, postId,  replyToId, body, user, replies, 
                   {isAuth &&
                     <div className="row align-items-center mt-3 mb-3">
                       <div className="col-auto">
-                        {auth && <Link href={'/profile/' + auth.id}><Avatar {...auth} size={32} /></Link>}
+                        {auth && <Link href={'/profile/' + auth.slug}><Avatar {...auth} size={32} /></Link>}
                       </div>
                       <div className="col">
                         <input ref={inputAddRef} className={s.posts__addComment + ' f--x-small'} type="text" placeholder="Reply to a comment..." onKeyPress={(e) => e.key === 'Enter' && handleAddReply()} />

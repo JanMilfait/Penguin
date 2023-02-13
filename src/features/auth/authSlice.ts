@@ -52,7 +52,7 @@ export const AuthApi = apiSlice.injectEndpoints({
       })
     }),
     getUser: builder.query<T.GetUserResult, T.GetUserArg>({
-      query: ({id}) => '/api/user/' + id,
+      query: ({slug}) => '/api/user/' + slug,
       onQueryStarted: (arg, {dispatch, queryFulfilled}) => {
         queryFulfilled.then((result) => {
           const user = result.data;
@@ -61,9 +61,9 @@ export const AuthApi = apiSlice.injectEndpoints({
           }
         });
       },
-      providesTags: (result, error, arg) =>
+      providesTags: (result) =>
         result
-          ? [{type: 'User', id: arg.id}, 'User']
+          ? [{type: 'User', id: result.id}, 'User']
           : ['User']
     }),
     updateUser: builder.mutation<MessageResponse, T.UpdateUserArg>({
@@ -89,6 +89,7 @@ export const AuthSlice = createSlice({
     profile: {
       id: null,
       edit: null,
+      slug: null,
       quill: ''
     }
   } as T.AuthState,

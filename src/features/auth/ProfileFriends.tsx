@@ -88,20 +88,22 @@ const ProfileFriends = () => {
     <div className={s.profile__friends + ' mb-4'}>
       <div className={s.profile__friendsHeader}>
         <h3 className="f--small mb-1">Friends</h3>
-        {isSuccess && <p className="f--x-small mb-1">{friendsIds.ids.length} friends</p>}
+        {isSuccess && <p className="f--x-small mb-0">{friendsIds.ids.length} friends</p>}
       </div>
-      <div className="mt-3">
-        <div ref={containerRef} className={s.profile__friendsContainer}>
-          <div ref={contentRef} className={s.profile__friendsContent}>
-            {combinedData.map((friend: Friend) => (
-              <div key={friend.id}>
-                <FriendAvatar tooltip={'friendProfile'} {...friend} href={'/profile/' + friend.id}/>
-              </div>
-            ))}
-            <ReactTooltip id="friendProfile" type="light" />
+      {friendsIds.ids.length !== 0 &&
+        <div className="mt-3">
+          <div ref={containerRef} className={s.profile__friendsContainer}>
+            <div ref={contentRef} className={s.profile__friendsContent}>
+              {combinedData.map((friend: Friend) => (
+                <div key={friend.id}>
+                  <FriendAvatar tooltip={'friendProfile'} {...friend} href={'/profile/' + friend.slug}/>
+                </div>
+              ))}
+              <ReactTooltip id="friendProfile" type="light" />
+            </div>
           </div>
         </div>
-      </div>
+      }
     </div>
   );
 };

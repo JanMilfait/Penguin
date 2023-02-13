@@ -25,14 +25,14 @@ const Notification = ({source, source_id, source_data, created_at, unreaded, onH
 
   const href = {
     chat: '',
-    post: '/post/' + source_id,
+    post: data.path,
     comment: data.path,
     reply: data.path,
-    sharing: '/post/' + source_id
+    sharing: data.path
   };
 
   const text = {
-    chat: <><span className="fw-bold">{data.name}</span> was {data.state === 'removed' ? 'removed from' : 'added to'} the chat <span className="fw-bold">{data.names && data.names.join(', ')}</span></>,
+    chat: <><span className="fw-bold">{data.name}</span> {data.state === 'removed' ? 'left' : 'was added to'} the chat <span className="fw-bold">{data.names && data.names.join(', ')}</span></>,
     post: <><span className="fw-bold">{data.name}</span> created a new post <span className="fw-bold">{data.preview}</span></>,
     comment: <><span className="fw-bold">{data.name}</span> commented on your post <span className="fw-bold">{data.preview}</span></>,
     reply: <><span className="fw-bold">{data.name}</span> replied to your comment <span className="fw-bold">{data.preview}</span></>,

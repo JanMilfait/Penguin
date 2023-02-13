@@ -38,7 +38,7 @@ const Pending = ({id, type, user, state, updated_at, unreaded, onHover}: Pending
       isHoverable && e.stopPropagation();
       setHover(!hover);
     }
-    !isHoverable && router.push('/profile/' + user.id);
+    !isHoverable && router.push('/profile/' + user.slug);
   };
 
   const handleAccept = (e: any) => {
@@ -65,7 +65,7 @@ const Pending = ({id, type, user, state, updated_at, unreaded, onHover}: Pending
         onClick={handleClick}
       >
         <div className="col-auto">
-          <Link href={'/profile/' + user.id}>
+          <Link href={'/profile/' + user.slug}>
             <Avatar {...user} size={40} />
           </Link>
         </div>

@@ -20,10 +20,10 @@ import PostHead from './PostHead';
 
 const PostForPageContent = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const postId = useSelector((state: AppState) => state.post.post.id);
+  const slug = useSelector((state: AppState) => state.post.post.slug);
   const width = useSelector((state: AppState) => state.root.window.width);
 
-  const {data, isSuccess, isLoading} = useGetPostQuery({id: postId!}, {skip: !postId});
+  const {data, isSuccess, isLoading} = useGetPostQuery({slug: slug!}, {skip: typeof slug !== 'string'});
   const {id, body, comments_count, most_reacted_comment, reactions, sharings, image, video, user, updated_at} = data as Post;
 
   if (isLoading || !isSuccess) return null;
@@ -73,7 +73,7 @@ const PostForPageContent = () => {
       <div className="col-12 col-xl-4 p-xl-0 h-100 d-flex flex-column">
         <div className={s.postPage__post}>
           <PostHead {...{id, body, user, image, video, updated_at, sharings}} />
-          <PostBody {...{id, body}} />
+          <PostBody {...{id, body, slug}} />
           {width !== 0 && width < 1199 &&
             <>
               {image?.name && <div className="mb-3"><Zoom><PostImage {...image} small={true} className="aspect-ratio w-100" /></Zoom></div>}

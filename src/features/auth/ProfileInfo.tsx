@@ -9,8 +9,8 @@ import SkillBar from '../skill/SkillBar';
 import DOMPurify from 'isomorphic-dompurify';
 
 const ProfileInfo = () => {
-  const userId = useSelector((state: AppState) => state.auth.profile?.id);
-  const { data: user, isSuccess, isLoading } = useGetUserQuery({id: userId!}, {skip: typeof userId !== 'number'});
+  const slug = useSelector((state: AppState) => state.auth.profile?.slug);
+  const { data: user, isSuccess, isLoading } = useGetUserQuery({slug: slug!}, {skip: typeof slug !== 'string'});
   const skills = useMemo(() => skillsByTag(user?.skills ?? []), [user?.skills]);
 
   if (isLoading || !isSuccess) return null;
@@ -74,9 +74,9 @@ const ProfileInfo = () => {
         </div>
         <div className="col-12 col-xl-7 offset-0 offset-xl-1 mb-4 mb-xl-0">
           <div className={s.profile__description}>
-            <h3 className="f--medium fw-bold mt-2 mb-4">Description:</h3>
+            <h3 className="f--medium fw-bold mt-2 mb-1">Description:</h3>
             {profile?.description
-              ? <div className="d-flex h-100 flex-grow-1 mb-2" dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(profile.description)}} />
+              ? <div className="ql-container ql-snow"><div className="quill ql-editor"><div dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(profile.description)}} /></div></div>
               : <div className="d-flex justify-content-center align-items-center h-100 flex-grow-1 mb-2"><p>{notSet}</p></div>
             }
           </div>

@@ -21,8 +21,8 @@ const UserDropdown = () => {
   return (
     <ul className={s.dropdown}>
       <li><Link href="/" >Home</Link></li>
-      <li><Link href={'/profile/' + user?.id}>Profile</Link></li>
-      <li><LinkCallback href={'/profile/' + user?.id + '/info'} onClick={() => dispatchSSR('auth/setProfile', {edit: user?.id})}>Edit Profile</LinkCallback></li>
+      <li><Link href={'/profile/' + user?.slug}>Profile</Link></li>
+      <li><LinkCallback href={'/profile/' + user?.slug + '/info'} onClick={() => dispatchSSR('auth/setProfile', {edit: user?.id})}>Edit Profile</LinkCallback></li>
       <li><Link href="/settings">Settings</Link></li>
       <li><a onClick={() => handleLogout()}>Logout</a></li>
     </ul>

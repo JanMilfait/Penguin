@@ -1,26 +1,28 @@
-import { AuthApi, setToken } from '../../features/auth/authSlice';
+import {AuthApi, setProfile, setToken} from '../../features/auth/authSlice';
 import { AppStore } from '../store';
 import { GetServerSidePropsContext } from 'next';
 import { deleteCookie, hasCookie, setCookie, getCookie } from 'cookies-next';
 import { setIsMobile, setRouterPath } from '../../features/root/rootSlice';
-import { PostApi, setHiddenPosts } from '../../features/post/postSlice';
+import {expandComments, PostApi, setHiddenPosts, setPost} from '../../features/post/postSlice';
 import { FriendApi } from 'features/friend/friendSlice';
 import {CommentApi} from '../../features/comment/commentSlice';
+import {UserData} from '../../features/auth/authSlice.types';
+import { SerializedError } from '@reduxjs/toolkit';
 
-interface InitialFunctions {
+interface Functions {
   (store: AppStore, context: GetServerSidePropsContext, redirect?: string|boolean): unknown;
 }
 
-export const init: InitialFunctions = async (store, {req, res, resolvedUrl} ) => {
+// ***********************
+// Page Init
+// ***********************
+export const init: Functions = async (store, {req, res, resolvedUrl} ) => {
   store.dispatch(setRouterPath(resolvedUrl));
 
   if (req.headers['user-agent'] && req.headers['user-agent'].includes('Mobile')) {
     store.dispatch(setIsMobile(true));
   }
 
-  ////////////////////////////
-  // Cookies
-  ////////////////////////////
   if (hasCookie('httpTokenDelete', {req, res})) {
     deleteCookie('httpTokenDelete', {req, res});
     deleteCookie('token', {req, res});
@@ -37,7 +39,11 @@ export const init: InitialFunctions = async (store, {req, res, resolvedUrl} ) =>
   }
 };
 
-export const authenticate: InitialFunctions = async (store, {req, res}) => {
+
+//***********************
+// Authenticate
+//***********************
+export const authenticate: Functions = async (store, {req, res}) => {
   const token = req?.cookies?.token;
 
   if (!token) {
@@ -78,7 +84,10 @@ export const authenticate: InitialFunctions = async (store, {req, res}) => {
   }
 };
 
-export const authenticateUnprotected: InitialFunctions = async (store, {req, res}, redirect = '/') => {
+//***********************
+// Authenticate Unprotected
+//***********************
+export const authenticateUnprotected: Functions = async (store, {req, res}, redirect = '/') => {
   const token = req?.cookies?.token;
 
   if (token) {
@@ -123,7 +132,9 @@ export const authenticateUnprotected: InitialFunctions = async (store, {req, res
   }
 };
 
-
+//***********************
+// Hydration Queries
+//***********************
 export const getFriends = async (store: AppStore) => {
   const id = await store.getState().auth.data?.id;
   id && await store.dispatch(FriendApi.endpoints.getFriends.initiate({id: id, page: 1, limit: 20}));
@@ -141,16 +152,18 @@ export const getPosts = async (store: AppStore) => {
   await store.dispatch(PostApi.endpoints.getPosts.initiate({page: 1, limit: 3, media: 'all', category: 'latest'}));
 };
 
-export const getPost = async (store: AppStore, id: number) => {
-  await store.dispatch(PostApi.endpoints.getPost.initiate({id}));
+export const getPost = async (store: AppStore, slug: string) => {
+  const response = await store.dispatch(PostApi.endpoints.getPost.initiate({slug}));
+  return response.data;
 };
 
 export const getComments = async (store: AppStore, id: number) => {
   await store.dispatch(CommentApi.endpoints.getComments.initiate({id, page: 1, limit: 8}));
 };
 
-export const getUser = async (store: AppStore, id: number) => {
-  await store.dispatch(AuthApi.endpoints.getUser.initiate({id}));
+export const getUser = async (store: AppStore, slug: string) => {
+  const response = await store.dispatch(AuthApi.endpoints.getUser.initiate({slug}));
+  return response.data;
 };
 
 export const getUserFriends = async (store: AppStore, id: number) => {
@@ -159,4 +172,58 @@ export const getUserFriends = async (store: AppStore, id: number) => {
 
 export const getUserPosts = async (store: AppStore, id: number) => {
   await store.dispatch(PostApi.endpoints.getUserPosts.initiate({page: 1, limit: 3, id}));
+};
+
+//***********************
+// Unified Params Pages
+//***********************
+export const profilePage = async (store: AppStore, ctx: GetServerSidePropsContext) => {
+  const slug = ctx.params?.slug as string|undefined;
+  if (!slug) return {status: 404};
+
+  const auth = await authenticateUnprotected(store, ctx, false) as UserData|undefined;
+
+  await Promise.all([
+    auth && getFriends(store),
+    auth && getSendPendings(store),
+    auth && getFriendsIds(store, auth.id),
+    getUser(store, slug).then((user) => {
+      if (user) {
+        return Promise.all([
+          store.dispatch(setProfile({id: user.id, slug})),
+          getFriendsIds(store, user.id),
+          getUserFriends(store, user.id),
+          getUserPosts(store, user.id)
+        ]);
+      }
+    })
+  ]);
+
+  const state = store.getState();
+  return state.api.queries[`getUser({"slug":"${slug}"})`]?.error as {status: number} | undefined;
+};
+
+
+export const postPage = async (store: AppStore, ctx: GetServerSidePropsContext) => {
+  const slug = ctx.params?.slug as string|undefined;
+  if (!slug) return {status: 404};
+
+  const auth = await authenticateUnprotected(store, ctx, false) as UserData|undefined;
+
+  await Promise.all([
+    auth && getFriends(store),
+    getPost(store, slug)
+      .then((post) => {
+        if (post) {
+          return Promise.all([
+            store.dispatch(setPost({id: post.id, slug})),
+            store.dispatch(expandComments(post.id)),
+            getComments(store, post.id)
+          ]);
+        }
+      })
+  ]);
+
+  const state = store.getState();
+  return state.api.queries[`getPost({"slug":"${slug}"})`]?.error as {status: number} | undefined;
 };

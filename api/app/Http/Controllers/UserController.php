@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Services\UserAvatar;
 use App\Models\User\User;
+use DB;
 use HTMLPurifier;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -77,7 +78,19 @@ class UserController extends Controller
 
         $user = $request->user();
 
-        $userUpdate = ['name', 'profile_visibility'];
+        // If name is changed, generate new slug and add it to redirects
+        if ($request->has('name')) {
+            $slug = Str::slug($request->name . ' ' . Str::random(5));
+
+            DB::table('users_redirects')->insert([
+                'old_slug' => $user->slug,
+                'new_slug' => $slug,
+                'created_at' => now()
+            ]);
+            $request->merge(['slug' => $slug]);
+        }
+
+        $userUpdate = ['name', 'slug', 'profile_visibility'];
         if ($this->requestHasOne($userUpdate)) {
             $user->update($request->only($userUpdate));
         }

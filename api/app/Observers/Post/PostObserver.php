@@ -17,7 +17,7 @@ class PostObserver
      */
     public function created(Post $post)
     {
-        // Laravel file driver not support cache tags, use redis or memcached in real project
+        // TODO: Laravel file driver doesn't support cache tags, use redis or memcached in real project
         foreach (range(0, 1000) as $i) {
             Cache::forget('posts:user:' . $post->user->id . ':page:' . $i);
         }
@@ -25,6 +25,7 @@ class PostObserver
         $post->user->friends->each(function ($friend) use ($post) {
             broadcast(new SendNotification($friend->user->id, 'post', $post->id,[
                 'preview' => Str::limit($post->body, 50),
+                'path' => '/post/' . $post->slug,
                 'id' => $post->user->id,
                 'name' => $post->user->name,
                 'avatar' => $post->user->avatar_name ? ($post->user->avatar_url . '50_' . $post->user->avatar_name) : null
@@ -51,7 +52,7 @@ class PostObserver
      */
     public function deleted(Post $post)
     {
-        // Laravel file driver not support cache tags, use redis or memcached in real project
+        // TODO: Laravel file driver doesn't support cache tags, use redis or memcached in real project
         foreach (range(0, 1000) as $i) {
             Cache::forget('posts:user:' . $post->user->id . ':page:' . $i);
         }

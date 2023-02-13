@@ -38,7 +38,7 @@ const PostComments = ({postId, commentsCount, mostReacted, className}: {postId: 
       {isAuth &&
         <div className="row align-items-center mt-3 mb-3">
           <div className="col-auto">
-            <Link href={'/profile/' + user.id}><Avatar {...user} size={32} /></Link>
+            <Link href={'/profile/' + user.slug}><Avatar {...user} size={32} /></Link>
           </div>
           <div className="col">
             <input ref={inputAddRef} className={s.posts__addComment + ' f--x-small'} type="text" placeholder="Write a comment..." onKeyPress={(e) => {

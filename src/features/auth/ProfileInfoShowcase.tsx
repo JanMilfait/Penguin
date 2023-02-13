@@ -6,8 +6,8 @@ import {AppState} from '../../app/store';
 import {useGetUserQuery} from './authSlice';
 
 const ProfileInfoShowcase = () => {
-  const userId = useSelector((state: AppState) => state.auth.profile.id);
-  const { data: user, isSuccess, isLoading } = useGetUserQuery({id: userId!}, {skip: typeof userId !== 'number'});
+  const slug = useSelector((state: AppState) => state.auth.profile.slug);
+  const { data: user, isSuccess, isLoading } = useGetUserQuery({slug: slug!}, {skip: typeof slug !== 'string'});
 
   if (isLoading || !isSuccess) return null;
 
@@ -57,7 +57,7 @@ const ProfileInfoShowcase = () => {
           </div>
         </li>
       }
-      {hasSkills &&
+      {hasSkills || hasDesc &&
         <>
           <li className="mt-4">
             <div className="row">
@@ -71,7 +71,7 @@ const ProfileInfoShowcase = () => {
           <li className="mt-3">
             <div className="row">
               <div className="col-12">
-                <Link href={'/profile/' + user.id + '/info'}><button className="button button--small button--fluid">See More</button></Link>
+                <Link href={'/profile/' + user.slug + '/info'}><button className="button button--small button--fluid">See More</button></Link>
               </div>
             </div>
           </li>

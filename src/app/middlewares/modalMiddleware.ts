@@ -1,5 +1,5 @@
 import { Middleware } from '@reduxjs/toolkit';
-import { ChatApi, deactivateChat } from 'features/chat/chatSlice';
+import {activateChat, ChatApi, deactivateChat} from 'features/chat/chatSlice';
 import { PostApi } from '../../features/post/postSlice';
 import { setOpenModal } from '../../features/root/rootSlice';
 
@@ -46,11 +46,16 @@ export const modalMiddleware: Middleware = (store) => (next) => (action) => {
       });
   }
 
+  if (tag === 'confirmLeaveChat') {
+    store.dispatch(ChatApi.endpoints.removeParticipant.initiate({id: data.id, userId: data.userId }));
+    store.dispatch(deactivateChat(data.id));
+  }
+
   if (tag === 'confirmDeleteChat') {
-    store.dispatch(ChatApi.endpoints.deleteChat.initiate({ id: data }))
+    store.dispatch(ChatApi.endpoints.deleteChat.initiate({ id: data.id }))
       .then((res: any) => {
         if (!res.error) {
-          store.dispatch(deactivateChat(data));
+          store.dispatch(deactivateChat(data.id));
           store.dispatch(setOpenModal({
             props: {
               type: 'alert',
@@ -93,6 +98,8 @@ export const modalMiddleware: Middleware = (store) => (next) => (action) => {
                 clickOutside: true
               }
             }));
+          } else {
+            store.dispatch(activateChat({chatId: data.id}));
           }
         });
     });

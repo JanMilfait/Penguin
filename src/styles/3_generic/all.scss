@@ -141,7 +141,7 @@ body {
 .ql-editor {
   min-height: 120px;
   max-height: 400px;
-  padding: 12.5px 0 8px !important;
+  padding: 16px 0 8px !important;
   overflow-x: hidden;
   overflow-y: auto;
 
@@ -158,4 +158,9 @@ body {
   a {
     color: $primary !important;
   }
+}
+
+.select__input {
+  border-radius: 0 !important;
+  box-shadow: none !important;
 }

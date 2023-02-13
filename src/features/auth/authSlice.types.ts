@@ -8,6 +8,7 @@ export type UserData = User & {
 
 export type User = {
   id: number;
+  slug: string;
   name: string;
   avatar_name: null | string;
   avatar_url: null | string;
@@ -53,7 +54,7 @@ export type ForgotPasswordArg = { email: string }
 
 export type GetUserResult = UserData
 
-export type GetUserArg = { id: number };
+export type GetUserArg = { slug: string };
 
 export type UpdateUserArg = { formData: FormData; }
 
@@ -63,6 +64,7 @@ export type AuthState = {
   profile: {
     id: null | number;
     edit: null | number;
+    slug: null | string;
     quill: string;
   }
 }

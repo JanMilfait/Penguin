@@ -1,5 +1,5 @@
 import {AppState, wrapper} from '../app/store';
-import {authenticate, getPosts, getFriends, init} from '../app/ssr/initialFunctions';
+import {authenticate, getPosts, getFriends, init} from '../app/ssr/functions';
 import type { NextPage } from 'next';
 import { useSelector } from 'react-redux';
 import dynamic from 'next/dynamic';
@@ -17,7 +17,7 @@ const Home: NextPage = () => {
           <PostAdd />
           <Posts />
         </div>
-        <div className="col-3 offset-1 d-none d-xl-block ">
+        <div className="col-3 offset-1 d-none d-xl-block mt-3">
           { !isMobile && <Sidebar /> }
         </div>
       </div>

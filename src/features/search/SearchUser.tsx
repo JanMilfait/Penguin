@@ -1,19 +1,19 @@
 import * as React from 'react';
 import s from '../../styles/6_components/SearchBar.module.scss';
-import { User } from './searchSlice.types';
 import { PersonFill } from 'react-bootstrap-icons';
 import Avatar from '../../components/Avatar';
 import {AppDispatch} from '../../app/store';
 import {setSearch} from './searchSlice';
 import { useRouter } from 'next/router';
 import { useDispatch } from 'react-redux';
+import { User } from 'features/auth/authSlice.types';
 
 export const SearchUser = ({user}: {user: User}) => {
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
 
   const handleClick = () => {
-    router.push(`/profile/${user.id}`);
+    router.push(`/profile/${user.slug}`);
     dispatch(setSearch(''));
   };
 

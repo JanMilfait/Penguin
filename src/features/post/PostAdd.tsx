@@ -82,7 +82,7 @@ const PostAdd = () => {
     <form className={s.postAdd} onSubmit={handleSubmit}>
       <div className="row">
         <div className="col-auto">
-          <Link href={'/profile/' + user?.id}><Avatar {...user} size={50} /></Link>
+          <Link href={'/profile/' + user?.slug}><Avatar {...user} size={50} /></Link>
         </div>
         <div className="col">
           <textarea ref={textareaRef} className={s.textarea + (hasErrMessage(error) ? ' isInvalidTextarea' : '')} rows={4} name='body' placeholder="What's on your mind?"></textarea>

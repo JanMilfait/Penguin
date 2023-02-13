@@ -1,5 +1,5 @@
 import {wrapper} from '../app/store';
-import {authenticate, getFriends, init} from '../app/ssr/initialFunctions';
+import {authenticate, getFriends, init} from '../app/ssr/functions';
 import type { NextPage } from 'next';
 import SettingsForm from '../features/auth/SettingsForm';
 import s from 'styles/6_components/Settings.module.scss';

@@ -21,7 +21,7 @@ class SearchController extends Controller
 
 
         $queryUsers = DB::table('users')
-            ->select(['id', 'name', 'avatar_url', 'avatar_name'])
+            ->select(['id', 'slug', 'name', 'avatar_url', 'avatar_name'])
             ->whereRaw(
                 strlen($request->get('text')) > 3 ?
                     'MATCH(name) AGAINST("' . DB::connection()->getPdo()->quote($request->input('text')) . '")'
@@ -36,7 +36,7 @@ class SearchController extends Controller
 
         if (strlen($request->get('text')) > 3) {
             $queryPosts = DB::table('posts')
-                ->select(['id', 'user_id', 'body'])
+                ->select(['id', 'user_id', 'slug', 'body'])
                 ->whereRaw('MATCH(body) AGAINST("' . DB::connection()->getPdo()->quote($request->input('text')) . '")');
 
             $postsTotal = $queryPosts->count();
@@ -45,7 +45,7 @@ class SearchController extends Controller
 
             foreach ($posts as $post) {
                 $post->body = Str::limit($post->body);
-                $post->user = User::find($post->user_id)->only(['id', 'name', 'avatar_url', 'avatar_name']);
+                $post->user = User::find($post->user_id)->only(['id', 'slug', 'name', 'avatar_url', 'avatar_name']);
                 unset($post->user_id);
             }
         } else {

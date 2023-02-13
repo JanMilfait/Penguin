@@ -1,18 +1,12 @@
-export type User = {
-  id: number;
-  name: string;
-  avatar_url: string | null;
-  avatar_name: string | null;
-}
-
-export type Post = {
-  id: number;
-  body: string;
-  user: User;
-}
+import { User } from 'features/auth/authSlice.types';
 
 export type SearchResult = {
-  items: Post[] | User[];
+  items: {
+    id: number;
+    user: User;
+    slug: string;
+    body: string;
+  } | User[];
   page: number;
   last_page: number;
   limit: number;

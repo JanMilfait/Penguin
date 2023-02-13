@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Services\ChatImage;
 use App\Models\Chat\ChatParticipant;
 use App\Models\Chat\ChatRoom;
+use App\Models\User\Notification;
 use App\Models\User\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -159,10 +160,16 @@ class ChatController extends Controller
      * @return JsonResponse
      */
     public function destroy(Request $request, ChatRoom $chat) {
+
         if (!$chat->participants()->where('user_id', $request->user()->id)->first()->is_admin) {
             return $this->jsonError('You are not admin of this chat.', 403);
         }
+
         $chat->delete();
+
+        Notification::where('source_id', $chat->id)
+            ->whereIn('source', ['message', 'chat'])
+            ->delete();
 
         return response()->json(['message' => 'Chat deleted']);
     }
@@ -260,6 +267,10 @@ class ChatController extends Controller
             return $this->jsonError('Cannot add a user that is not your friend.', 403);
         }
 
+        if ($chat->participants()->where('user_id', $request->input('user_id'))->first()) {
+            return $this->jsonError('User is already in this chat.', 403);
+        }
+
         if ($chat->participants()->count() === 2) {
             $chat->update(['type' => 'group']);
         }
@@ -284,16 +295,18 @@ class ChatController extends Controller
      */
     public function destroy_participant(Request $request, ChatRoom $chat, User $user)
     {
-        if (!$chat->participants()->where('user_id', $request->user()->id)->first()->is_admin) {
-            return $this->jsonError('You are not admin of this chat.', 403);
-        }
-
         if (!$chat->participants()->where('user_id', $user->id)->first()) {
             return $this->jsonError('User is not participant of this chat.', 404);
         }
 
-        if ($chat->participants()->where('user_id', $user->id)->first()->is_admin) {
-            return $this->jsonError('You cannot remove admin from this chat.', 403);
+        // TODO: currently anyone can only leave the chat and admins add other users
+        if ($request->user()->id !== $user->id) {
+            return $this->jsonError('You can remove only yourself from this chat.', 403);
+        } else {
+            Notification::where('user_id', $user->id)
+                ->where('source_id', $chat->id)
+                ->whereIn('source', ['message', 'chat'])
+                ->delete();
         }
 
         $chat->participants()->where('user_id', $user->id)->first()->delete();

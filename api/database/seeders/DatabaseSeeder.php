@@ -5,6 +5,7 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\Friend\Friend;
 use App\Models\User\User;
+use App\Models\User\UsersProfile;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -16,8 +17,9 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-         User::factory(40)->create();
-         $this->createFriends(1600);
+        User::factory(1)->create()->each(function ($user) {
+            $user->profile()->save(UsersProfile::factory()->make());
+        });
     }
 
 

@@ -7,7 +7,7 @@ import {Post} from './postSlice.types';
 import TextareaAutosize from 'react-textarea-autosize';
 import { useRouter } from 'next/router';
 
-const PostBody = ({id, body}: {id: Post['id'], body: Post['body']}) => {
+const PostBody = ({id, slug, body}: {id: Post['id'], slug: Post['slug'] | null, body: Post['body']}) => {
   const dispatch = useDispatch<AppDispatch>();
   const textareaRef = useRef<HTMLTextAreaElement|null>(null);
   const edit = useSelector((state: AppState) => isEdited(state, id)) as string|false;
@@ -28,7 +28,7 @@ const PostBody = ({id, body}: {id: Post['id'], body: Post['body']}) => {
   };
 
   return (
-    <div onDoubleClick={() => router.push(`/post/${id}`)}>
+    <div onDoubleClick={() => router.push('/post/' + slug)}>
       {edit === false
         ? <h3 className={s.posts__body + ' f--small mt-4 mb-3 py-2'}>{body}</h3>
         : <TextareaAutosize

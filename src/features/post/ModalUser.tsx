@@ -26,7 +26,7 @@ const ModalUser = ({id: reactionId, reaction, type, user, created_at}: ModalUser
   return (
     <div className="row mt-3 mb-3" key={reactionId}>
       <div className="col-auto position-relative">
-        <Link href={'/profile/' + user.id}><Avatar {...user} size={50} /></Link>
+        <Link href={'/profile/' + user.slug}><Avatar {...user} size={50} /></Link>
         {type === 'reactions' ? <div className="position-absolute bottom-0 end-0"><Emoji id={reaction} size={20} /></div> : null}
       </div>
       <div className="col d-flex align-items-center mw-0">

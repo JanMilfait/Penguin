@@ -19,7 +19,7 @@ const PostHead = ({id, body, user, image, video, updated_at, sharings}: PostHead
   return (
     <div className="row align-items-center">
       <div className="col-auto">
-        <Link href={'/profile/' + user.id}>
+        <Link href={'/profile/' + user.slug}>
           <Avatar {...user} size={50} />
         </Link>
       </div>
@@ -28,7 +28,7 @@ const PostHead = ({id, body, user, image, video, updated_at, sharings}: PostHead
           <div className="col-auto">
             <div className={s.posts__title}>
               <h4 className="text-truncate">
-                <Link className="text-black" href={'/profile/' + user.id}>{user.name}</Link>
+                <Link className="text-black" href={'/profile/' + user.slug}>{user.name}</Link>
                 {image?.name && !isMobile && <>, posted an <a href={image.url + image.name} target="_blank" rel="noreferrer">image</a></>}
                 {video?.name && !isMobile && <>, posted a <a href={video.url + video.name} target="_blank" rel="noreferrer">video</a></>}
               </h4>

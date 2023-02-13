@@ -17,7 +17,7 @@ import {setOpenModal} from '../root/rootSlice';
 import PostHead from './PostHead';
 import PostBody from './PostBody';
 
-const Post = ({id, body, user, updated_at, image, video, reactions, sharings, comments_count, most_reacted_comment}: PostType) => {
+const Post = ({id, slug, body, user, updated_at, image, video, reactions, sharings, comments_count, most_reacted_comment}: PostType) => {
   const dispatch = useDispatch<AppDispatch>();
   const isPostHidden = useSelector((state: AppState) => isHidden(state, id));
   const openReactionsModal = (e: any): PointerEventHandler<HTMLLIElement>|void => {
@@ -64,8 +64,8 @@ const Post = ({id, body, user, updated_at, image, video, reactions, sharings, co
     <div className="mb-5">
       <div className={s.posts__post}>
         <PostHead {...{id, body, user, image, video, updated_at, sharings}} />
-        <PostBody {...{id, body}} />
-        {image?.name && <div className="mb-3"><Link className="text-decoration-none" href={'/post/' + id}><PostImage {...image} small={true} className="aspect-ratio w-100" /></Link></div>}
+        <PostBody {...{id, slug, body}} />
+        {image?.name && <div className="mb-3"><Link className="text-decoration-none" href={'/post/' + slug}><PostImage {...image} small={true} className="aspect-ratio w-100" /></Link></div>}
         {video?.name && <div className="mb-3"><PostVideo {...video} className="aspect-ratio aspect-ratio-16x9 bg-black" /></div>}
         <div className="row pt-2 pb-2">
           <div className="col-auto">

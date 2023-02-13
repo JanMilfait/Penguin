@@ -226,6 +226,7 @@
   }
 
   &__chatType {
+    min-width: 0;
     margin-bottom: 0;
     padding: 0 10px;
     font-size: 12px;
@@ -466,6 +467,24 @@
 
       &:last-child {
         margin-right: 0;
+      }
+    }
+  }
+
+  &__groupModal {
+    display: flex;
+    flex-direction: column;
+    max-width: 300px;
+    padding: 5px;
+    border-radius: 10px;
+    background: $secondary;
+    box-shadow: 0 0 10px 0 rgb(0 0 0 / 50%);
+
+    li {
+      margin-bottom: 5px;
+
+      &:last-child {
+        margin-bottom: 0;
       }
     }
   }

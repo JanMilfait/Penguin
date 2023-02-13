@@ -25,6 +25,7 @@ use Illuminate\Database\Eloquent\Collection;
  * Class User
  *
  * @property int $id
+ * @property string $slug
  * @property string $name
  * @property string $email
  * @property Carbon|null $email_verified_at
@@ -77,6 +78,7 @@ class User extends Authenticatable
 	];
 
 	protected $fillable = [
+        'slug',
 		'name',
 		'email',
 		'password',

@@ -7,10 +7,13 @@ use App\Http\Services\PostMetadata;
 use App\Http\Services\PostVideo;
 use App\Http\Services\UserPrivacy;
 use App\Models\Post\Post;
+use App\Models\User\Notification;
 use App\Models\User\User;
 use Cache;
+use DB;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Str;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class PostController extends Controller
@@ -136,7 +139,10 @@ class PostController extends Controller
             ], 422);
         }
 
-        $post = $request->user()->posts()->create($request->only('body'));
+        $post = $request->user()->posts()->create([
+            'slug' => Str::slug(Str::limit($request->get('body'), 30) . ' ' . Str::random(5)),
+            'body' => $request->get('body')
+        ]);
 
         if ($request->hasFile('image')) {
             $response = PostImage::save($request->file('image'));
@@ -204,7 +210,22 @@ class PostController extends Controller
             'image.dimensions' => 'The image must be at least 300x150 pixels.'
         ]);
 
-        $post->update($request->only('body'));
+        // If body is changed, generate new slug and add it to redirects
+        if ($request->has('body')) {
+            $slug = Str::slug(Str::limit($request->get('body'), 30) . ' ' . Str::random(5));
+
+            DB::table('posts_redirects')->insert([
+                'old_slug' => $post->slug,
+                'new_slug' => $slug,
+                'created_at' => now()
+            ]);
+            $request->merge(['slug' => $slug]);
+        }
+
+        $userUpdate = ['body', 'slug'];
+        if ($this->requestHasOne($userUpdate)) {
+            $post->update($request->only($userUpdate));
+        }
 
         if ($request->hasFile('image')) {
             $response = PostImage::save($request->file('image'));
@@ -245,7 +266,7 @@ class PostController extends Controller
             ]);
         }
 
-        // Laravel file driver not support cache tags, use redis or memcached in real project
+        // TODO: Laravel file driver doesn't support cache tags, use redis or memcached in real project
         foreach (range(0, 1000) as $i) {
             Cache::forget('posts:user:' . $post->user->id . ':page:' . $i);
         }
@@ -268,6 +289,10 @@ class PostController extends Controller
         }
 
         $post->delete();
+
+        Notification::where('source_id', $post->id)
+            ->whereIn('source', ['message', 'post', 'comment', 'reply', 'sharing'])
+            ->delete();
 
         return response()->json(['message' => 'Post deleted']);
     }

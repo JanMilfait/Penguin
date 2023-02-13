@@ -41,6 +41,7 @@ class Kernel extends HttpKernel
         'api' => [
 //            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             'throttle:api',
+            'redirect.slug' => \App\Http\Middleware\RedirectSlug::class,
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
         ],
     ];

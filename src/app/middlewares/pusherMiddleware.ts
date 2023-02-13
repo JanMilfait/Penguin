@@ -1,4 +1,4 @@
-import {ChatApi, syncInfiniteScroll} from 'features/chat/chatSlice';
+import {activateChat, ChatApi, syncInfiniteScroll} from 'features/chat/chatSlice';
 import Pusher from 'pusher-js';
 import { Middleware } from 'redux';
 import * as CT from '../../features/chat/chatSlice.types';
@@ -6,6 +6,7 @@ import { appendDatesToMessages } from '../helpers/helpers';
 import {Notification} from '../../features/notification/notificationSlice.types';
 import {addMessageNotification, addOtherNotification, addPendingNotification} from 'features/notification/notificationSlice';
 import {FriendApi, resetInfiniteScroll, setActivityStatus} from 'features/friend/friendSlice';
+import {Chat} from '../../features/chat/chatSlice.types';
 
 type EventFriendStatus = {
   friend_id: number;
@@ -69,6 +70,8 @@ export const pusherMiddleware: Middleware = (store) => (next) => (action) => {
        * Add new notification to client's store
        */
       channel.bind('new-notification', (data: Notification) => {
+
+        // Pending notifications
         if (data.source === 'pending') {
           store.dispatch(addPendingNotification(data));
           const sourceData = JSON.parse(data.source_data);
@@ -79,11 +82,25 @@ export const pusherMiddleware: Middleware = (store) => (next) => (action) => {
             sourceData.state === 'accepted' && store.dispatch(resetInfiniteScroll());
             store.dispatch(FriendApi.util.invalidateTags(['SendPending']));
           }
-        } else if (data.source === 'message') {
+        }
+
+        // Chat notifications (new message)
+        if (data.source === 'message') {
           store.dispatch(addMessageNotification(data));
           store.dispatch(ChatApi.util.invalidateTags(['Chats']));
-        } else {
+        }
+
+        // Other notifications
+        if (data.source !== 'pending' && data.source !== 'message') {
           store.dispatch(addOtherNotification(data));
+
+          // someone left/added user to chat
+          if (data.source === 'chat') {
+            store.dispatch(ChatApi.util.invalidateTags(['Chats']));
+            if (store.getState().chat.activeChats.find((chat: Chat) => chat.id === data.source_id)) {
+              store.dispatch(activateChat({chatId: data.source_id}));
+            }
+          }
         }
       });
     });

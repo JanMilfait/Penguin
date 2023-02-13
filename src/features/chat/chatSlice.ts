@@ -29,13 +29,15 @@ export const ChatApi = apiSlice.injectEndpoints({
       transformResponse: (response: T.ChatResult) => {
         response.scrollToBottom = 1;
         return response;
-      }
+      },
+      providesTags: (result, error, arg): any => [{type: 'Chats', id: arg.id}]
     }),
     deleteChat: builder.mutation<T.DeleteChatResult, T.DeleteChatArg>({
       query: ({id}) => ({
         url: '/api/chat/' + id,
         method: 'DELETE'
-      })
+      }),
+      invalidatesTags: (result, error, arg): any => [{type: 'Chats', id: arg.id}]
     }),
     getMessages: builder.query<T.MessagesResult, T.MessagesArg>({
       query: ({id, page, limit}) => '/api/chat/' + id + '/messages?page=' + page + '&limit=' + limit,
@@ -89,7 +91,7 @@ export const ChatApi = apiSlice.injectEndpoints({
         method: 'POST',
         body: {user_id: userId}
       }),
-      invalidatesTags: (result, error, arg): any => [{type: 'Chats', id: arg.id}] // TODO: check
+      invalidatesTags: (result, error, arg): any => [{type: 'Chats', id: arg.id}]
     }),
     removeParticipant: builder.mutation<T.RemoveParticipantResult, T.RemoveParticipantArg>({
       query: ({id, userId}) => ({
@@ -188,22 +190,25 @@ export const ChatSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(activateChat.fulfilled, (state, action: PayloadAction<Chat>) => {
+        const isActive = state.activeChats.find(chat => chat.id === action.payload.id);
+        !isActive
+          ? state.activeChats.push(action.payload)
+          : state.activeChats = state.activeChats.map(chat => chat.id === action.payload.id ? action.payload : chat);
+
+        const isOpened = state.openedChats.find(id => id === action.payload.id);
+        !isOpened && state.openedChats.push(action.payload.id);
+
         // If 6 or more chats are opened, remove last activated
         if (state.activeChats.length >= 6) {
           state.activeChats = state.activeChats.slice(1);
         }
-        const isActive = state.activeChats.find(chat => chat.id === action.payload.id);
-        !isActive && state.activeChats.push(action.payload);
-
-        const isOpened = state.openedChats.find(id => id === action.payload.id);
-        !isOpened && state.openedChats.push(action.payload.id);
       });
   }
 });
 
 export const {
   useGetChatsQuery,
-  useSendMessageMutation
+  useSendMessageMutation,
 } = ChatApi;
 
 export const {

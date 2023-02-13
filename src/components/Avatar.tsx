@@ -16,15 +16,15 @@ const Avatar = ({id, avatar, avatar_name, avatar_url, size, onClick, className}:
 
   if (avatar) {
     return (
-      <Image className={className ? 'avatar ' + className : 'avatar'} src={avatar} alt={'avatar_' + id} width={size} height={size} onClick={onClick} priority={size > 150} />
+      <Image className={className ? 'avatar ' + className : 'avatar'} src={avatar} alt={'avatar_' + id} width={size} height={size} onClick={onClick} />
     );
   }
 
   return (
     <>
       {avatar_name
-        ? <Image className={className ? 'avatar ' + className : 'avatar'} src={avatar_url + (size > 50 ? '200_' : '50_') + avatar_name} alt={'avatar_' + id} width={size} height={size} onClick={onClick} priority={size > 150} />
-        : <Image className={className ? 'avatar ' + className : 'avatar'} src={'/images/avatars/default.png'} alt={'avatar_default'} width={size} height={size} onClick={onClick} priority={size > 150} />}
+        ? <Image className={className ? 'avatar ' + className : 'avatar'} src={avatar_url + (size > 50 ? '200_' : '50_') + avatar_name} alt={'avatar_' + id} width={size} height={size} onClick={onClick} />
+        : <Image className={className ? 'avatar ' + className : 'avatar'} src={'/images/avatars/default.png'} alt={'avatar_default'} width={size} height={size} onClick={onClick} />}
     </>
   );
 };

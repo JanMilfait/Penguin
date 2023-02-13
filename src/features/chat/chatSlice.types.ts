@@ -12,6 +12,7 @@ export type Chat = {
 
 export type Friend = {
   id: User['id'];
+  slug: User['slug'];
   name: User['name'];
   avatar_name: User['avatar_name'];
   avatar_url: User['avatar_url'];

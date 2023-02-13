@@ -36,7 +36,7 @@ class FriendController extends Controller
 
         $friends = Friend::join('users', 'friends.user_b', '=', 'users.id')
             ->where('friends.user_a', $user->id)
-            ->selectRaw('users.id as id, users.name, users.avatar_name, users.avatar_url' . ($isSelf ? ', users.is_active' : ''))
+            ->selectRaw('users.id as id, users.slug, users.name, users.avatar_name, users.avatar_url' . ($isSelf ? ', users.is_active' : ''))
             ->orderBy('users.is_active', 'desc')
             ->orderBy('users.name')
             ->limit($limit)

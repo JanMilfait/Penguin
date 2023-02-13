@@ -1,6 +1,6 @@
 import type { NextPage } from 'next';
 import {wrapper} from '../app/store';
-import {authenticateUnprotected, init} from '../app/ssr/initialFunctions';
+import {authenticateUnprotected, init} from '../app/ssr/functions';
 import s from '../styles/6_components/SignForm.module.scss';
 import Logo from '../components/Logo';
 import RegisterForm from 'features/auth/RegisterForm';

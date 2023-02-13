@@ -29,7 +29,7 @@ export const PostApi = apiSlice.injectEndpoints({
           : ['Post']
     }),
     getPost: builder.query<T.Post, T.PostArg>({
-      query: ({id}) => '/api/post/' + id,
+      query: ({slug}) => '/api/post/' + slug,
       providesTags: (result): any =>
         result
           ? [{type: 'Post', id: result.id}, 'Post']
@@ -153,7 +153,8 @@ export const PostSlice = createSlice({
       media: 'all'
     },
     post: {
-      id: null
+      id: null,
+      slug: null
     },
     hiddenPosts: {},
     editedPosts: {},

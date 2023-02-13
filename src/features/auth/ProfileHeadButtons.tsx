@@ -13,16 +13,16 @@ import {useAddFriendMutation, useDeleteFriendMutation, useGetFriendsIdsQuery, us
 const ProfileHeadButtons = () => {
   const dispatch = useDispatch<AppDispatch>();
   const id = useSelector((state: AppState) => state.auth.data?.id);
-  const userId = useSelector((state: AppState) => state.auth.profile.id);
+  const slug = useSelector((state: AppState) => state.auth.profile.slug);
   const editId = useSelector((state: AppState) => state.auth.profile.edit);
   const url = useSelector((state: AppState) => state.root.routerPath);
 
   const isAuth = typeof id === 'number';
-  const isInfo = url === '/profile/' + userId + '/info';
+  const isInfo = url === '/profile/' + slug + '/info';
   const isEditing = editId === id;
 
   const [isFriendHover, setIsFriendHover] = useState(false);
-  const { data: user, isSuccess, isLoading } = useGetUserQuery({id: userId!}, {skip: typeof userId !== 'number'});
+  const { data: user, isSuccess, isLoading } = useGetUserQuery({slug: slug!}, {skip: typeof slug !== 'string'});
   const { data: friends, isSuccess: isSuccessF } = useGetFriendsIdsQuery({id: id!}, {skip: !isAuth});
   const { data: friendsPending } = useGetSendPendingsQuery(undefined, {skip: !isAuth});
   const [addFriend] = useAddFriendMutation();
@@ -31,9 +31,9 @@ const ProfileHeadButtons = () => {
   if (isLoading || !isSuccess) return null;
 
   return (
-    <div className="row justify-content-start justify-content-md-end">
+    <div className="row justify-content-start justify-content-md-end" style={{minHeight: '38px'}}>
       <div className="col-auto d-flex flex-wrap" style={{marginRight: '-0.5rem'}}>
-        {isAuth && id !== userId && (isSuccessF && friends?.ids.includes(user.id)
+        {isAuth && id !== user.id && (isSuccessF && friends?.ids.includes(user.id)
           ? ( // isFriend
             <>
               <div
@@ -54,15 +54,15 @@ const ProfileHeadButtons = () => {
               : <button className="button--small mt-1 mr-2" onClick={()=>addFriend({id: user.id})}><span><PersonPlusFill /></span>Add Friend</button>
           )
         )}
-        {isInfo && <Link href={'/profile/' + userId}><button className="button--small mt-1 mr-2">Show Posts</button></Link>}
-        {isAuth && id === userId && isInfo &&
+        {isInfo && <Link href={'/profile/' + user.slug}><button className="button--small mt-1 mr-2">Show Posts</button></Link>}
+        {isAuth && id === user.id && isInfo &&
           (isEditing
             ? <button className="button--small mt-1 mr-2" onClick={() => dispatch(setProfile({edit: null}))}><span><EyeFill /></span>Preview</button>
-            : <button className="button--small mt-1 mr-2" onClick={() => dispatch(setProfile({edit: userId}))}><span><PencilFill /></span>Edit Profile</button>
+            : <button className="button--small mt-1 mr-2" onClick={() => dispatch(setProfile({edit: user.id}))}><span><PencilFill /></span>Edit Profile</button>
           )
         }
-        {isAuth && id === userId && !isInfo &&
-            <LinkCallback href={'/profile/' + userId + '/info'} onClick={() => dispatchSSR('auth/setProfile', {edit: userId})}>
+        {isAuth && id === user.id && !isInfo &&
+            <LinkCallback href={'/profile/' + user.slug + '/info'} onClick={() => dispatchSSR('auth/setProfile', {edit: user.id})}>
               <button className="button--small mt-1 mr-2"><span><PencilFill /></span>Edit Profile</button>
             </LinkCallback>
         }

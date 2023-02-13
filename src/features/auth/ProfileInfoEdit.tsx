@@ -70,7 +70,7 @@ const ProfileInfoEdit = () => {
           percent !== 100 &&
             <h3 className="f--x-small text-center text-danger mb-4">Your profile is missing
               {missing.map((item, index) =>
-                <span key={index}> {missingText[item]}{index !== missing.length - 1 ? (index === missing.length - 2 ? ' and ' : ', ' ) : '.'}</span>
+                <span key={index}> {missingText[item]}{index !== missing.length - 1 ? ', ' : '.'}</span>
               )}
             </h3>
         ) : (

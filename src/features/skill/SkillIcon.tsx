@@ -9,8 +9,6 @@ const SkillIcon = ({name, icon_url, description, tag, created_by}: Skill) => {
 
   return (
     <HoverModal
-      attachToCursor={true}
-      autoOrientation={true}
       hover={
         <div className={s.profile__skillIcon}>
           {icon_url
@@ -43,6 +41,8 @@ const SkillIcon = ({name, icon_url, description, tag, created_by}: Skill) => {
           <p className="position-absolute bottom-0 end-0 f--xx-small text-truncate mb-0 p-2">by {created_by.name}</p>
         </div>
       }
+      attachToCursor
+      autoOrientation
     />
   );
 };

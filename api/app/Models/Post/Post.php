@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property int $id
  * @property int $user_id
+ * @property string $slug
  * @property string|null $body
  * @property float $interaction_score
  * @property Carbon|null $created_at
@@ -46,6 +47,7 @@ class Post extends Model
 
 	protected $fillable = [
 		'user_id',
+        'slug',
 		'body',
         'interaction_score'
 	];
