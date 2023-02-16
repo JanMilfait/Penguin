@@ -76,20 +76,13 @@ const UserPostsResults = () => {
           </div>
         </div>
       }
-      {isDone && (
-        combinedData.length === 0 ?
-          <div className="row">
-            <div className="col-12 d-flex justify-content-center mt-5 mb-5">
-              <p className="f--medium mb-0">No posts yet</p>
-            </div>
+      {isDone && combinedData.length !== 0 &&
+        <div className="row">
+          <div className="col-12 d-flex justify-content-center mb-5">
+            <p className="f--medium mb-0">No more posts</p>
           </div>
-          :
-          <div className="row">
-            <div className="col-12 d-flex justify-content-center mb-5">
-              <p className="f--medium mb-0">No more posts</p>
-            </div>
-          </div>
-      )}
+        </div>
+      }
     </div>
   );
 };

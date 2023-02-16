@@ -23,9 +23,11 @@ export const PostApi = apiSlice.injectEndpoints({
           dispatch(syncInfiniteScroll());
         });
       },
-      providesTags: (result): any =>
+      providesTags: (result, error, arg): any =>
         result
-          ? [...result.items.map(({id}) => ({type: 'Post', id})), 'Post']
+          ? arg.category === 'shared'
+            ? [...result.items.map(({id}) => ({type: 'Post', id})), {type: 'Post', id: 'SharedPost'}, 'Post']
+            : [...result.items.map(({id}) => ({type: 'Post', id})), 'Post']
           : ['Post']
     }),
     getPost: builder.query<T.Post, T.PostArg>({
@@ -110,7 +112,7 @@ export const PostApi = apiSlice.injectEndpoints({
         url: '/api/post/' + id + '/share',
         method: 'POST'
       }),
-      invalidatesTags: (result, error, arg) => [{type: 'Post', id: arg.id}]
+      invalidatesTags: (result, error, arg) => [{type: 'Post', id: arg.id}, {type: 'Post', id: 'SharedPost'}]
     }),
     unsharePost: builder.mutation<MessageResponse, T.UnsharePostArg>({
       query: ({id}) => ({

@@ -12,7 +12,7 @@ const ToggleModal = ({toggle, modal, clickClose, disabled, hidden = true}: Toggl
   return (
     <div className="position-relative">
       <div ref={containerRef} className={isOpenModal ? 'toggleModal-open' : ''}>
-        <div ref={toggleRef}>{toggle}</div>
+        <div ref={toggleRef} style={{userSelect: 'none'}}>{toggle}</div>
         {hidden
           ? <div className={isOpenModal ? '' : 'd-none'}>{modal}</div>
           : isOpenModal && <div>{modal}</div>

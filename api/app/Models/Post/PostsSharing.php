@@ -4,6 +4,7 @@ namespace App\Models\Post;
 
 use App\Models\User\User;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -21,6 +22,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class PostsSharing extends Model
 {
+    use HasFactory;
+
 	protected $table = 'posts_sharing';
 
     const UPDATED_AT = null;

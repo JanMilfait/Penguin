@@ -3,6 +3,7 @@
 namespace App\Models\Post;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -21,6 +22,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class PostsVideo extends Model
 {
+    use HasFactory;
+
 	protected $table = 'posts_videos';
 
     const UPDATED_AT = null;

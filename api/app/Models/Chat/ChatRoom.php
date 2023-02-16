@@ -5,6 +5,7 @@ namespace App\Models\Chat;
 use App\Models\User\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -25,6 +26,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class ChatRoom extends Model
 {
+    use HasFactory;
+
 	protected $table = 'chat_rooms';
 
     protected $hidden = [

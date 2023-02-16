@@ -5,6 +5,7 @@ namespace App\Models\Post;
 use App\Models\User\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -29,7 +30,9 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Post extends Model
 {
-    protected array $scores = [];
+    use HasFactory;
+
+    protected array $scores;
 
     public function __construct(array $attributes = [])
     {

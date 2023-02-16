@@ -4,6 +4,7 @@ namespace App\Models\Post;
 
 use App\Models\User\User;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -22,6 +23,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class PostsCommentsRepliesReaction extends Model
 {
+    use HasFactory;
+
 	protected $table = 'posts_comments_replies_reactions';
 
     const UPDATED_AT = null;

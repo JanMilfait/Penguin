@@ -1,12 +1,8 @@
 import { User } from 'features/auth/authSlice.types';
+import { Post } from '../post/postSlice.types';
 
 export type SearchResult = {
-  items: {
-    id: number;
-    user: User;
-    slug: string;
-    body: string;
-  } | User[];
+  items: Post[] | User[];
   page: number;
   last_page: number;
   limit: number;

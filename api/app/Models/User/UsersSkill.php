@@ -2,6 +2,7 @@
 
 namespace App\Models\User;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -18,6 +19,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class UsersSkill extends Model
 {
+    use HasFactory;
+
 	protected $table = 'users_skills';
 
     public $timestamps = false;

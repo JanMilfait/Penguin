@@ -35,7 +35,7 @@ const Banner = () => {
       </style>
       <div className="banner">
         <a href={imgRedirection} target="_blank" rel="noopener noreferrer">
-          <Image src={imgSrc} alt={'banner'} width={261} height={435} />
+          <Image src={imgSrc} alt={'banner'} width={261} height={435} quality={100} />
         </a>
       </div>
     </div>

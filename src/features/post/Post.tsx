@@ -65,7 +65,7 @@ const Post = ({id, slug, body, user, updated_at, image, video, reactions, sharin
       <div className={s.posts__post}>
         <PostHead {...{id, body, user, image, video, updated_at, sharings}} />
         <PostBody {...{id, slug, body}} />
-        {image?.name && <div className="mb-3"><Link className="text-decoration-none" href={'/post/' + slug}><PostImage {...image} small={true} className="aspect-ratio w-100" /></Link></div>}
+        {image?.name && <div className="mb-3"><Link className="text-decoration-none" href={'/post/' + slug}><PostImage {...image} small={true} className="aspect-ratio w-100" style={{maxHeight: '450px', objectFit: 'cover'}} /></Link></div>}
         {video?.name && <div className="mb-3"><PostVideo {...video} className="aspect-ratio aspect-ratio-16x9 bg-black" /></div>}
         <div className="row pt-2 pb-2">
           <div className="col-auto">

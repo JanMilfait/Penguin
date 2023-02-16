@@ -10,6 +10,8 @@ use Illuminate\Support\Str;
  */
 class UserFactory extends Factory
 {
+    private $visibility = ['private', 'friends', 'public'];
+
     /**
      * Define the model's default state.
      *
@@ -17,32 +19,51 @@ class UserFactory extends Factory
      */
     public function definition()
     {
-        $name = fake()->name();
-        $visibility = ['private', 'friends', 'public'];
+        $name = $this->faker->unique()->name();
 
         return [
             'slug' => Str::slug($name . ' ' . Str::random(5)),
             'name' => $name,
-            'email' => fake()->unique()->safeEmail(),
+            'email' => $this->faker->unique()->safeEmail(),
             'email_verified_at' => now(),
-            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
+            'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi',
             'remember_token' => Str::random(10),
             'is_active' => 0,
             'avatar_name' => $this->faker->unique()->numberBetween(0, 600) . '.jpg',
             'avatar_url' => env('APP_URL') . '/storage/avatars/images/',
-            'profile_visibility' => $visibility[array_rand($visibility)],
+            'profile_visibility' => $this->visibility[array_rand($this->visibility)],
         ];
     }
 
-    /**
-     * Indicate that the model's email address should be unverified.
-     *
-     * @return static
-     */
+
     public function unverified()
     {
         return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
+        ]);
+    }
+
+
+    public function active()
+    {
+        return $this->state(fn (array $attributes) => [
+            'is_active' => 1,
+        ]);
+    }
+
+
+    public function withoutAvatar()
+    {
+        return $this->state(fn (array $attributes) => [
+            'avatar_name' => null,
+            'avatar_url' => null,
+        ]);
+    }
+
+    public function profileVisibility($visibility)
+    {
+        return $this->state(fn (array $attributes) => [
+            'profile_visibility' => $this->visibility[$visibility],
         ]);
     }
 }

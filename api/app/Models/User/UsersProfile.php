@@ -2,6 +2,7 @@
 
 namespace App\Models\User;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -21,6 +22,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class UsersProfile extends Model
 {
+    use HasFactory;
+
 	protected $table = 'users_profiles';
 
     public $timestamps = false;

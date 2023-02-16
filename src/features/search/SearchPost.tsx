@@ -1,19 +1,19 @@
 import * as React from 'react';
 import s from '../../styles/6_components/SearchBar.module.scss';
-import { Post } from './searchSlice.types';
 import { PencilSquare } from 'react-bootstrap-icons';
 import Avatar from '../../components/Avatar';
 import {setSearch} from './searchSlice';
 import { useRouter } from 'next/router';
 import { AppDispatch } from 'app/store';
 import { useDispatch } from 'react-redux';
+import { Post } from 'features/post/postSlice.types';
 
-export const SearchUser = ({post}: {post: Post}) => {
+export const SearchPost = ({post}: {post: Post}) => {
   const dispatch = useDispatch<AppDispatch>();
   const router = useRouter();
 
   const handleClick = () => {
-    router.push(`/posts/${post.id}`);
+    router.push('/post/' + post.slug);
     dispatch(setSearch(''));
   };
 
@@ -49,4 +49,4 @@ export const SearchUser = ({post}: {post: Post}) => {
   );
 };
 
-export default SearchUser;
+export default SearchPost;

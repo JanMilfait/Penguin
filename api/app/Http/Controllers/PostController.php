@@ -36,7 +36,7 @@ class PostController extends Controller
         $posts = Post::whereIn('user_id', $request->user()->friends()->pluck('user_b')->push($request->user()->id));
 
         if ($category === 'shared') {
-            $posts->has('sharings');
+            $posts->whereIn('id', DB::table('posts_sharing')->where('user_id', $request->user()->id)->pluck('post_id'));
 
         } elseif ($category === 'trending') {
             $posts->orderBy('interaction_score', 'desc')
