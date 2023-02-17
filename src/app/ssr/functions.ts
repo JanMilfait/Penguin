@@ -7,10 +7,9 @@ import {expandComments, PostApi, setHiddenPosts, setPost} from '../../features/p
 import { FriendApi } from 'features/friend/friendSlice';
 import {CommentApi} from '../../features/comment/commentSlice';
 import {UserData} from '../../features/auth/authSlice.types';
-import { SerializedError } from '@reduxjs/toolkit';
 
 interface Functions {
-  (store: AppStore, context: GetServerSidePropsContext, redirect?: string|boolean): unknown;
+  (store: AppStore, context: GetServerSidePropsContext, redirect?: string|boolean): Promise<any>;
 }
 
 // ***********************
@@ -51,7 +50,7 @@ export const authenticate: Functions = async (store, {req, res}) => {
       res.writeHead(302, { Location: '/login' });
       res.end();
     }
-    return;
+    return {kill: true};
   }
 
   setCookie('token', token, {
@@ -118,7 +117,7 @@ export const authenticateUnprotected: Functions = async (store, {req, res}, redi
         res.writeHead(302, { Location: '/login' });
         res.end();
       }
-      return;
+      return {kill: true};
     }
 
     if (!redirect) {
@@ -128,6 +127,7 @@ export const authenticateUnprotected: Functions = async (store, {req, res}, redi
         res.writeHead(302, {Location: redirect as string});
         res.end();
       }
+      return {kill: true};
     }
   }
 };

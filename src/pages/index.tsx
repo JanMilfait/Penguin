@@ -29,7 +29,8 @@ export default Home;
 
 export const getServerSideProps = wrapper.getServerSideProps(store => async (ctx) => {
   await init(store, ctx);
-  await authenticate(store, ctx);
+  const response = await authenticate(store, ctx);
+  if (response?.kill) return {props: {}};
 
   await Promise.all([
     getFriends(store),

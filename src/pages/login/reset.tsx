@@ -68,7 +68,10 @@ export default Reset;
 
 export const getServerSideProps = wrapper.getServerSideProps(store => async (ctx) => {
   await init(store, ctx);
-  await authenticateUnprotected(store, ctx);
+  const response = await authenticateUnprotected(store, ctx);
+  if (response?.kill) return {props: {}};
+
+  // ...
 
   return {props: {}};
 });
