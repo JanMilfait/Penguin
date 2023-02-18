@@ -17,6 +17,6 @@ function MobileFriendsAndChats() {
       </div>
     </div>
   );
-};
+}
 
 export default MobileFriendsAndChats;

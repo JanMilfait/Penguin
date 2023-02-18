@@ -23,7 +23,7 @@ class SkillIcon
         }
 
         try {
-            $icon80 = Image::make($icon)->fit(80, 80);
+            $icon80 = Image::make($icon)->fit(160, 160);
             $icon80->save($iconsPath . $iconName, 90, 'jpg');
 
             return [

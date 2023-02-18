@@ -40,7 +40,7 @@ const ModalUser = ({id: reactionId, reaction, type, user, created_at}: ModalUser
           </>
         }
       </div>
-      {friendsIds?.ids.includes(user.id) && user.id !== id
+      {!friendsIds?.ids.includes(user.id) && user.id !== id
         ? friendsPending?.find((pending) => pending.pending.id === user.id && pending.state === 'waiting')
           ?  <div className="col-auto d-flex align-items-center"><button className="button button--small" disabled><span><SendCheckFill /></span>Request sent</button></div>
           : <div className="col-auto d-flex align-items-center"><button className="button button--small" onClick={()=>addFriend({id: user.id})}>Add Friend</button></div>

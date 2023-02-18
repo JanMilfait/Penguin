@@ -57,7 +57,7 @@ const ProfileInfoShowcase = () => {
           </div>
         </li>
       }
-      {hasSkills || hasDesc &&
+      {(hasSkills || hasDesc) &&
         <>
           <li className="mt-4">
             <div className="row">

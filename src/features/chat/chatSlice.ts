@@ -135,6 +135,7 @@ export const ChatSlice = createSlice({
     openedEmojiPicker: [],
     openedGiphyPicker: [],
     expandChats: false,
+    virtualKeyboardHeight: 0,
     animation: {
       time: 200,
       closeTimeout: 180 // unmount chat just before animation ends to prevent flickering
@@ -168,6 +169,9 @@ export const ChatSlice = createSlice({
       isOpened
         ? state.openedGiphyPicker = state.openedGiphyPicker.filter(id => id !== action.payload)
         : state.openedGiphyPicker.push(action.payload);
+    },
+    setVirtualKeyboard: (state, action) => {
+      state.virtualKeyboardHeight = action.payload;
     },
     minimizeChat: (state, action: PayloadAction<number>) => {
       state.openedChats = state.openedChats.filter((id) => id !== action.payload);
@@ -208,7 +212,7 @@ export const ChatSlice = createSlice({
 
 export const {
   useGetChatsQuery,
-  useSendMessageMutation,
+  useSendMessageMutation
 } = ChatApi;
 
 export const {
@@ -216,6 +220,7 @@ export const {
   toggleChat,
   toggleEmojiPicker,
   toggleGiphyPicker,
+  setVirtualKeyboard,
   minimizeChat,
   deactivateChat,
   deactivateChatAll,

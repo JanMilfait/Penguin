@@ -30,7 +30,7 @@
   &__window {
     position: relative;
     width: 100%;
-    height: calc(var(--visual100vh) - 110px);
+    height: calc(var(--visual100vh) - 109px);
     animation: scale-up 200ms ease-in-out;
     border-radius: 10px;
     background: $secondary;

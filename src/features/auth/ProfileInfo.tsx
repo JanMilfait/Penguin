@@ -22,7 +22,7 @@ const ProfileInfo = () => {
     return (
       <div className="row mt-5">
         <p className="text-center">
-          User has set their profile to private, <Link href={'/register'}>register</Link> and send them friend request.
+          User has set their profile to private, <Link href={'/login'}>Log In</Link> and send them friend request.
         </p>
       </div>
     );

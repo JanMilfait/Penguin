@@ -66,6 +66,15 @@ const ProfileHeadButtons = () => {
               <button className="button--small mt-1 mr-2"><span><PencilFill /></span>Edit Profile</button>
             </LinkCallback>
         }
+
+        {/* Is not auth */}
+
+        {!isAuth &&
+          <>
+            <Link href={'/login'}><button className="button--small mt-1 mr-2"><span><ChatFill /></span>Open Chat</button></Link>
+            <Link href={'/login'}><button className="button--small mt-1 mr-2"><span><PersonPlusFill /></span>Add Friend</button></Link>
+          </>
+        }
       </div>
     </div>
   );

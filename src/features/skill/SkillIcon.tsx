@@ -12,7 +12,7 @@ const SkillIcon = ({name, icon_url, description, tag, created_by}: Skill) => {
       hover={
         <div className={s.profile__skillIcon}>
           {icon_url
-            ? <Image src={icon_url} alt={name} width={80} height={80} />
+            ? <Image src={icon_url} alt={name} width={80} height={80} quality={100} />
             : <div className={s.profile__skillNoImg}><h3 className="f--x-small fw-bold">{name}</h3></div>
           }
         </div>
@@ -24,7 +24,7 @@ const SkillIcon = ({name, icon_url, description, tag, created_by}: Skill) => {
             <div className="col-auto">
               <div className={s.profile__skillIcon}>
                 {icon_url
-                  ? <Image src={icon_url} alt={name} width={80} height={80} />
+                  ? <Image src={icon_url} alt={name} width={80} height={80} quality={100} />
                   : <div className={s.profile__skillNoImg}><h3 className="f--x-small fw-bold">{name}</h3></div>
                 }
               </div>

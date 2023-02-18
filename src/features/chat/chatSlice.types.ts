@@ -60,6 +60,7 @@ export type ChatState = {
   openedEmojiPicker: number[];
   openedGiphyPicker: number[];
   expandChats: boolean;
+  virtualKeyboardHeight: number;
   animation: {
     time: number,
     closeTimeout: number
