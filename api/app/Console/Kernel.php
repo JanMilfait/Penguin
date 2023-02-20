@@ -15,7 +15,10 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+        // runs at 05:00 every day in production
+
+        $schedule->command('pusher:clear')->storeOutput();
+        $schedule->command('delete:old-notifications')->storeOutput();
     }
 
     /**

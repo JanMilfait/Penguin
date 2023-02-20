@@ -2,7 +2,7 @@ import {activateChat, ChatApi, syncInfiniteScroll} from 'features/chat/chatSlice
 import Pusher from 'pusher-js';
 import { Middleware } from 'redux';
 import * as CT from '../../features/chat/chatSlice.types';
-import { appendDatesToMessages } from '../helpers/helpers';
+import {appendDatesToMessages, isSSR} from '../helpers/helpers';
 import {Notification} from '../../features/notification/notificationSlice.types';
 import {addMessageNotification, addOtherNotification, addPendingNotification} from 'features/notification/notificationSlice';
 import {FriendApi, resetInfiniteScroll, setActivityStatus} from 'features/friend/friendSlice';
@@ -20,6 +20,8 @@ type EventNewMessage = {
 }
 
 export const pusherMiddleware: Middleware = (store) => (next) => (action) => {
+  if (isSSR) return next(action);
+
   const pusher = Pusher.instances[0];
   const auth = store.getState().auth;
 
@@ -141,6 +143,10 @@ export const pusherMiddleware: Middleware = (store) => (next) => (action) => {
 
   if (action.type === 'chat/deactivateChat') {
     pusher.unsubscribe('presence-chat-room.' + action.payload);
+  }
+
+  if (action.type === 'auth/logout') {
+    pusher.unsubscribe('private-user.' + action.payload);
   }
 
   return next(action);

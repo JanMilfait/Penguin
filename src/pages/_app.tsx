@@ -4,25 +4,32 @@ import { wrapper} from '../app/store';
 import { Provider } from 'react-redux';
 import Head from 'next/head';
 import { useEffect } from 'react';
-import {setAppLoaded, setIsMobile, setWindow} from '../features/root/rootSlice';
+import {setAppLoaded, setIsMobile, setRouterPath, setWindow} from '../features/root/rootSlice';
 import debounce from 'lodash.debounce';
 import ComponentShared from 'features/root/ComponentShared';
 import { isSSR } from '../app/helpers/helpers';
 import Chats from 'features/chat/Chats';
 import Nav from 'components/Nav';
+import { useRouter } from 'next/router';
 
 
 function MyApp({ Component, ...rest }: AppProps) {
   const {store, props} = wrapper.useWrappedStore(rest);
+  const router = useRouter();
 
   /**
-   * 1. Dispatch AppLoaded
-   * 2. Calculate visual viewport for mobile devices
-   * 3. Detect if the user is on a mobile device (first dispatch - ssr init)
+   * First App load
    */
   useEffect(() => {
     store.dispatch(setAppLoaded());
+  }, []);
 
+
+  /**
+   * Calculate visual viewport for mobile devices
+   * Detect if the user is on a mobile device (first dispatch - ssr init)
+   */
+  useEffect(() => {
     const calculateVisualViewport = () => {
       document.documentElement.style.setProperty('--visual100vh', `${visualViewport?.height}px`);
     };
@@ -44,6 +51,20 @@ function MyApp({ Component, ...rest }: AppProps) {
     return () => {
       !isSSR && visualViewport?.removeEventListener('resize', calculateVisualViewport);
       window.removeEventListener('resize', handleResize);
+    };
+  }, []);
+
+
+  /**
+   * We have to dispatch the router path in case of client transitions (first dispatch - ssr init)
+   */
+  useEffect(() => {
+    const handleRouteChange = (url: string) => {
+      store.dispatch(setRouterPath(url));
+    };
+    router.events.on('routeChangeComplete', handleRouteChange);
+    return () => {
+      router.events.off('routeChangeComplete', handleRouteChange);
     };
   }, []);
 

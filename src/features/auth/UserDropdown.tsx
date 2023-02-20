@@ -3,19 +3,25 @@ import s from 'styles/6_components/Dropdown.module.scss';
 import { setCookie } from 'cookies-next';
 import { useLogoutMutation } from './authSlice';
 import React from 'react';
-import { AppState } from 'app/store';
-import { useSelector } from 'react-redux';
+import {AppDispatch, AppState } from 'app/store';
+import {useDispatch, useSelector } from 'react-redux';
 import LinkCallback from 'components/LinkCallback';
 import {dispatchSSR} from '../../app/helpers/helpers';
 
 const UserDropdown = () => {
-  const [logout] = useLogoutMutation();
+  const dispatch = useDispatch<AppDispatch>();
   const user = useSelector((state: AppState) => state.auth.data);
+  const [logout] = useLogoutMutation();
 
   const handleLogout = async () => {
-    await logout();
-    setCookie('httpTokenDelete', 'true');
-    window.location.href = '/login';
+    Promise.allSettled([
+      logout(),
+      user?.id && dispatch({type: 'auth/logout', payload: user.id})
+    ])
+      .then(() => {
+        setCookie('httpTokenDelete', 'true');
+        window.location.href = '/login';
+      });
   };
 
   return (

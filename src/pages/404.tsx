@@ -10,8 +10,8 @@ const Custom404: NextPage = () => {
             display: none;
           }
           .container {
-            height: calc(100vh - 3em);
-            }
+            height: calc(100dvh - 3em);
+           }
         `}
       </style>
       <div className="d-flex align-items-center justify-content-center flex-column h-100">

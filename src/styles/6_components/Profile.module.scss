@@ -139,16 +139,22 @@
   &__info {
     display: flex;
     flex-direction: column;
-    padding: 22px;
+    padding: 16px 22px;
     border-radius: 10px;
     background: $secondary;
+
+    &Border {
+      width: 90%;
+      margin: 0 auto;
+      border-bottom: 3px solid $back;
+    }
   }
 
   &__description {
     display: flex;
     flex-direction: column;
     min-height: 100%;
-    padding: 22px;
+    padding: 16px 22px;
     border-radius: 10px;
     background: $secondary;
     word-break: break-word;

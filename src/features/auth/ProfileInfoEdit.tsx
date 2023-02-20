@@ -82,34 +82,34 @@ const ProfileInfoEdit = () => {
       <div className="row mt-4 flex-wrap-reverse">
         <div className="col-12 col-xl-4">
           <ul className={s.profile__info}>
-            <li className="mb-2 mt-2">
+            <li className="my-2">
               <div className="row align-items-center flex-nowrap">
                 <div className="col-4"><h3 className="f--small mb-0 fw-bold">E-mail:</h3></div>
                 <div className="col"><input className='f--small' type="text" name="email" defaultValue={user?.email ?? ''} readOnly/></div>
               </div>
             </li>
-            <li className="mb-2 mt-2">
+            <li className="my-2">
               <div className="row align-items-center flex-nowrap">
                 <div className="col-4"><h3 className="f--small mb-0 fw-bold">Phone:</h3></div>
                 <div className="col"><input className={'f--small' + (hasErrMessage(error, 'telephone') ? ' isInvalid' : '')} type="tel" name="telephone" defaultValue={profile?.telephone ?? ''} /></div>
               </div>
               {hasErrMessage(error, 'telephone') && <div className="row"><div className="col-4"></div><div className="col"><p className="isInvalidText">{error.data?.validationErrors?.telephone.join('\n')}</p></div></div>}
             </li>
-            <li className="mb-2 mt-2">
+            <li className="my-2">
               <div className="row align-items-center flex-nowrap">
                 <div className="col-4"><h3 className="f--small mb-0 fw-bold">Age:</h3></div>
                 <div className="col"><input className={'f--small' + (hasErrMessage(error, 'age') ? ' isInvalid' : '')} type="number" name="age" min="1" defaultValue={profile?.age ?? ''} /></div>
               </div>
               {hasErrMessage(error, 'age') && <div className="row"><div className="col-4"></div><div className="col"><p className="isInvalidText">{error.data?.validationErrors?.age.join('\n')}</p></div></div>}
             </li>
-            <li className="mb-2 mt-2">
+            <li className="my-2">
               <div className="row align-items-center flex-nowrap">
                 <div className="col-4"><h3 className="f--small mb-0 fw-bold">Address:</h3></div>
                 <div className="col"><input className={'f--small' + (hasErrMessage(error, 'address') ? ' isInvalid' : '')} type="text" name="address" defaultValue={profile?.address ?? ''} /></div>
               </div>
               {hasErrMessage(error, 'address') && <div className="row"><div className="col-4"></div><div className="col"><p className="isInvalidText">{error.data?.validationErrors?.address.join('\n')}</p></div></div>}
             </li>
-            <li className="mt-2 mb-2">
+            <li className="my-2">
               <div className="row align-items-center flex-nowrap">
                 <div className="col-4"><h3 className="f--small mb-0 fw-bold">Country:</h3></div>
                 <div className="col"><input className={'f--small' + (hasErrMessage(error, 'nationality') ? ' isInvalid' : '')} type="text" name="nationality" defaultValue={profile?.nationality ?? ''} /></div>

@@ -33,13 +33,14 @@ const ProfileInfo = () => {
       <div className="row mt-4 flex-wrap-reverse">
         <div className="col-12 col-xl-4">
           <ul className={s.profile__info}>
-            <li className="mb-2 mt-2">
+            <li className="my-3">
               <div className="row flex-nowrap">
                 <div className="col-4"><h3 className="f--small mb-0 fw-bold">E-mail:</h3></div>
                 <div className="col"><p className="f--small mb-0 text-break"><a href={'mailto:' + user.email}>{user.email ?? notSet}</a></p></div>
               </div>
             </li>
-            <li className="mb-2 mt-2">
+            <div className={s.profile__infoBorder}></div>
+            <li className="my-3">
               <div className="row flex-nowrap">
                 <div className="col-4"><h3 className="f--small mb-0 fw-bold">Phone:</h3></div>
                 <div className="col">
@@ -52,19 +53,22 @@ const ProfileInfo = () => {
                 </div>
               </div>
             </li>
-            <li className="mb-2 mt-2">
+            <div className={s.profile__infoBorder}></div>
+            <li className="my-3">
               <div className="row flex-nowrap">
                 <div className="col-4"><h3 className="f--small mb-0 fw-bold">Age:</h3></div>
                 <div className="col"><p className="f--small mb-0 text-break">{profile?.age ?? notSet}</p></div>
               </div>
             </li>
-            <li className="mb-2 mt-2">
+            <div className={s.profile__infoBorder}></div>
+            <li className="my-3">
               <div className="row flex-nowrap">
                 <div className="col-4"><h3 className="f--small mb-0 fw-bold">Address:</h3></div>
                 <div className="col"><p className="f--small mb-0 text-break">{profile?.address ?? notSet}</p></div>
               </div>
             </li>
-            <li className="mt-2 mb-2">
+            <div className={s.profile__infoBorder}></div>
+            <li className="my-3">
               <div className="row flex-nowrap">
                 <div className="col-4"><h3 className="f--small mb-0 fw-bold">Country:</h3></div>
                 <div className="col"><p className="f--small mb-0 text-break">{profile?.nationality ?? notSet}</p></div>
@@ -74,7 +78,7 @@ const ProfileInfo = () => {
         </div>
         <div className="col-12 col-xl-7 offset-0 offset-xl-1 mb-4 mb-xl-0">
           <div className={s.profile__description}>
-            <h3 className="f--medium fw-bold mt-2 mb-1">Description:</h3>
+            <h3 className="f--medium fw-bold mt-3 mb-1">Description:</h3>
             {profile?.description
               ? <div className="ql-container ql-snow"><div className="quill ql-editor"><div dangerouslySetInnerHTML={{__html: DOMPurify.sanitize(profile.description)}} /></div></div>
               : <div className="d-flex justify-content-center align-items-center h-100 flex-grow-1 mb-2"><p>{notSet}</p></div>
