@@ -35,6 +35,7 @@
     border-radius: 10px;
     background: $secondary;
     box-shadow: 0 0 5px 0 rgb(0 0 0 / 25%);
+    overscroll-behavior: contain;
 
     @keyframes scale-up {
       0% {

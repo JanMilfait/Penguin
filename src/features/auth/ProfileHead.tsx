@@ -12,6 +12,7 @@ import ImgUploadHover from 'components/ImgUploadHover';
 const ProfileHead = () => {
   const id = useSelector((state: AppState) => state.auth.data?.id);
   const slug = useSelector((state: AppState) => state.auth.profile.slug);
+  const isMobile = useSelector((state: AppState) => state.root.isMobile);
 
   const { data: user, isLoading, isSuccess } = useGetUserQuery({slug: slug!}, {skip: typeof slug !== 'string'});
   // TODO: next-redux-wrapper has problem with client transition and fix is in progress (v.9), so we need to pass 0 as id
@@ -41,15 +42,30 @@ const ProfileHead = () => {
           <div className={s.profile__avatarContent}>
             <div className="row">
               <div className="col-12">
-                <h2 className="fw-bold text-truncate mb-0">
-                  {user.name}
-                  {id === user.id
-                    ? <span className={s.profile__active + ' f--x-small'}>is online</span>
-                    : activityStatus === 1
-                      ? <span className={s.profile__active + ' f--x-small'}>is online</span>
-                      : <span className={s.profile__offline + ' f--x-small'}>is offline</span>
-                  }
-                </h2>
+                {!isMobile
+                  ? (
+                    <h2 className="fw-bold text-truncate mb-0">
+                      {user.name}
+                      {id === user.id
+                        ? <span className={s.profile__active + ' f--x-small'}>is online</span>
+                        : activityStatus === 1
+                          ? <span className={s.profile__active + ' f--x-small'}>is online</span>
+                          : <span className={s.profile__offline + ' f--x-small'}>is offline</span>
+                      }
+                    </h2>
+                  ) : (
+                    <>
+                      <h3 className="fw-bold text-truncate mb-0">{user.name}</h3>
+                      <h3 className="fw-bold mb-0">
+                        {id === user.id
+                          ? <span className={s.profile__active + ' f--small'} style={{paddingLeft: 0}}>is online</span>
+                          : activityStatus === 1
+                            ? <span className={s.profile__active + ' f--small'} style={{paddingLeft: 0}}>is online</span>
+                            : <span className={s.profile__offline + ' f--small'} style={{paddingLeft: 0}}>is offline</span>
+                        }
+                      </h3>
+                    </>
+                  )}
               </div>
             </div>
             <div className="row">

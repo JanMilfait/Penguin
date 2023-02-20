@@ -2,6 +2,9 @@
 
 .profile {
   &__head {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     height: 140px;
     margin-top: 30px;
     padding: 10px 22px;
@@ -9,6 +12,8 @@
     background: $secondary;
 
     @media (max-width: $md) {
+      height: auto;
+      min-height: 140px;
       padding: 10px;
     }
 
