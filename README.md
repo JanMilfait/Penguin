@@ -1,6 +1,8 @@
 # Penguin
 
-<img src="https://penguinsocial.co/images/logo.png" alt="Penguin Logo" width="200"/>
+<p align="center">
+  <img src="https://penguinsocial.co/images/logo.png" alt="Penguin Logo" width="200"/>
+</p>
 
 Penguin is a social app that helps you connect with friends and meet new people. With Penguin, you can:
 
