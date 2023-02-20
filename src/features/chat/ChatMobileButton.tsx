@@ -27,16 +27,14 @@ const ChatMobileButton = () => {
     if (isTyping) {
       container.style.bottom = '12px';
       chatWindow.style.height = 'calc(var(--visual100vh) - 24px)';
-      buttonRef.current.style.display = 'none';
-      document.body.style.overflow = 'hidden';
+      document.body.style.touchAction = 'none';
 
       const messages = chatWindow.querySelector('.' + ss.activeChats__messages) as HTMLElement;
       messages && messages.scrollTo(0, messages.scrollHeight + virtualKeyboard);
     } else {
       container.style.bottom = '95px';
       chatWindow.style.height = 'calc(var(--visual100vh) - 109px)';
-      buttonRef.current.style.display = 'flex';
-      document.body.style.overflow = 'auto';
+      document.body.style.touchAction = 'auto';
     }
   }, [isTyping, virtualKeyboard]);
 
