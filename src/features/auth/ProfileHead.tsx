@@ -43,8 +43,12 @@ const ProfileHead = () => {
               <div className="col-12">
                 <h2 className="fw-bold text-truncate mb-0">
                   {user.name}
-                  {activityStatus === 1 && <span className={s.profile__active + ' f--x-small'}>is online</span>}
-                  {activityStatus === 0 && <span className={s.profile__offline + ' f--x-small'}>is offline</span>}
+                  {id === user.id
+                    ? <span className={s.profile__active + ' f--x-small'}>is online</span>
+                    : activityStatus === 1
+                      ? <span className={s.profile__active + ' f--x-small'}>is online</span>
+                      : <span className={s.profile__offline + ' f--x-small'}>is offline</span>
+                  }
                 </h2>
               </div>
             </div>
